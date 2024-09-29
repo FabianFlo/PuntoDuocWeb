@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Evento</title>
+    <script>
+        // Mostrar alerta si hay un mensaje
+        window.onload = function() {
+            const alertMessage = "{{ alert_message|default:'' }}";
+            if (alertMessage) {
+                alert(alertMessage);
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Subir Evento</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <!-- Aquí van tus campos de formulario -->
+        <input type="text" name="descripcion" placeholder="Descripción" required>
+        <input type="text" name="estado" placeholder="Estado" required>
+        <input type="datetime-local" name="fecha" placeholder="Fecha" required>
+        <input type="text" name="imagen" placeholder="Imagen" required>
+        <input type="text" name="lugar" placeholder="Lugar" required>
+        <input type="text" name="sede" placeholder="Sede" required>
+        <input type="text" name="tipo" placeholder="Tipo" required>
+        <input type="text" name="titulo" placeholder="Título" required>
+        <button type="submit">Subir Evento</button>
+        <button>
+            <a href="{% url 'listar_eventos' %}" class="btn">Listar Eventos</a>
+        </button>
+        
+    </form>
+</body>
+</html>

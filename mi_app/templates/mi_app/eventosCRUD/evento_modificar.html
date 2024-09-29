@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Evento</title>
+</head>
+<body>
+    <h1>Modificar Evento</h1>
+    {% if alert_message %}
+        <script>
+            alert("{{ alert_message }}");
+        </script>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="descripcion" placeholder="Descripción" value="{{ evento.descripcion.stringValue }}" required>
+        <input type="text" name="estado" placeholder="Estado" value="{{ evento.estado.stringValue }}" required>
+        <input type="datetime-local" name="fecha" placeholder="Fecha" value="{{ evento.fecha.timestampValue }}" required>
+        <input type="text" name="imagen" placeholder="Imagen" value="{{ evento.imagen.stringValue }}" required>
+        <input type="text" name="lugar" placeholder="Lugar" value="{{ evento.lugar.stringValue }}" required>
+        <input type="text" name="sede" placeholder="Sede" value="{{ evento.sede.stringValue }}" required>
+        <input type="text" name="tipo" placeholder="Tipo" value="{{ evento.tipo.stringValue }}" required>
+        <input type="text" name="titulo" placeholder="Título" value="{{ evento.titulo.stringValue }}" required>
+        <button type="submit">Modificar Evento</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Eventos</title>
+</head>
+<body>
+    <h1>Eventos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Lugar</th>
+                <th>Sede</th>
+                <th>Tipo</th>
+                <th>Imagen</th>
+                <th>Acciones</th> <!-- Nueva columna para acciones -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in eventos %}
+                <tr>
+                    <td>{{ evento.fields.titulo.stringValue }}</td>
+                    <td>{{ evento.fields.descripcion.stringValue }}</td>
+                    <td>{{ evento.fields.fecha.timestampValue }}</td>
+                    <td>{{ evento.fields.estado.stringValue }}</td>
+                    <td>{{ evento.fields.lugar.stringValue }}</td>
+                    <td>{{ evento.fields.sede.stringValue }}</td>
+                    <td>{{ evento.fields.tipo.stringValue }}</td>
+                    <td><img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen" width="100"></td>
+                    <td>
+                        <!-- Botón de eliminar -->
+                        <form method="POST" action="{% url 'eliminar_evento' evento.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="GET" action="{% url 'modificar_evento' evento.id %}">
+                            <button type="submit">Modificar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9">No hay eventos disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
