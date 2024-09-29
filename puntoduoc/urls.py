@@ -19,5 +19,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     path('', include('mi_app.urls')),  # Reemplaza con el nombre de tu aplicación
+    path('', include('mi_app.urls')),  # Reemplaza con el nombre de tu aplicación
 ]
