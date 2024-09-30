@@ -15,7 +15,7 @@ def format_fecha(fecha):
     else:
         # Si no se pasa una fecha, usar la fecha actual en formato UTC
         return datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-
+# # #  esto es el crud de los eventos
 def subir_evento_view(request):
     if request.method == 'POST':
         datos = {
@@ -133,3 +133,110 @@ def modificar_evento_view(request, evento_id):
         else:
             print("Error al modificar el evento:", response.content)
             return render(request, 'mi_app/eventosCRUD/evento_modificar.html', {'alert_message': 'Error al modificar evento'})
+# # #  home      
+def home_view(request):
+    return render(request, 'mi_app/home.html')
+# # # esto CRUD estudantes
+def crear_estudiante_view(request):
+    if request.method == 'POST':
+        datos = {
+            'nombre_completo': request.POST.get('nombre_completo'),
+            'rut': request.POST.get('rut'),
+            'telefono': request.POST.get('telefono'),
+            'email': request.POST.get('email'),
+            'password': request.POST.get('password'),
+            'id_estudiante': ''  # Lo generaremos después de subir el estudiante
+        }
+
+        # URL de Firestore para la colección de estudiantes
+        url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes"
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        # Subir los datos a Firestore
+        response = requests.post(url, headers=headers, json={"fields": {
+            "Nombre_completo": {"stringValue": datos['nombre_completo']},
+            "Rut": {"stringValue": datos['rut']},
+            "Telefono": {"stringValue": datos['telefono']},
+            "email": {"stringValue": datos['email']},
+            "password": {"stringValue": datos['password']}
+        }})
+
+        if response.status_code in [200, 201]:
+            alert_message = "Estudiante creado correctamente."
+        else:
+            alert_message = "Error al crear el estudiante."
+
+        return render(request, 'mi_app/estudiantesCRUD/crear_estudiante.html', {'alert_message': alert_message})
+
+    return render(request, 'mi_app/estudiantesCRUD/crear_estudiante.html')
+
+def listar_estudiantes_view(request):
+    # URL de Firestore para la colección "estudiantes"
+    url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes"
+    
+    # Realiza la solicitud para obtener los estudiantes
+    response = requests.get(url)
+    
+    estudiantes = []
+    if response.status_code == 200:
+        estudiantes = response.json().get('documents', [])
+        # Añadir el ID del documento (Firestore) a los datos del estudiante
+        for estudiante in estudiantes:
+            estudiante_id = estudiante['name'].split('/')[-1]  # Extraer solo el ID del documento
+            estudiante['id'] = estudiante_id  # Añadir el ID a los datos del estudiante
+
+    return render(request, 'mi_app/estudiantesCRUD/listar_estudiantes.html', {'estudiantes': estudiantes})
+
+def eliminar_estudiante_view(request, estudiante_id):
+    # URL de Firestore para eliminar el estudiante
+    url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes/{estudiante_id}"
+
+    if request.method == "POST":
+        response = requests.delete(url)
+
+        if response.status_code == 204:  # 204 No Content significa que se eliminó correctamente
+            print("Estudiante eliminado correctamente.")
+        else:
+            print("Error al eliminar el estudiante.")
+
+    return redirect('listar_estudiantes')
+
+def modificar_estudiante_view(request, estudiante_id):
+    # URL para obtener el estudiante a modificar
+    url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes/{estudiante_id}"
+    
+    if request.method == "POST":
+        # Obtener los datos del formulario
+        datos = {
+            'Nombre_completo': request.POST.get('Nombre_completo'),
+            'Rut': request.POST.get('Rut'),
+            'Telefono': request.POST.get('Telefono'),
+            'email': request.POST.get('email'),
+            'id_estudiante': estudiante_id,  # Usar el ID del estudiante
+            'password': request.POST.get('password')
+        }
+        
+        # Enviar los datos actualizados a Firestore
+        response = requests.patch(url, json={"fields": {
+            "Nombre_completo": {"stringValue": datos['Nombre_completo']},
+            "Rut": {"stringValue": datos['Rut']},
+            "Telefono": {"stringValue": datos['Telefono']},
+            "email": {"stringValue": datos['email']},
+            "id_estudiante": {"stringValue": datos['id_estudiante']},
+            "password": {"stringValue": datos['password']}
+        }})
+
+        if response.status_code in [200, 204]:
+            return redirect('listar_estudiantes')  # Redirigir a la lista de estudiantes
+        else:
+            print("Error al modificar el estudiante:", response.content)
+
+    # Obtener los datos actuales del estudiante
+    response = requests.get(url)
+    if response.status_code == 200:
+        estudiante = response.json().get('fields', {})
+        return render(request, 'mi_app/estudiantesCRUD/modificar_estudiante.html', {'estudiante': estudiante})
+
+    return redirect('listar_estudiantes')  # Si hay un error, redirigir

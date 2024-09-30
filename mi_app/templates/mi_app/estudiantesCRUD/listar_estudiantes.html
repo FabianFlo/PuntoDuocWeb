@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Estudiantes</title>
+</head>
+<body>
+    <h1>Lista de Estudiantes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Estudiante</th>
+                <th>Nombre Completo</th>
+                <th>Rut</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estudiante in estudiantes %}
+                <tr>
+                    <td>{{ estudiante.id }}</td> <!-- Mostrar el ID del documento -->
+                    <td>{{ estudiante.fields.Nombre_completo.stringValue }}</td>
+                    <td>{{ estudiante.fields.Rut.stringValue }}</td>
+                    <td>{{ estudiante.fields.Telefono.stringValue }}</td>
+                    <td>{{ estudiante.fields.email.stringValue }}</td>
+                    <td>
+                        <form action="{% url 'eliminar_estudiante' estudiante.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form> 
+                    </td>
+                    <td>
+                        <button>
+                            <a href="{% url 'modificar_estudiante' estudiante.id %}">Modificar</a>
+                        </button>
+                    </td>
+                    
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No hay estudiantes disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
