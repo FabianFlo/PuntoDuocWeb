@@ -37,6 +37,12 @@
                         <a class="nav-link text-white" href="/listar_eventos">Listar Eventos</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-white" href="/crear_estudiante">Crear Estudiante</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/listar_estudiantes">Listar Estudiantes</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link disabled text-white text-white-50" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
@@ -88,30 +94,41 @@
                     {% for evento in eventos %}
                         <tr>
                             <td>{{ evento.fields.titulo.stringValue }}</td>
-                            <td>{{ evento.fields.descripcion.stringValue|slice:":100" }}...</td>
+                            <td>
+                                {% if evento.fields.descripcion.stringValue|length > 100 %}
+                                    {{ evento.fields.descripcion.stringValue|slice:":100" }}...
+                                {% else %}
+                                    {{ evento.fields.descripcion.stringValue }}
+                                {% endif %}
+                            </td>
+
+
                             <td>{{ evento.fields.fecha.timestampValue }}</td>
                             <td>{{ evento.fields.estado.stringValue }}</td>
                             <td>{{ evento.fields.lugar.stringValue }}</td>
                             <td>{{ evento.fields.sede.stringValue }}</td>
                             <td>{{ evento.fields.tipo.stringValue }}</td>
-                            <td><img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen" width="150"></td>
+                            <td><img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen" class="img-thumbnail" style="width:150px !important;"></td>
 
                             <td>
-                                <!--Botón para editar-->
-                                <div class="row">
-                                <form method="GET" action="{% url 'modificar_evento' evento.id %}">
-                                    <div>
-                                        <button type="submit" class="btn btn-warning col-12"><img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit" style="width: 20px; height: 20px;"></button>
-                                    </div>
-                                </form>
-                                <!-- Botón para eliminar -->
-                                <form method="POST" action="{% url 'eliminar_evento' evento.id %}">
-                                    {% csrf_token %}
-                                    <div>    
-                                        <button type="submit" class="btn btn-danger col-12"><img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Edit" style="width: 20px; height: 20px;"></button>
-                                    </div>
-                                </form>
+                                <div style="display: inline-flex; align-items: center;">
+                                    <!-- Botón para editar -->
+                                    <form method="GET" action="{% url 'modificar_evento' evento.id %}" class="m-1">
+                                        <button type="submit" class="btn btn-dark">
+                                            <img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit" style="width: 20px; height: 20px;" class="invert-color">
+                                        </button>
+                                    </form>
+                                    <!-- Botón para eliminar -->
+                                    <form method="POST" action="{% url 'eliminar_evento' evento.id %}" class="m-1">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">
+                                            <img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Delete" style="width: 20px; height: 20px;" class="invert-color">
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
+
+
                         </tr>
                     {% empty %}
                         <tr>
