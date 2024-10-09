@@ -1,0 +1,58 @@
+@font-face {
+    font-family: "Merriweather";
+    src: url(/static/Merriweather-font/Merriweather-Regular.ttf);
+}
+
+
+* {
+    font-family: 'Merriweather', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body {
+    background: #eee;
+}
+
+.invert-color {
+    filter: invert();
+
+}
+
+.h1-style {
+    background: linear-gradient(to left, #FFB800, #000);
+    background-clip: text;
+    color: transparent;
+}
+
+:is(input[type]:focus, textarea:focus, select:focus) {   
+  /*border-color: rgba(33, 37, 41, 0.8);*/
+  border-color: rgba(40, 35, 0, 0.8);
+  /*box-shadow: 0 1px 1px #00000013 inset, 0 0 8px rgba(32, 4, 109, 0.6);*/
+  box-shadow: 0 0 0 .25rem rgb(255, 184, 0, .5);
+  outline: 0 none;
+}
+
+.background-image {
+    color: #000 !important; /* Optional: Change text color for better contrast */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/Antonio-varas.jpg') !important;
+    background-size: cover !important; /* Cover the entire area */
+    background-position: center !important; /* Center the image */
+    background-repeat: no-repeat !important; /* Prevent repetition */
+}
+
+/*
+.banner-background-image {
+    background-image: linear-gradient(rgba(246, 220, 141, .75), rgba(246, 220, 141, .75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/Antonio-varas.jpg') !important;
+}
+*/
+
+
+.background-color {
+    background: radial-gradient(rgb(255, 184, 0), rgb(199,154,15)); /* , rgb(201, 123, 34)); */
+}
+
+.form-background {
+    background-image: linear-gradient(rgba(255, 240, 200, 1), rgba(200, 200, 200, 1)) !important;
+    background-size: cover !important; /* Cover the entire area */
+    background-position: center !important; /* Center the image */
+    background-repeat: no-repeat !important; /* Prevent repetition */
+}
