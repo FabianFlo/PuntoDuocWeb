@@ -106,14 +106,14 @@
                     </div>
 
                     <!--Imagen Evento (Upload)-->
-                    <div class="col-6">
+                    <div class="col-12">
                         <label for="imagen" class="form-label">Imagen para el evento:</label>
                         <input type="text" id="imagen" name="imagen" class="form-control" required
                             placeholder="URL de imagen.">
                     </div>
 
                     <!---Fecha-->
-                    <div class="col-6">
+                    <div class="col">
                         <label for="fecha" class="form-label">Fecha:</label>
                         <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
                     </div>
@@ -121,24 +121,21 @@
                     <!--Sede (text)-->
                     <div class="col">
                         <label for="sede-select" class="form-label">Sede:</label>
-                        <select name="sedes" id="sede-select" class="form-select" required>
+                        <select name="sede" id="sede-select" class="form-select" required>
                             <option value="" selected disabled>--Escoge una sede--</option>
-                            <option value="duoc-antonio-varas">Duoc UC Antonio Varas</option>
-                            <option value="duoc-puente-alto">Duoc UC Puente Alto</option>
-                            <option value="duoc-san-bernardo">Duoc UC San Bernardo</option>
+                            <option value="Duoc UC Antonio Varas">Duoc UC Antonio Varas</option>
+                            <option value="Duoc UC Puente Alto">Duoc UC Puente Alto</option>
+                            <option value="Duoc San Bernardo">Duoc UC San Bernardo</option>
                         </select>
                     </div>
 
-                    <!--Estado Evento (Select)-->
-                    <div class="col">
-                        <label for="estado-evento-select" class="form-label">Estado de Evento (Cambiar en modo editar):</label>
-                        <select name="estado-evento-select" id="estado-evento-select" class="form-select" required disabled>
-                            <option value="pendiente" selected>Pendiente</option>
-                            <option value="aprobado">Aprobado</option>
-                            <option value="cancelado">Cancelado</option>
-                            <option value="finalizado">Finalizado</option>
-                        </select>
+                    <!--Estado Evento (text)-->
+                    <div class="col d-none">
+                        <label for="estado" class="form-label">Estado de Evento (Cambiar en modo editar):</label>
+                        <input type="text" id="estado" name="estado" class="col-12 form-control" required readonly
+                            placeholder="Pendiente" value="Pendiente">
                     </div>
+
 
                     <!--Lugar Evento [Ubicación] (text)-->
                     <div class="col-12">
