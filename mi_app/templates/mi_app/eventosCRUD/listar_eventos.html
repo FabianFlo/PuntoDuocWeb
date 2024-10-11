@@ -81,6 +81,9 @@
                     <tr>
                         <th>Título</th>
                         <th>Descripción</th>
+                        <th>Cupos</th>
+                        <th>Cantidad Inscritos</th>
+                        <th>Lista Espera</th>
                         <th>Fecha</th>
                         <th>Estado</th>
                         <th>Lugar</th>
@@ -101,8 +104,19 @@
                                     {{ evento.fields.descripcion.stringValue }}
                                 {% endif %}
                             </td>
-
-
+                            <td>{{ evento.fields.Cupos.integerValue }}</td>
+                            <td>{{ evento.fields.inscritos.integerValue }}</td>
+                            <td>
+                                {% if evento.fields.listaEspera.arrayValue.values %}
+                                    <ul>
+                                        {% for item in evento.fields.listaEspera.arrayValue.values %}
+                                            <li>{{ item }}</li> <!-- Asegúrate de que aquí sea el valor correcto -->
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No hay inscritos en la lista de espera.</p>
+                                {% endif %}
+                            </td>
                             <td>{{ evento.fields.fecha.timestampValue }}</td>
                             <td>{{ evento.fields.estado.stringValue }}</td>
                             <td>{{ evento.fields.lugar.stringValue }}</td>

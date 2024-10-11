@@ -49,7 +49,7 @@ def subir_evento_view(request):
             "sede": {"stringValue": datos['sede']},
             "tipo": {"stringValue": datos['tipo']},
             "titulo": {"stringValue": datos['titulo']},
-            "cupos": {"integerValue": datos['cupos']},
+            "Cupos": {"integerValue": datos['cupos']},
             "inscritos": {"integerValue": "0"},  # Inicializamos en 0
                 "listaEspera": {
                     "arrayValue": {
@@ -120,7 +120,8 @@ def modificar_evento_view(request, evento_id):
             'lugar': request.POST.get('lugar'),
             'sede': request.POST.get('sede'),
             'tipo': request.POST.get('tipo'),
-            'titulo': request.POST.get('titulo')
+            'titulo': request.POST.get('titulo'),
+            'cupos': request.POST.get('cupos'),
         }
         
         headers = {
@@ -135,7 +136,14 @@ def modificar_evento_view(request, evento_id):
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
             "tipo": {"stringValue": datos['tipo']},
-            "titulo": {"stringValue": datos['titulo']}
+            "titulo": {"stringValue": datos['titulo']},
+            "Cupos": {"integerValue": datos['cupos']},
+            "inscritos": {"integerValue": "0"},  # Inicializamos en 0
+                "listaEspera": {
+                    "arrayValue": {
+                        "values": []  # Inicializamos con un array vacío
+                    }
+                }
         }})
 
         if response.status_code in [200, 204]:
