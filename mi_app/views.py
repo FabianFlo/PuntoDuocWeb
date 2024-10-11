@@ -18,6 +18,7 @@ def format_fecha(fecha):
 # # #  esto es el crud de los eventos
 def subir_evento_view(request):
     if request.method == 'POST':
+        ###     Esto es para traer los datos del form por: id y el name control form (creo...)
         datos = {
             'descripcion': request.POST.get('descripcion'),
             'estado': request.POST.get('estado'),
@@ -27,13 +28,16 @@ def subir_evento_view(request):
             'lugar': request.POST.get('lugar'),
             'sede': request.POST.get('sede'),
             'tipo': request.POST.get('tipo'),
-            'titulo': request.POST.get('titulo')
+            'titulo': request.POST.get('titulo'),
+            'cupos': request.POST.get('cupos'),
         }
 
         url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
         headers = {
             "Content-Type": "application/json"
         }
+        
+        ###     esto lleva los datos al firebase :P
         
         response = requests.post(url, headers=headers, json={"fields": {
             "descripcion": {"stringValue": datos['descripcion']},
@@ -44,7 +48,14 @@ def subir_evento_view(request):
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
             "tipo": {"stringValue": datos['tipo']},
-            "titulo": {"stringValue": datos['titulo']}
+            "titulo": {"stringValue": datos['titulo']},
+            "cupos": {"integerValue": datos['cupos']},
+            "inscritos": {"integerValue": "0"},  # Inicializamos en 0
+                "listaEspera": {
+                    "arrayValue": {
+                        "values": []  # Inicializamos con un array vacío
+                    }
+                }
         }})
 
         if response.status_code in [200, 201]:
