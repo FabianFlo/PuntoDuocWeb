@@ -83,6 +83,32 @@
                         </div>
                     </div>
 
+                     <!---Carrera-->
+                    <div class="col-12">
+                        <label for="carrera" class="form-label">Carrera:</label>
+                        <div>
+                            <input type="text" id="carrera" name="carrera" class="form-control" required
+                            placeholder="Jane Doe" value="{{ estudiante.carrera.stringValue }}">
+                        </div>
+                    </div>      
+
+                     <!---Puntos-->
+                    <div class="col-12">
+                        <label for="puntaje" class="form-label">Puntaje:</label>
+                        <div>
+                            <input type="number" id="puntaje" name="puntaje" class="form-control" required
+                            placeholder="Jane Doe" value="{{ estudiante.puntaje.integerValue }}">
+                        </div>
+                    </div>      
+                    <!---Nombre-->
+                    <div class="col-12">
+                        <label for="nombre_completo" class="form-label">Nombre Completo:</label>
+                        <div>
+                            <input type="text" id="nombre_completo" name="nombre_completo" class="form-control form-control" required
+                                placeholder="Jane Doe" value="{{ estudiante.Nombre_completo.stringValue }}">
+                        </div>
+                    </div>
+
                     <!---Rut-->
                     <div class="col-12">
                         <label for="rut" class="form-label">Rut:</label>
