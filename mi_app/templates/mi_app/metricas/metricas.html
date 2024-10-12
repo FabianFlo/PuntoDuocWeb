@@ -145,8 +145,21 @@
 
     
     <h1>Métricas de Eventos</h1>
-    <img src="{% url 'metricas' %}" alt="Gráfico de Cupos e Inscritos">
-      
+    <button onclick="mostrarGrafico()">Mostrar Gráfico</button>
+    <div id="grafico-container">
+        <img id="grafico" src="{% url 'metricas' %}" alt="Gráfico de Cupos e Inscritos">
+    </div>
+
+    <script>
+        function mostrarGrafico() {
+            var grafico = document.getElementById('grafico');
+            if (grafico.style.display === 'none') {
+                grafico.style.display = 'block';
+            } else {
+                grafico.style.display = 'none';
+            }
+        }
+    </script>
         
         <!-- Scripts -->
         <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->
