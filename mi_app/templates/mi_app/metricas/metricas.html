@@ -55,26 +55,97 @@
     </nav>
     
     
-    <h1>Métricas y KPIs</h1>
-    <div>
-        <h2>Eventos</h2>
-        <ul>
-            {% for evento in eventos %}
-                <li>ID: {{ evento.id }}, Nombre: {{ evento.fields.nombre.stringValue }}</li>
-                <!-- Añadir más campos aquí según sea necesario -->
-            {% endfor %}
-        </ul>
+    <div class="container-xl">
+        <div class="row justify-content-center">
+            <h1>Métricas y KPIs</h1>
+            
+            <div class="table-responsive">
+                <h2>Eventos</h2>
+                <table class="table table-dark table-striped table-hover rounded shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>ID Evento</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Fecha de Creación</th>
+                            <th>ID Evento</th>
+                            <th>Cupos</th>
+                            <th>Inscritos</th>
+                            <th>Lugar</th>
+                            <th>Sede</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider table-light">
+                        {% for evento in eventos %}
+                            <tr>
+                                <td>{{ evento.id }}</td>
+                                <td>{{ evento.fields.titulo.stringValue }}</td>
+                                <td>{{ evento.fields.descripcion.stringValue }}</td>
+                                <td>{{ evento.fields.estado.stringValue }}</td>
+                                <td>{{ evento.fields.fecha.timestampValue }}</td>
+                                <td>{{ evento.fields.fecha_creacion.timestampValue }}</td>
+                                <td>{{ evento.fields.id_evento.stringValue }}</td>
+                                <td>{{ evento.fields.Cupos.integerValue }}</td>
+                                <td>{{ evento.fields.inscritos.integerValue }}</td>
+                                <td>{{ evento.fields.lugar.stringValue }}</td>
+                                <td>{{ evento.fields.sede.stringValue }}</td>
+                                <td>{{ evento.fields.tipo.stringValue }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="12">No hay eventos disponibles.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-responsive">
+                <h2>Estudiantes</h2>
+                <table class="table table-dark table-striped table-hover rounded shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>ID Estudiante</th>
+                            <th>Nombre Completo</th>
+                            <th>Rut</th>
+                            <th>Teléfono</th>
+                            <th>Carrera</th>
+                            <th>Email</th>
+                            <th>ID Estudiante</th>
+                            <th>Password</th>
+                            <th>Puntaje</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider table-light">
+                        {% for estudiante in estudiantes %}
+                            <tr>
+                                <td>{{ estudiante.id }}</td>
+                                <td>{{ estudiante.fields.Nombre_completo.stringValue }}</td>
+                                <td>{{ estudiante.fields.Rut.stringValue }}</td>
+                                <td>{{ estudiante.fields.Telefono.stringValue }}</td>
+                                <td>{{ estudiante.fields.carrera.stringValue }}</td>
+                                <td>{{ estudiante.fields.email.stringValue }}</td>
+                                <td>{{ estudiante.fields.id_estudiante.stringValue }}</td>
+                                <td>{{ estudiante.fields.password.stringValue }}</td>
+                                <td>{{ estudiante.fields.puntaje.integerValue }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="9">No hay estudiantes disponibles.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div>
-        <h2>Estudiantes</h2>
-        <ul>
-            {% for estudiante in estudiantes %}
-                <li>ID: {{ estudiante.id }}, Nombre: {{ estudiante.fields.nombre.stringValue }}</li>
-                <!-- Añadir más campos aquí según sea necesario -->
-            {% endfor %}
-        </ul>
-    </div>
+
     
+    <h1>Métricas de Eventos</h1>
+    <img src="{% url 'metricas' %}" alt="Gráfico de Cupos e Inscritos">
       
         
         <!-- Scripts -->

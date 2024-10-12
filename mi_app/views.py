@@ -3,46 +3,72 @@ from django.shortcuts import render, redirect
 import requests
 from datetime import datetime
 import uuid  # Importamos uuid para generar un identificador único
+import io
+import matplotlib.pyplot as plt
+import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from django.http import HttpResponse
+
 
 
 import requests
 from django.shortcuts import render
 
 # mi_app/views.py
-
 def metricas_view(request):
-    # URL de Firestore para la colección "Eventos"
-    eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    # Obtener datos de eventos desde Firestore
+    url_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    response_eventos = requests.get(url_eventos)
     
-    # URL de Firestore para la colección "Estudiantes"
-    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes"
-    
-    # Obtener eventos
-    eventos_response = requests.get(eventos_url)
     eventos = []
-    if eventos_response.status_code == 200:
-        eventos = eventos_response.json().get('documents', [])
+    if response_eventos.status_code == 200:
+        eventos = response_eventos.json().get('documents', [])
         for evento in eventos:
             evento_id = evento['name'].split('/')[-1]  # Extraer solo el ID
             evento['id'] = evento_id  # Añadir el ID al evento
     
-    # Obtener estudiantes
-    estudiantes_response = requests.get(estudiantes_url)
-    estudiantes = []
-    if estudiantes_response.status_code == 200:
-        estudiantes = estudiantes_response.json().get('documents', [])
-        for estudiante in estudiantes:
-            estudiante_id = estudiante['name'].split('/')[-1]  # Extraer solo el ID del documento
-            estudiante['id'] = estudiante_id  # Añadir el ID a los datos del estudiante
-    
-    # Pasar los datos de eventos y estudiantes al contexto
-    context = {
-        'eventos': eventos,
-        'estudiantes': estudiantes,
-    }
+    # Preprocesar datos
+    eventos_data = []
+    for evento in eventos:
+        evento_data = {
+            "titulo": evento['fields']['titulo']['stringValue'],
+            "Cupos": int(evento['fields']['Cupos']['integerValue']),
+            "inscritos": int(evento['fields']['inscritos']['integerValue'])
+        }
+        eventos_data.append(evento_data)
 
-    return render(request, 'mi_app/metricas/metricas.html', {'eventos': context})
-    #return render(request, 'mi_app/metricas.html', context)
+    eventos_df = pd.DataFrame(eventos_data)
+
+    # Crear el gráfico
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    bar_width = 0.35
+    index = eventos_df['titulo']
+
+    r1 = range(len(index))
+    r2 = [x + bar_width for x in r1]
+
+    ax.bar(r1, eventos_df['Cupos'], color='blue', width=bar_width, edgecolor='grey', label='Cupos')
+    ax.bar(r2, eventos_df['inscritos'], color='red', width=bar_width, edgecolor='grey', label='Inscritos')
+
+    ax.set_xlabel('Eventos', fontweight='bold')
+    ax.set_ylabel('Número de Personas', fontweight='bold')
+    ax.set_title('Comparación de Cupos y Inscritos en Eventos')
+    ax.set_xticks([r + bar_width/2 for r in range(len(index))])
+    ax.set_xticklabels(index, rotation=45)
+    ax.legend()
+
+    # Guardar el gráfico en un archivo temporal
+    buffer = io.BytesIO()
+    plt.tight_layout()
+    fig.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Crear una respuesta HTTP con el contenido de la imagen
+    return HttpResponse(buffer, content_type='image/png')
+
+def metricas_page_view(request):
+    return render(request, 'mi_app/metricas/metricas.html')
 
 def format_fecha(fecha):
     if fecha:
