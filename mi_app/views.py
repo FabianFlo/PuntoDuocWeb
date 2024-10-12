@@ -3,6 +3,45 @@ from django.shortcuts import render, redirect
 import requests
 from datetime import datetime
 
+import requests
+from django.shortcuts import render
+
+# mi_app/views.py
+
+def metricas_view(request):
+    # URL de Firestore para la colección "Eventos"
+    eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    
+    # URL de Firestore para la colección "Estudiantes"
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/estudiantes"
+    
+    # Obtener eventos
+    eventos_response = requests.get(eventos_url)
+    eventos = []
+    if eventos_response.status_code == 200:
+        eventos = eventos_response.json().get('documents', [])
+        for evento in eventos:
+            evento_id = evento['name'].split('/')[-1]  # Extraer solo el ID
+            evento['id'] = evento_id  # Añadir el ID al evento
+    
+    # Obtener estudiantes
+    estudiantes_response = requests.get(estudiantes_url)
+    estudiantes = []
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            estudiante_id = estudiante['name'].split('/')[-1]  # Extraer solo el ID del documento
+            estudiante['id'] = estudiante_id  # Añadir el ID a los datos del estudiante
+    
+    # Pasar los datos de eventos y estudiantes al contexto
+    context = {
+        'eventos': eventos,
+        'estudiantes': estudiantes,
+    }
+
+    return render(request, 'mi_app/metricas/metricas.html', {'eventos': context})
+    #return render(request, 'mi_app/metricas.html', context)
+
 def format_fecha(fecha):
     if fecha:
         try:
