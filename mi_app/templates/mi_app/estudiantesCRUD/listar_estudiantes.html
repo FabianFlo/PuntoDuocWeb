@@ -79,6 +79,8 @@
                         <tr>
                             <th>ID Estudiante</th>
                             <th>Nombre Completo</th>
+                            <th>Carrera</th>
+                            <th>Puntaje</th>
                             <th>Rut</th>
                             <th>Teléfono</th>
                             <th>Email</th>
@@ -90,6 +92,8 @@
                             <tr>
                                 <td>{{ estudiante.id }}</td> <!-- Mostrar el ID del documento -->
                                 <td>{{ estudiante.fields.Nombre_completo.stringValue }}</td>
+                                <td>{{ estudiante.fields.carrera.stringValue }}</td>
+                                <td>{{ estudiante.fields.puntaje.integerValue }}</td>
                                 <td>{{ estudiante.fields.Rut.stringValue }}</td>
                                 <td>{{ estudiante.fields.Telefono.stringValue }}</td>
                                 <td>{{ estudiante.fields.email.stringValue }}</td>
