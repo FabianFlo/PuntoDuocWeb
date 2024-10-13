@@ -58,6 +58,17 @@
     <div class="container-xl">
         <div class="row justify-content-center">
             <h1>Métricas y KPIs</h1>
+
+            <script>
+                    function showGraph(eventId) {
+            const graphImage = document.getElementById('graph-image');
+            if (graphImage) {
+                graphImage.src = `/metricas/${eventId}/`;
+            } else {
+                console.error('Element with id "graph-image" not found.');
+            }
+        }
+            </script>
             
             <div class="table-responsive">
                 <h2>Eventos</h2>
@@ -81,18 +92,26 @@
                     <tbody class="table-group-divider table-light">
                         {% for evento in eventos %}
                             <tr>
-                                <td>{{ evento.id }}</td>
+                                
                                 <td>{{ evento.fields.titulo.stringValue }}</td>
                                 <td>{{ evento.fields.descripcion.stringValue }}</td>
                                 <td>{{ evento.fields.estado.stringValue }}</td>
                                 <td>{{ evento.fields.fecha.timestampValue }}</td>
-                                <td>{{ evento.fields.fecha_creacion.timestampValue }}</td>
-                                <td>{{ evento.fields.id_evento.stringValue }}</td>
+                                
+                                
                                 <td>{{ evento.fields.Cupos.integerValue }}</td>
                                 <td>{{ evento.fields.inscritos.integerValue }}</td>
+                            <!-- FILAS Importantes
+                                <td>{{ evento.fields.fecha_creacion.timestampValue }}</td>
+                                <td>{{ evento.fields.id_evento.stringValue }}</td>
+                                <td>{{ evento.id }}</td> 
                                 <td>{{ evento.fields.lugar.stringValue }}</td>
                                 <td>{{ evento.fields.sede.stringValue }}</td>
                                 <td>{{ evento.fields.tipo.stringValue }}</td>
+                            -->
+                            <td>
+                                <button onclick="showGraph('{{ evento.id }}')">Mostrar Gráfico</button>
+                            </td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -146,7 +165,7 @@
     
     <h1>Métricas de Eventos</h1>
     <button onclick="mostrarGrafico()">Mostrar Gráfico</button>
-    <div id="grafico-container">
+    <div id="graph-image">
         <img id="grafico" src="{% url 'metricas' %}" alt="Gráfico de Cupos e Inscritos">
     </div>
 

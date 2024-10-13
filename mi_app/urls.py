@@ -22,4 +22,5 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('metricas/', metricas_view, name='metricas'),
     path('metricas/grafico/', views.metricas_view, name='metricas'),
+     path('metricas/<str:event_id>/', metricas_view, name='metricas_view'),
 ]
