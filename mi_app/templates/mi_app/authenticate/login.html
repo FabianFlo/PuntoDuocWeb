@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="email" name="Correo_electronico" placeholder="Correo Electrónico" required>
+        <input type="password" name="Contraseña" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    {% if request.session.usuario_autenticado %}
+    <p>Estás logeado.</p>
+    <form action="{% url 'logout' %}" method="post" class="logout-button">
+        {% csrf_token %}
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+    {% else %}
+    <p>No estás logeado.</p>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Login Exitoso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Has iniciado sesión exitosamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Ir a Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var messages = "{% if messages %}true{% else %}false{% endif %}";
+            var isAuthenticated = "{% if request.session.usuario_autenticado %}true{% else %}false{% endif %}";
+
+            // Mostrar el modal solo si hay mensajes y el usuario está autenticado
+            if (messages === "true" && isAuthenticated === "true") {
+                $('#successModal').modal('show');
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

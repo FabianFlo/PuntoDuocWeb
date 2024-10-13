@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'mi_app/css/styles.css' %}"> <!-- Puedes agregar tu propio CSS -->
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido al Dashboard</h1>
+        
+        <p>Has iniciado sesión como: <strong>{{ request.session.user_email }}</strong></p>
+        
+        <a href="{% url 'logout' %}">Cerrar Sesión</a>
+
+        <!-- Puedes agregar más contenido aquí -->
+    </div>
+</body>
+</html>
