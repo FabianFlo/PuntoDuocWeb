@@ -1,3 +1,4 @@
+from collections import Counter
 from django.contrib import messages
 from django.shortcuts import render, redirect
 import requests
@@ -8,8 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from django.http import HttpResponse
-import requests
-from django.shortcuts import render
+
 
 # mi_app/views.py
 def metricas_page_view(request, event_id):
@@ -340,3 +340,57 @@ def logout_view(request):
     request.session.flush()  # Elimina todos los datos de la sesión
     messages.success(request, 'Has cerrado sesión exitosamente.')
     return redirect('login_view')
+
+@login_required
+def dashboard_2(request):
+    # Obtener datos de Firebase
+    eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    
+    eventos_response = requests.get(eventos_url)
+    estudiantes_response = requests.get(estudiantes_url)
+
+    eventos = []
+    estudiantes = []
+
+    if eventos_response.status_code == 200:
+        eventos = eventos_response.json().get('documents', [])
+        for evento in eventos:
+            evento_id = evento['name'].split('/')[-1]
+            evento['id'] = evento_id
+
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            estudiante_id = estudiante['name'].split('/')[-1]
+            estudiante['id'] = estudiante_id
+
+    # KPIs
+    inscritos_por_evento = {evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0) for evento in eventos}
+    carreras_con_mayor_participacion = Counter(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes).most_common(5)
+    promedio_eventos_por_estudiante = len(eventos) / len(estudiantes) if estudiantes else 0
+    satisfaccion_participante = 0  # Asumiendo que no tienes estos datos aún
+
+    # Gráficos
+    grafico_inscritos = list(inscritos_por_evento.values())
+    grafico_eventos = list(inscritos_por_evento.keys())
+    
+    # Preparar datos para gráfico de carreras
+    labels_carreras = [carrera[0] for carrera in carreras_con_mayor_participacion]
+    data_carreras = [carrera[1] for carrera in carreras_con_mayor_participacion]
+    
+    # Enviando datos al template
+    context = {
+        'eventos': eventos,
+        'estudiantes': estudiantes,
+        'inscritos_por_evento': inscritos_por_evento,
+        'carreras_con_mayor_participacion': carreras_con_mayor_participacion,
+        'promedio_eventos_por_estudiante': promedio_eventos_por_estudiante,
+        'satisfaccion_participante': satisfaccion_participante,
+        'grafico_inscritos': grafico_inscritos,
+        'grafico_eventos': grafico_eventos,
+        'labels_carreras': labels_carreras,
+        'data_carreras': data_carreras,
+    }
+    
+    return render(request, 'mi_app/dashboard/dashboard_2.html', context)
