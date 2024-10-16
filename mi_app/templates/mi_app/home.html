@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color">
-
+<body class="background-color" style="
+background: radial-gradient(rgb(92, 144, 246),rgb(10, 73, 168));
+background-repeat: no-repeat; background-attachment: fixed;">
 
 
 
@@ -25,7 +26,7 @@
                         <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg"
                             alt="Logo Duoc" width="150" height="30" class="d-inline-block align-text-top">
                     </a>
-                    <a class="navbar-brand text-warning nav-brand" href="/">PuntoDuoc</a>
+                    <a class="navbar-brand text-white nav-brand" href="/">PuntoDuoc</a>
                     <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                         aria-label="Toggle navigation">
@@ -52,21 +53,17 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="/dashboard_2">Metricas</a>
                             </li>
-                            <li class="nav-item">
-                            <li class="nav-item">
-                                <a class="nav-link disabled text-white text-white-50" href="/listar_estudiantes" >Disabled</a>
-                            </li>
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 {% if request.session.usuario_autenticado %}
-                                <p>Estás logeado.</p>
                                 <form action="{% url 'logout' %}" method="post" class="logout-button">
                                     {% csrf_token %}
-                                    <button type="submit">Cerrar Sesión</button>
+                                    <button type="submit" class="btn btn-black text-white">Cerrar Sesión</button>
                                 </form>
                                 {% else %}
-                                <p>No estás logeado.</p>
+                                <!--<p>No estás logeado.</p>-->
+                                <a class="nav-link text-light" href="{% url 'login_view' %}">Iniciar sesión</a>
                                 {% endif %}
                             </li>
                         </ul>
@@ -75,71 +72,40 @@
             </nav>
         </header>
 
-        <!--
-        <div>
-            <main class="align-middle">
-                <img src="https://www.duoc.cl/wp-content/uploads/2020/06/Antonio-varas.jpg" class="img-fluid">
-            <h1 class="p-3 m-3 text-center">Bienvenido al administrador de eventos Punto Duoc.</h1>
-            <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
-            <p class="lead">
-                <a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>
-            </p>
-            </main>
-        
-            <footer class="mt-auto text-white-50">
-            <p>Cover template for <a href="https://duoc.cl/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>
-            </footer>
-        </div>
-        -->
+        <section>
+            <div class="container-fluid p-1">
+                <div class="container my-5">
+                    <div class="p-5 text-center rounded-3 background-image shadow">
 
-        <div class="container-fluid p-1">
-            <div class="container my-5">
-                <div class="p-5 text-center rounded-3 background-image shadow">
+                        <div class="bg-black bg-opacity-25 p-4 rounded">
+                            <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg"
+                                alt="Logo Duoc" width="50%" class="d-inline-block align-text-top">
+                            <h1 class="p-3 m-3 text-center">Bienvenido a PuntoDuoc Administradores</h1>
+                            <p class="text-center text-muted fs-2">
+                                Herramienta para la creación y gestión de eventos Duoc UC.
+                            </p>
 
-                    <div class="bg-black bg-opacity-25 p-4 rounded">
-                        <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg"
-                            alt="Logo Duoc" width="50%" class="d-inline-block align-text-top">
-                        <h1 class="p-3 m-3 text-center">Bienvenido a PuntoDuoc Administradores</h1>
-                        <p class="col-lg-8 mx-auto fs-5 text-muted">
-                            Herramienta para la creación y gestión de eventos Duoc UC.
-                        </p>
+                            {% if request.session.usuario_autenticado %}
+                            <div class="d-inline-flex gap-2 mt-3 mb-5">
+                                <a href="{% url 'subir_evento' %}" class="d-inline-flex align-items-center btn bg-black btn-lg px-4 rounded-pill text-white">
+                                    Subir evento
+                                </a>
+                            </div>
+                            {% else %}
+                            <!--<p>No estás logeado.</p>-->
+                            <div class="d-inline-flex gap-2 mt-3 mb-5">
+                                <a href="{% url 'login_view' %}" class="d-inline-flex align-items-center btn bg-black btn-lg px-4 rounded-pill text-white">
+                                    Iniciar sesión
+                                </a>
+                            </div>
+                            {% endif %}
 
-                        <div class="d-inline-flex gap-2 mt-3 mb-5">
-                            <a href="{% url 'login_view' %}" class="d-inline-flex align-items-center btn bg-black btn-lg px-4 rounded-pill text-white">
-                                Ir a Login
-                            </a>
+
                         </div>
-                        
-
                     </div>
-                    <!--
-                    <div class="d-inline-flex gap-2 mb-5">
-                        <button class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" type="button">
-                        Botón primario
-                        <svg class="bi ms-2" width="24" height="24"><use xlink:href="#arrow-right-short"/></svg>
-                        </button>
-                        <button class="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button">
-                        Botón secundario
-                        </button>
-                    </div>
-                    -->
                 </div>
             </div>
-        </div>
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
+        </section>
 
 
 

@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color">
-
+<body class="background-color" style="
+background: radial-gradient(rgb(92, 144, 246),rgb(10, 73, 168));
+background-repeat: no-repeat; background-attachment: fixed;">
 
 
     <nav class="navbar navbar-expand-lg bg-black">
@@ -21,7 +22,7 @@
                 <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
                     width="150" height="30" class="d-inline-block align-text-top">
             </a>
-            <a class="navbar-brand text-warning nav-brand" href="/">PuntoDuoc</a>
+            <a class="navbar-brand text-white nav-brand" href="/">PuntoDuoc</a>
             <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -43,16 +44,18 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/listar_estudiantes">Listar Estudiantes</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/dashboard_2">Metricas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled text-white text-white-50" aria-disabled="true">Disabled</a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#">Logout</a>
+                        {% if request.session.usuario_autenticado %}
+                        <form action="{% url 'logout' %}" method="post" class="logout-button">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-black text-white">Cerrar Sesión</button>
+                        </form>
+                        {% else %}
+                        <!--<p>No estás logeado.</p>-->
+                        <a class="nav-link text-light" href="{% url 'login_view' %}">Iniciar sesión</a>
+                        {% endif %}
                     </li>
                 </ul>
             </div>
@@ -60,123 +63,130 @@
     </nav>
 
 
-    <div class="container-fluid p-1">
-        <div class="container my-5">
-            <div class="p-2 text-center rounded-3 background-image shadow" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/plaza-vespucio.jpg') !important;">
-                <div class="bg-black bg-opacity-25 rounded">
-                    <div class="d-inline-flex gap-2 justify-content-center px-3">
-                        <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                        width="30%" class="d-inline-block align-text-top">
-                        <h1 class="p-3 m-3 text-center border-start border-black">Modificar evento</h1>
+    <section>
+        <div class="container-lg mt-4 mb-5">
+            <div class="row shadow mx-auto">
+                <div class="col p-0 border-end">
+                    <div class="p-5 text-center rounded-start-3 background-image h-100" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://extensionduoc.s3.us-west-2.amazonaws.com/wp-content/uploads/2023/05/09171717/alameda_IMG_4709_1920-1040x600-1.jpg') !important; background-position: left !important;">
+                        <div class="bg-black bg-opacity-25 rounded h-100 d-flex align-items-center justify-content-center">
+                            <div class="px-3">
+                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
+                                width="30%">
+                                <div>
+                                    <h1 class="text-black p-2 display-1">PuntoDuoc</h1>
+                                    <p class="text-center text-muted fs-2">Modificar evento</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if alert_message %}
+                    <script>
+                        alert("{{ alert_message }}");
+                    </script>
+                {% endif %}
+                
+                <div class="col p-0">
+                    <div class="p-4 rounded-end-3 bg-white">
+
+                        <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
+                            {% csrf_token %}
+                            <!-- Aquí van tus campos de formulario -->
+
+                            <!---Título Evento-->
+                            <div class="col-12">
+                                <label for="titulo" class="form-label">Título de Evento:</label>
+                                <div>
+                                    <input type="text" id="titulo" name="titulo" class="form-control form-control-lg" required
+                                        placeholder="Charla: La importancia de la música en el ser humano" value="{{ evento.titulo.stringValue }}">
+                                </div>
+                            </div>
+
+                            <!---Descripción [Detalles Evento] (TextArea)-->
+                            <div class="col-12">
+                                <label for="descripcion" class="form-label">Detalles de evento:</label>
+                                <textarea id="descripcion" name="descripcion" rows="2" cols="33" class="form-control" maxlength="300" required
+                                    placeholder="Información sobre el evento...">{{ evento.descripcion.stringValue }}</textarea>
+                            </div>
+
+                            <!--Imagen Evento (Upload)-->
+                            <div class="col-6">
+                                <label for="imagen" class="form-label">Imagen para el evento:</label>
+                                <input type="text" id="imagen" name="imagen" class="form-control" required
+                                    placeholder="URL de imagen." value="{{ evento.imagen.stringValue }}">
+                            </div>
+
+                            <!---Fecha-->
+                            <div class="col-6">
+                                <label for="fecha" class="form-label">Fecha:</label>
+                                <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
+                            </div>
+
+                            <!--Sede (text)-->
+                            <div class="col">
+                                <label for="sede-select" class="form-label">Sede:</label>
+                                <select name="sede" id="sede-select" class="form-select" required>
+                                    <option value="" selected disabled>--Escoge una sede--</option>
+                                    <option value="Duoc UC Antonio Varas">Duoc UC Antonio Varas</option>
+                                    <option value="Duoc UC Puente Alto">Duoc UC Puente Alto</option>
+                                    <option value="Duoc San Bernardo">Duoc UC San Bernardo</option>
+                                </select>
+                            </div>
+                        
+                            <!--Estado Evento (Select)-->
+                            <div class="col">
+                                <label for="estado-select" class="form-label">Estado de Evento:</label>
+                                <select name="estado" id="estado-select" class="form-select" required>
+                                    <option value="" selected disabled>--Escoge un estado--</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Aprobado">Aprobado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                </select>
+                            </div>
+
+                            <!--Lugar Evento [Ubicación] (text)-->
+                            <div class="col-12">
+                                <label for="lugar" class="form-label">Ubicación:</label>
+                                <input type="text" id="lugar" name="lugar" class="col-12 form-control" required
+                                    placeholder="Avenida Concha y Toro 1340, Puente Alto" value="{{ evento.lugar.stringValue }}">
+                            </div>
+
+
+                            <!--Tipo (text)-->
+                            <div class="col">
+                                <label for="tipo" class="form-label">Tipo:</label>
+                                <input type="text" id="tipo" name="tipo" class="col-12 form-control" required
+                                    placeholder="Taller" value="{{ evento.tipo.stringValue }}">
+                            </div>                    
+
+                            <!--Cupos-->
+                            <div class="col">
+                                <label for="cupos" class="form-label">Cupos :</label>
+                                <div>
+                                    <input type="number" id="cupos" name="cupos" class="form-control" required
+                                        placeholder="999">
+                                </div>
+                            </div>
+
+                            <hr class="mt-3">
+
+                            <!--Button Modificar evento-->
+                            <div class="col-12 col-md-6 mt-3">
+                                <input type="submit" value="Modificar evento" class="btn btn-dark col-12">
+                            </div>
+                
+                            <!--Button Listar eventos-->
+                            <div class="col-12 col-md-6 my-3">
+                                <a href="/listar_eventos" class="btn btn-outline-dark col-12">Listado de eventos</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        {% if alert_message %}
-            <script>
-                alert("{{ alert_message }}");
-            </script>
-        {% endif %}
-        
-        <div class="container my-5">
-            <div class="p-1 rounded-3 form-background shadow">
-
-                <form class="row m-1 g-3 bg-white bg-opacity-25" method="POST">
-                    {% csrf_token %}
-                    <!-- Aquí van tus campos de formulario -->
-
-                    <!---Título Evento-->
-                    <div class="col-12">
-                        <label for="titulo" class="form-label">Título de Evento:</label>
-                        <div>
-                            <input type="text" id="titulo" name="titulo" class="form-control form-control-lg" required
-                                placeholder="Charla: La importancia de la música en el ser humano" value="{{ evento.titulo.stringValue }}">
-                        </div>
-                    </div>
-
-                    <!---Descripción [Detalles Evento] (TextArea)-->
-                    <div class="col-12">
-                        <label for="descripcion" class="form-label">Detalles de evento:</label>
-                        <textarea id="descripcion" name="descripcion" rows="5" cols="33" class="form-control" maxlength="300" required
-                            placeholder="Información sobre el evento...">{{ evento.descripcion.stringValue }}</textarea>
-                    </div>
-
-                    <!---cupos -->
-                    <div class="col-12">
-                        <label for="cupos" class="form-label">Título de Evento:</label>
-                        <div>
-                            <input type="number" id="cupos" name="cupos" class="form-control form-control-lg" required
-                                placeholder="Cupos: 999" >
-                        </div>
-                    </div>
-
-                    <!--Imagen Evento (Upload)-->
-                    <div class="col-6">
-                        <label for="imagen" class="form-label">Imagen para el evento:</label>
-                        <input type="text" id="imagen" name="imagen" class="form-control" required
-                            placeholder="URL de imagen." value="{{ evento.imagen.stringValue }}">
-                    </div>
-
-                    <!---Fecha-->
-                    <div class="col-6">
-                        <label for="fecha" class="form-label">Fecha:</label>
-                        <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
-                    </div>
-
-                    <!--Sede (text)-->
-                    <div class="col">
-                        <label for="sede-select" class="form-label">Sede:</label>
-                        <select name="sede" id="sede-select" class="form-select" required>
-                            <option value="" selected disabled>--Escoge una sede--</option>
-                            <option value="Duoc UC Antonio Varas">Duoc UC Antonio Varas</option>
-                            <option value="Duoc UC Puente Alto">Duoc UC Puente Alto</option>
-                            <option value="Duoc San Bernardo">Duoc UC San Bernardo</option>
-                        </select>
-                    </div>
-                
-                    <!--Estado Evento (Select)-->
-                    <div class="col">
-                        <label for="estado-select" class="form-label">Estado de Evento:</label>
-                        <select name="estado" id="estado-select" class="form-select" required>
-                            <option value="" selected disabled>--Escoge un estado--</option>
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Aprobado">Aprobado</option>
-                            <option value="Cancelado">Cancelado</option>
-                            <option value="Finalizado">Finalizado</option>
-                        </select>
-                    </div>
-
-                    <!--Lugar Evento [Ubicación] (text)-->
-                    <div class="col-12">
-                        <label for="lugar" class="form-label">Ubicación:</label>
-                        <input type="text" id="lugar" name="lugar" class="col-12 form-control" required
-                            placeholder="Avenida Concha y Toro 1340, Puente Alto" value="{{ evento.lugar.stringValue }}">
-                    </div>
-
-
-                    <!--Tipo (text)-->
-                    <div class="col-12">
-                        <label for="tipo" class="form-label">Tipo:</label>
-                        <input type="text" id="tipo" name="tipo" class="col-12 form-control" required
-                            placeholder="Taller" value="{{ evento.tipo.stringValue }}">
-                    </div>                           
-
-                    <hr>
-        
-                    <!--Button Modificar evento-->
-                    <div class="col-12 col-md-6 mt-4">
-                        <input type="submit" value="Modificar evento" class="btn btn-dark col-12">
-                    </div>
-        
-                    <!--Button Listar eventos-->
-                    <div class="col-12 col-md-6 my-4">
-                        <a href="/listar_eventos" class="btn btn-outline-dark col-12">Listado de eventos</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!--
     <input type="text" name="titulo" placeholder="Título" value="{{ evento.titulo.stringValue }}" required>
