@@ -16,10 +16,13 @@ urlpatterns = [
     path('modificar_estudiante/<str:estudiante_id>/', modificar_estudiante_view, name='modificar_estudiante'),
     path('metricas/', metricas_view, name='metricas'),
     path('metricas/grafico/', views.metricas_view, name='metricas'),
-    path('modificar_estudiante/<str:estudiante_id>/', modificar_estudiante_view, name='modificar_estudiante'),
     # # # login 
     path('login/', login_view, name='login_view'),
     path('logout/', logout_view, name='logout'),
+    # # # metricas
     path('dashboard_2/', dashboard_2, name='dashboard_2'),
+    # # # correo
+    path('enviar-correos/', enviar_correos_view, name='enviar_correos_view'),
+    
     
 ]

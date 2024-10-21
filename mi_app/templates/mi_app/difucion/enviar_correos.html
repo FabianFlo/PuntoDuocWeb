@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Enviar Correos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .alerta-carta {
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #155724;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enviar Correos</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alerta-carta">
+                    <strong>Éxito!</strong> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <label for="carrera">Selecciona Carrera:</label>
+            <select name="carrera" required>
+                {% for carrera in carreras %}
+                    <option value="{{ carrera }}">{{ carrera }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="asunto">Asunto:</label>
+            <input type="text" name="asunto" required>
+
+            <label for="mensaje">Mensaje:</label>
+            <textarea name="mensaje" required></textarea>
+
+            <button type="submit" class="btn btn-primary">Enviar Correos</button>
+        </form>
+    </div>
+</body>
+</html>

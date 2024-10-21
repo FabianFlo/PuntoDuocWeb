@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
+
 <body>
     <header class="mb-auto">
         <nav class="navbar navbar-expand-lg bg-black">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
                     <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg"
-                         alt="Logo Duoc" width="150" height="30" class="d-inline-block align-text-top">
+                        alt="Logo Duoc" width="150" height="30" class="d-inline-block align-text-top">
                 </a>
                 <a class="navbar-brand text-white nav-brand" href="/">PuntoDuoc</a>
                 <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                        aria-label="Toggle navigation">
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="estudiantesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="estudiantesDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Estudiantes
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="estudiantesDropdown">
@@ -32,7 +35,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="eventosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="eventosDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Eventos
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
@@ -61,4 +65,5 @@
         </nav>
     </header>
 </body>
+
 </html>

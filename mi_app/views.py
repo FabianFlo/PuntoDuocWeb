@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from django.http import HttpResponse
+from django.core.mail import send_mail
 
 
 # mi_app/views.py
@@ -392,5 +393,54 @@ def dashboard_2(request):
         'labels_carreras': labels_carreras,
         'data_carreras': data_carreras,
     }
-    
     return render(request, 'mi_app/dashboard/dashboard_2.html', context)
+
+def obtener_correos_por_carrera(carrera):
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    estudiantes_response = requests.get(estudiantes_url)
+
+    correos = []
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            fields = estudiante['fields']
+            if fields.get('carrera', {}).get('stringValue') == carrera:
+                correos.append(fields.get('email', {}).get('stringValue'))
+
+    return correos
+
+def obtener_carreras():
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    estudiantes_response = requests.get(estudiantes_url)
+
+    carreras = set()
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            carrera = estudiante['fields'].get('carrera', {}).get('stringValue')
+            if carrera:
+                carreras.add(carrera)
+
+    return list(carreras)
+
+@login_required
+def enviar_correos_view(request):
+    if request.method == 'POST':
+        carrera = request.POST['carrera']
+        asunto = request.POST['asunto']
+        mensaje = request.POST['mensaje']
+
+        correos_destinatarios = obtener_correos_por_carrera(carrera)
+
+        for email in correos_destinatarios:
+            try:
+                send_mail(asunto, mensaje, 'punto.estudiantil.puntoduoc@gmail.com', [email])
+            except Exception as e:
+                messages.error(request, f"Error al enviar correo a {email}: {str(e)}")
+                return redirect('enviar_correos_view')  # Salir en caso de error
+
+        messages.success(request, "Correos enviados exitosamente.")  # Mensaje de éxito
+        return redirect('enviar_correos_view')
+
+    carreras = obtener_carreras()  # Obtener dinámicamente las carreras
+    return render(request, 'mi_app/difucion/enviar_correos.html', {'carreras': carreras})
