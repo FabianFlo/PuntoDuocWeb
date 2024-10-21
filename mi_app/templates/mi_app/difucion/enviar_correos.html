@@ -2,48 +2,111 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enviar Correos</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .alerta-carta {
-            border: 1px solid #28a745;
-            border-radius: 5px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            color: #155724;
-            margin-top: 20px;
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <script>
+        // Mostrar alerta si hay un mensaje
+        window.onload = function() {
+            const alertMessage = "{{ alert_message|default:'' }}";
+            if (alertMessage) {
+                alert(alertMessage);
+            }
+        };
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Enviar Correos</h1>
+<body class="background-color" style="
+background: radial-gradient(rgb(92, 144, 246), rgb(10, 73, 168));
+background-repeat: no-repeat; background-attachment: fixed;">
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alerta-carta">
-                    <strong>Éxito!</strong> {{ message }}
+{% include 'mi_app/navbar.html' %}
+
+<section>
+    <div class="container-lg mt-4 mb-5">
+        <div class="row shadow mx-auto">
+            <div class="col p-0 border-end">
+                <div class="p-5 text-center rounded-start-3 background-image h-100" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/plaza-vespucio.jpg') !important;">
+                    <div class="bg-black bg-opacity-25 rounded h-100 d-flex align-items-center justify-content-center">
+                        <div class="px-3">
+                            <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc" width="30%">
+                            <div>
+                                <h1 class="text-black p-2 display-1">PuntoDuoc</h1>
+                                <p class="text-center text-muted fs-2">Enviar Correos</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
-        {% endif %}
+            </div>
 
-        <form method="POST">
-            {% csrf_token %}
-            <label for="carrera">Selecciona Carrera:</label>
-            <select name="carrera" required>
-                {% for carrera in carreras %}
-                    <option value="{{ carrera }}">{{ carrera }}</option>
-                {% endfor %}
-            </select>
+            <div class="col p-0">
+                <div class="p-4 rounded-end-3 bg-white">
 
-            <label for="asunto">Asunto:</label>
-            <input type="text" name="asunto" required>
+                    <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
+                        {% csrf_token %}
+                        
+                        <h2>Enviar correos por Evento</h2>
+                        <div class="col-12">
+                            <label for="titulo_evento" class="form-label">Título del Evento:</label>
+                            <select name="titulo_evento" id="titulo_evento" class="form-select" required>
+                                {% for titulo in titulos_eventos %}
+                                    <option value="{{ titulo }}">{{ titulo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-            <label for="mensaje">Mensaje:</label>
-            <textarea name="mensaje" required></textarea>
+                        <div class="col-12">
+                            <label for="asunto_evento" class="form-label">Asunto:</label>
+                            <input type="text" id="asunto_evento" name="asunto_evento" class="form-control form-control-lg" required placeholder="Asunto del correo">
+                        </div>
 
-            <button type="submit" class="btn btn-primary">Enviar Correos</button>
-        </form>
+                        <div class="col-12">
+                            <label for="mensaje_evento" class="form-label">Mensaje:</label>
+                            <textarea id="mensaje_evento" name="mensaje_evento" rows="3" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
+                        </div>
+
+                        <input type="hidden" name="tipo" value="evento">
+
+                        <div class="col-12 mt-3">
+                            <input type="submit" value="Enviar Correos por Evento" class="btn btn-dark col-12">
+                        </div>
+
+                        <hr>
+
+                        <h2>Enviar correos por Carrera</h2>
+                        <div class="col-12">
+                            <label for="carrera" class="form-label">Carrera:</label>
+                            <select name="carrera" id="carrera" class="form-select" required>
+                                {% for carrera in carreras %}
+                                    <option value="{{ carrera }}">{{ carrera }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="asunto_carrera" class="form-label">Asunto:</label>
+                            <input type="text" id="asunto_carrera" name="asunto_carrera" class="form-control form-control-lg" required placeholder="Asunto del correo">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="mensaje_carrera" class="form-label">Mensaje:</label>
+                            <textarea id="mensaje_carrera" name="mensaje_carrera" rows="3" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
+                        </div>
+
+                        <input type="hidden" name="tipo" value="carrera">
+
+                        <div class="col-12 mt-3">
+                            <input type="submit" value="Enviar Correos por Carrera" class="btn btn-dark col-12">
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
     </div>
+</section>
+
+<script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

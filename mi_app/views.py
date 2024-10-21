@@ -409,6 +409,20 @@ def obtener_correos_por_carrera(carrera):
 
     return correos
 
+def obtener_correos_por_carrera(carrera):
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    estudiantes_response = requests.get(estudiantes_url)
+
+    correos = []
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            fields = estudiante['fields']
+            if fields.get('carrera', {}).get('stringValue') == carrera:
+                correos.append(fields.get('email', {}).get('stringValue'))
+
+    return correos
+
 def obtener_carreras():
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
     estudiantes_response = requests.get(estudiantes_url)
@@ -423,24 +437,82 @@ def obtener_carreras():
 
     return list(carreras)
 
+def obtener_correos_por_evento(titulo_evento):
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+
+    estudiantes_response = requests.get(estudiantes_url)
+    correos = []
+
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        for estudiante in estudiantes:
+            fields = estudiante['fields']
+            if fields.get('eventosInscritos', {}).get('arrayValue', {}).get('values', []):
+                for evento in fields['eventosInscritos']['arrayValue']['values']:
+                    if evento.get('stringValue') == titulo_evento:
+                        correos.append(fields.get('email', {}).get('stringValue'))
+
+    return correos
+
 @login_required
 def enviar_correos_view(request):
     if request.method == 'POST':
-        carrera = request.POST['carrera']
-        asunto = request.POST['asunto']
-        mensaje = request.POST['mensaje']
+        # Obtener el asunto y mensaje
+        asunto = request.POST.get('asunto_evento') or request.POST.get('asunto_carrera')
+        mensaje = request.POST.get('mensaje_evento') or request.POST.get('mensaje_carrera')
 
-        correos_destinatarios = obtener_correos_por_carrera(carrera)
+        # Enviar correos por evento
+        if request.POST.get('tipo') == 'evento':
+            titulo_evento = request.POST['titulo_evento']
+            correos_destinatarios = obtener_correos_por_evento(titulo_evento)
 
-        for email in correos_destinatarios:
-            try:
-                send_mail(asunto, mensaje, 'punto.estudiantil.puntoduoc@gmail.com', [email])
-            except Exception as e:
-                messages.error(request, f"Error al enviar correo a {email}: {str(e)}")
-                return redirect('enviar_correos_view')  # Salir en caso de error
+            if not correos_destinatarios:
+                messages.error(request, "No se encontraron correos para el evento seleccionado.")
+            else:
+                for email in correos_destinatarios:
+                    try:
+                        send_mail(asunto, mensaje, 'punto.estudiantil.puntoduoc@gmail.com', [email])
+                    except Exception as e:
+                        messages.error(request, f"Error al enviar correo a {email}: {str(e)}")
 
-        messages.success(request, "Correos enviados exitosamente.")  # Mensaje de éxito
+                messages.success(request, "Correos enviados exitosamente por evento.")
+
+        # Enviar correos por carrera
+        elif request.POST.get('tipo') == 'carrera':
+            carrera = request.POST['carrera']
+            correos_destinatarios = obtener_correos_por_carrera(carrera)
+
+            if not correos_destinatarios:
+                messages.error(request, "No se encontraron correos para la carrera seleccionada.")
+            else:
+                for email in correos_destinatarios:
+                    try:
+                        send_mail(asunto, mensaje, 'punto.estudiantil.puntoduoc@gmail.com', [email])
+                    except Exception as e:
+                        messages.error(request, f"Error al enviar correo a {email}: {str(e)}")
+
+                messages.success(request, "Correos enviados exitosamente por carrera.")
+
         return redirect('enviar_correos_view')
 
-    carreras = obtener_carreras()  # Obtener dinámicamente las carreras
-    return render(request, 'mi_app/difucion/enviar_correos.html', {'carreras': carreras})
+    # Obtener títulos de eventos
+    eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    eventos_response = requests.get(eventos_url)
+
+    titulos_eventos = []
+    if eventos_response.status_code == 200:
+        eventos = eventos_response.json().get('documents', [])
+        for evento in eventos:
+            titulos_eventos.append(evento['fields']['titulo']['stringValue'])
+
+    # Obtener carreras
+    estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
+    estudiantes_response = requests.get(estudiantes_url)
+
+    carreras = []
+    if estudiantes_response.status_code == 200:
+        estudiantes = estudiantes_response.json().get('documents', [])
+        carreras = list(set(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes))
+
+    return render(request, 'mi_app/difucion/enviar_correos.html', {'titulos_eventos': titulos_eventos, 'carreras': carreras})
