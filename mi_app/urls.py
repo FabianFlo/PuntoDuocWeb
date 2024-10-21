@@ -21,7 +21,5 @@ urlpatterns = [
     path('login/', login_view, name='login_view'),
     path('logout/', logout_view, name='logout'),
     path('dashboard_2/', dashboard_2, name='dashboard_2'),
-    path('metricas/', metricas_view, name='metricas'),
-    path('metricas/grafico/', views.metricas_view, name='metricas'),
-    path('metricas/<str:event_id>/', metricas_view, name='metricas_view'),
+    
 ]
