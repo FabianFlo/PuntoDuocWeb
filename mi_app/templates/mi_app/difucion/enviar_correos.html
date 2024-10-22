@@ -17,9 +17,7 @@
         };
     </script>
 </head>
-<body class="background-color" style="
-background: radial-gradient(rgb(92, 144, 246), rgb(10, 73, 168));
-background-repeat: no-repeat; background-attachment: fixed;">
+<body class="background-color">
 
 {% include 'mi_app/navbar.html' %}
 
@@ -45,59 +43,98 @@ background-repeat: no-repeat; background-attachment: fixed;">
 
                     <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
                         {% csrf_token %}
+
+                        <!---test-->
+
                         
-                        <h2>Enviar correos por Evento</h2>
-                        <div class="col-12">
-                            <label for="titulo_evento" class="form-label">Título del Evento:</label>
-                            <select name="titulo_evento" id="titulo_evento" class="form-select" required>
-                                {% for titulo in titulos_eventos %}
-                                    <option value="{{ titulo }}">{{ titulo }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="col-12 m-0">
+                            <div class="multi-collapse collapse show" id="multiCollapseFormEvento">
+                                <!--FORM 1-->
+                                <div>
+                                    <!--...-->
+                                    <h2>Enviar correos por Evento</h2>
+                                    <div class="col-12 my-3">
+                                        <button type="button" class="btn btn-light border border-dark col-12" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="multiCollapseFormEvento multiCollapseFormCarrera">Cambiar Destinatario</button>
+                                    </div>
+
+                                    <hr class="mt-3">
+
+
+                                    <div class="col-12">
+                                        <label for="titulo_evento" class="form-label">Título del Evento:</label>
+                                        <select name="titulo_evento" id="titulo_evento" class="form-select" required>
+                                            {% for titulo in titulos_eventos %}
+                                                <option value="{{ titulo }}">{{ titulo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+            
+                                    <div class="col-12">
+                                        <label for="asunto_evento" class="form-label">Asunto:</label>
+                                        <input type="text" id="asunto_evento" name="asunto_evento" class="form-control" required placeholder="Asunto del correo">
+                                    </div>
+            
+                                    <div class="col-12">
+                                        <label for="mensaje_evento" class="form-label">Mensaje:</label>
+                                        <textarea id="mensaje_evento" name="mensaje_evento" rows="2" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
+                                    </div>
+            
+                                    <!--HIDDEN INPUT-->
+                                    <input type="hidden" name="tipo" value="evento">
+            
+
+                                    <hr class="mt-3">
+                                
+                                    <!--Enviar correo por evento-->
+                                    <div class="col-12 my-3">
+                                        <input type="submit" value="Enviar Correos por Evento" class="btn btn-dark border border-dark col-12">
+                                    </div>
+                                    <!--...-->
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div class="col-12 m-0">
+                            <div class="multi-collapse collapse" id="multiCollapseFormCarrera">
+                                <!--FORM 2-->
+                                <div>
+                                    <!--...-->
+                                    <h2>Enviar correos por Carrera</h2>
+                                    <div class="col-12 my-3">
+                                        <button type="button" class="btn btn-light border border-dark col-12" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="multiCollapseFormEvento multiCollapseFormCarrera">Cambiar Destinatario</button>
+                                    </div>
 
-                        <div class="col-12">
-                            <label for="asunto_evento" class="form-label">Asunto:</label>
-                            <input type="text" id="asunto_evento" name="asunto_evento" class="form-control form-control-lg" required placeholder="Asunto del correo">
-                        </div>
+                                    <hr class="my-3">
 
-                        <div class="col-12">
-                            <label for="mensaje_evento" class="form-label">Mensaje:</label>
-                            <textarea id="mensaje_evento" name="mensaje_evento" rows="3" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
-                        </div>
-
-                        <input type="hidden" name="tipo" value="evento">
-
-                        <div class="col-12 mt-3">
-                            <input type="submit" value="Enviar Correos por Evento" class="btn btn-dark col-12">
-                        </div>
-
-                        <hr>
-
-                        <h2>Enviar correos por Carrera</h2>
-                        <div class="col-12">
-                            <label for="carrera" class="form-label">Carrera:</label>
-                            <select name="carrera" id="carrera" class="form-select" required>
-                                {% for carrera in carreras %}
-                                    <option value="{{ carrera }}">{{ carrera }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="col-12">
-                            <label for="asunto_carrera" class="form-label">Asunto:</label>
-                            <input type="text" id="asunto_carrera" name="asunto_carrera" class="form-control form-control-lg" required placeholder="Asunto del correo">
-                        </div>
-
-                        <div class="col-12">
-                            <label for="mensaje_carrera" class="form-label">Mensaje:</label>
-                            <textarea id="mensaje_carrera" name="mensaje_carrera" rows="3" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
-                        </div>
-
-                        <input type="hidden" name="tipo" value="carrera">
-
-                        <div class="col-12 mt-3">
-                            <input type="submit" value="Enviar Correos por Carrera" class="btn btn-dark col-12">
+                                    <div class="col-12">
+                                        <label for="carrera" class="form-label">Carrera:</label>
+                                        <select name="carrera" id="carrera" class="form-select" required>
+                                            {% for carrera in carreras %}
+                                                <option value="{{ carrera }}">{{ carrera }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+            
+                                    <div class="col-12">
+                                        <label for="asunto_carrera" class="form-label">Asunto:</label>
+                                        <input type="text" id="asunto_carrera" name="asunto_carrera" class="form-control" required placeholder="Asunto del correo">
+                                    </div>
+            
+                                    <div class="col-12">
+                                        <label for="mensaje_carrera" class="form-label">Mensaje:</label>
+                                        <textarea id="mensaje_carrera" name="mensaje_carrera" rows="2" class="form-control" required placeholder="Escribe el mensaje..."></textarea>
+                                    </div>
+            
+                                    <input type="hidden" name="tipo" value="carrera">
+                                    
+                                    <hr class="mt-3">
+                                    
+                                    <!--Enviar correo por carrera-->
+                                    <div class="col-12 my-3">
+                                        <input type="submit" value="Enviar Correos por Carrera" class="btn btn-dark border border-dark col-12">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
 
@@ -106,6 +143,59 @@ background-repeat: no-repeat; background-attachment: fixed;">
         </div>
     </div>
 </section>
+
+
+<!------------->
+<!-------------
+
+<p class="d-inline-flex gap-1">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="multiCollapseExample1 multiCollapseExample2">Toggle both elements</button>
+  </p>
+  <div class="row">
+
+    <div class="col-12">
+      <div class="multi-collapse collapse show" id="multiCollapseExample1" style="">
+        <div class="card card-body">1</div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="multi-collapse collapse" id="multiCollapseExample2" style="">
+        <div class="card card-body">2</div>
+      </div>
+    </div>
+
+  </div>
+
+------------->
+
+
+
+
+
+<!-------------
+
+<p class="d-inline-flex gap-1">
+    <button>Cambiar Destinatario</button>
+  </p>
+  <div class="row">
+
+    <div class="col-12">
+      <div class="multi-collapse collapse show" id="multiCollapseExample1" style="">
+        <div class="card card-body">1</div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="multi-collapse collapse" id="multiCollapseExample2" style="">
+        <div class="card card-body">2</div>
+      </div>
+    </div>
+
+  </div>
+
+------------->
+<!------------->
 
 <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>

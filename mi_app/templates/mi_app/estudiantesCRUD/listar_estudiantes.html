@@ -18,74 +18,91 @@
 
 
 
-    <div class="container-fluid p-1">
-        <div class="container my-5">
-            <div class="p-2 text-center rounded-3 background-image shadow"
-                style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/san-joaquin.jpg') !important;">
-                <div class="bg-black bg-opacity-25 rounded">
-                    <div class="d-inline-flex gap-2 justify-content-center px-3">
-                        <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg"
-                            alt="Logo Duoc" width="30%" class="d-inline-block align-text-top">
-                        <h1 class="p-3 m-3 text-center border-start border-dark">Listado de Estudiantes</h1>
+    <div class="container-fluid mb-5 mt-4 p-0">
+        <div class="row m-0">
+            <div class="col-10 mx-auto p-0">
+                <div class="pb-3">
+                    <div class="p-3 text-center rounded-3 background-image shadow" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/san-joaquin.jpg') !important;">
+                        <div class="bg-black bg-opacity-25 rounded">
+                            <div class="d-inline-flex gap-2 justify-content-center px-3">
+                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
+                                width="30%" class="d-inline-block align-text-top">
+                                <h1 class="p-3 m-3 text-center border-start border-dark">Listado de Estudiantes</h1>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+
+            <div class="col-10 mx-auto p-0">
+                <div class="table-responsive rounded-3 shadow">
+                    <table class="table table-striped table-hover table-sm m-0 align-middle">
+                        <thead class="table-dark">
+                            <tr class="text-center nowrap">
+                                <th scope="col" class="px-2">#</th>
+                                <th scope="col">ID Estudiante</th>
+                                <th scope="col" class="nowrap">Nombre Completo</th>
+                                <th scope="col">Rut</th>
+                                <th scope="col">Carrera</th>
+                                <th scope="col">Puntaje</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for estudiante in estudiantes %}
+                            <tr class="text-center">
+
+                                <!--Contador-->
+                                <th scope="row" class="nowrap">{{ forloop.counter }}</td>
+
+                                <!-- Mostrar el ID del documento -->
+                                <td><div style="width: 10rem; word-break: break-word;" class="mx-auto">{{ estudiante.id }}</div></td>
+                                <!--Nombre completo-->
+                                <td><div style="width: 15rem;" class="mx-auto">{{ estudiante.fields.Nombre_completo.stringValue }}</div></td>
+                                <!--Rut-->
+                                <td class="nowrap">{{ estudiante.fields.Rut.stringValue }}</td>
+                                <td><div style="width: 15rem;" class="mx-auto">{{ estudiante.fields.carrera.stringValue }}</div></td>
+                                <td class="nowrap">{{ estudiante.fields.puntaje.integerValue }}</td>
+                                <td class="nowrap">{{ estudiante.fields.email.stringValue }}</td>
+                                <td class="nowrap">{{ estudiante.fields.Telefono.stringValue }}</td>
+
+                                <!--Acciones-->
+                                <td>
+                                    <!--Botón para editar-->
+                                    <div class="d-flex flex-row justify-content-evenly">
+                                        <div class="px-1">
+                                            <button class="btn btn-light border border-dark">
+                                                <a href="{% url 'modificar_estudiante' estudiante.id %}">
+                                                    <img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit"
+                                                        style="width: 1rem; height: 1rem;">
+                                                </a>
+                                            </button>
+                                        </div>
+
+                                        <!--Botón para eliminar-->
+                                        <div class="px-1">
+                                            <form action="{% url 'eliminar_estudiante' estudiante.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-dark border border-dark">
+                                                    <img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Delete"
+                                                        style="width: 1rem; height: 1rem;" class="invert-color">
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <div class="container-xl">
-        <div class="row justify-content-center">
-            <div class="table-responsive">
-                <table class="table table-dark table-striped table-hover rounded shadow-sm">
-                    <thead>
-                        <tr>
-                            <th>ID Estudiante</th>
-                            <th>Nombre Completo</th>
-                            <th>Carrera</th>
-                            <th>Puntaje</th>
-                            <th>Rut</th>
-                            <th>Teléfono</th>
-                            <th>Email</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider table-light">
-                        {% for estudiante in estudiantes %}
-                        <tr>
-                            <td>{{ estudiante.id }}</td> <!-- Mostrar el ID del documento -->
-                            <td>{{ estudiante.fields.Nombre_completo.stringValue }}</td>
-                            <td>{{ estudiante.fields.carrera.stringValue }}</td>
-                            <td>{{ estudiante.fields.puntaje.integerValue }}</td>
-                            <td>{{ estudiante.fields.Rut.stringValue }}</td>
-                            <td>{{ estudiante.fields.Telefono.stringValue }}</td>
-                            <td>{{ estudiante.fields.email.stringValue }}</td>
-                            <td>
-                                <div style="display: inline-flex; align-items: center;">
-                                    <button class="btn btn-dark m-1">
-                                        <a href="{% url 'modificar_estudiante' estudiante.id %}">
-                                            <img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit"
-                                                style="width: 20px; height: 20px;" class="invert-color">
-                                        </a>
-                                    </button>
-                                    <form action="{% url 'eliminar_estudiante' estudiante.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger m-1">
-                                            <img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Delete"
-                                                style="width: 20px; height: 20px;" class="invert-color">
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
-            </div>
-        </div>
-    </div>
     <!-- Scripts -->
     <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
