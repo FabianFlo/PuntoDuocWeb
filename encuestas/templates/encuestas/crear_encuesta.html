@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Encuesta</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+
+<body class="background-color">
+
+    {% include 'mi_app/navbar.html' %}
+
+    <section>
+        <div class="d-flex justify-content-center mt-4 mb-5 mx-3">
+            <div class="p-4 text-start rounded-3 background-image shadow" style="background-color: rgba(0, 0, 0, 0.5);">
+                <h2 class="text-dark">Crea una nueva encuesta</h2>
+                <form method="POST" id="encuestaForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nombre" class="text-dark">Nombre de la encuesta:</label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+
+                    <div id="preguntas">
+                        <h3 class="text-dark">Preguntas</h3>
+                        <div class="pregunta mb-3">
+                            <label for="pregunta" class="text-dark">Pregunta:</label>
+                            <input type="text" name="pregunta" class="form-control" required>
+                            <label for="tipo" class="text-dark">Tipo:</label>
+                            <select name="tipo" class="form-select tipo-pregunta mb-2">
+                                <option value="abierta">Abierta</option>
+                                <option value="opciones">Opciones</option>
+                            </select>
+                            <div class="opciones" style="display:none;">
+                                <h4 class="text-dark">Opciones</h4>
+                                <div class="opcion mb-2">
+                                    <input type="text" name="opciones" class="form-control" placeholder="Opción">
+                                    <button type="button" class="btn btn-danger btn-sm remove-opcion">Eliminar</button>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="addOpcion">Agregar Opción</button>
+                            </div>
+                            <button type="button" class="btn btn-danger mt-2 remove">Eliminar Pregunta</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="addPregunta">Agregar Pregunta</button>
+                    <br><br>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">Crear Encuesta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'jquery/jquery.min.js' %}"></script> 
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script>
+    document.getElementById('addPregunta').addEventListener('click', function() {
+        const preguntasDiv = document.getElementById('preguntas');
+        const nuevaPregunta = document.createElement('div');
+        nuevaPregunta.className = 'pregunta mb-3';
+        nuevaPregunta.innerHTML = `
+            <label for="pregunta" class="text-dark">Pregunta:</label>
+            <input type="text" name="pregunta" class="form-control" required>
+            <label for="tipo" class="text-dark">Tipo:</label>
+            <select name="tipo" class="form-select tipo-pregunta mb-2">
+                <option value="abierta">Abierta</option>
+                <option value="opciones">Opciones</option>
+            </select>
+            <div class="opciones" style="display:none;">
+                <h4 class="text-dark">Opciones</h4>
+                <div class="opcion mb-2">
+                    <input type="text" name="opciones" class="form-control" placeholder="Opción">
+                    <button type="button" class="btn btn-danger btn-sm remove-opcion">Eliminar</button>
+                </div>
+                <button type="button" class="btn btn-primary addOpcion">Agregar Opción</button>
+            </div>
+            <button type="button" class="btn btn-danger mt-2 remove">Eliminar Pregunta</button>
+        `;
+        preguntasDiv.appendChild(nuevaPregunta);
+
+        // Manejar la eliminación de preguntas
+        nuevaPregunta.querySelector('.remove').addEventListener('click', function() {
+            preguntasDiv.removeChild(nuevaPregunta);
+        });
+
+        // Manejar la adición de opciones
+        nuevaPregunta.querySelector('.addOpcion').addEventListener('click', function() {
+            const opcionDiv = document.createElement('div');
+            opcionDiv.className = 'opcion mb-2';
+            opcionDiv.innerHTML = `
+                <input type="text" name="opciones" class="form-control" placeholder="Opción">
+                <button type="button" class="btn btn-danger btn-sm remove-opcion">Eliminar</button>
+            `;
+            nuevaPregunta.querySelector('.opciones').appendChild(opcionDiv);
+
+            // Manejar la eliminación de la opción
+            opcionDiv.querySelector('.remove-opcion').addEventListener('click', function() {
+                opcionDiv.remove();
+            });
+        });
+
+        // Mostrar/ocultar campo de opciones
+        nuevaPregunta.querySelector('.tipo-pregunta').addEventListener('change', function() {
+            nuevaPregunta.querySelector('.opciones').style.display = this.value === 'opciones' ? 'block' : 'none';
+        });
+    });
+    </script>
+
+</body>
+</html>

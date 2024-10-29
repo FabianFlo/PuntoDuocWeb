@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Encuesta</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+
+<body class="background-color">
+
+
+<section>
+    <div class="d-flex justify-content-center mt-4 mb-5 mx-3">
+        <div class="p-4 rounded-3 background-image shadow" style="background-color: rgba(0, 0, 0, 0.5);">
+            <h2 class="text-dark text-center">{{ encuesta.nombre }}</h2>
+            <form method="POST" class="text-start">
+                {% csrf_token %}
+                
+                {% for pregunta in encuesta.preguntas %}
+                    <h3 class="text-dark">{{ pregunta.pregunta }}</h3>
+                    
+                    {% if pregunta.tipo == 'opciones' %}
+                        {% for opcion in pregunta.opciones %}
+                            <div class="form-check">
+                                <input type="radio" name="{{ pregunta.pregunta }}" value="{{ opcion }}" class="form-check-input">
+                                <label class="form-check-label text-dark">{{ opcion }}</label>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <input type="text" name="{{ pregunta.pregunta }}" placeholder="Tu respuesta" class="form-control mb-3">
+                    {% endif %}
+                {% endfor %}
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Enviar respuestas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

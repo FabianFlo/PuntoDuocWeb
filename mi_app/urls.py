@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from .views import *
 from django.urls import path
 from . import views
@@ -24,5 +24,6 @@ urlpatterns = [
     # # # correo
     path('enviar-correos/', enviar_correos_view, name='enviar_correos_view'),
     
-    
+    path('encuestas/', include('encuestas.urls')),  # Cambia 'nombre_de_la_app_encuestas' por el nombre real
+
 ]

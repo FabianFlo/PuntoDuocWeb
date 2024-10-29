@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mi_app',
+    'encuestas',
 ]
 
 MIDDLEWARE = [
@@ -35,7 +36,8 @@ ROOT_URLCONF = 'puntoduoc.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'mi_app', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'mi_app', 'templates'),
+                 os.path.join(BASE_DIR, 'encuestas', 'templates')],  # Agrega la ruta a tus plantillas de encuestas
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -47,6 +49,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'puntoduoc.wsgi.application'
 
