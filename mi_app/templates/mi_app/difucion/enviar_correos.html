@@ -55,6 +55,15 @@
                         </div>
 
                         <div class="col-12">
+                            <label for="encuesta_id_evento" class="form-label">ID de Encuesta:</label>
+                            <select name="encuesta_id" id="encuesta_id_evento" class="form-select" required>
+                                {% for encuesta in encuestas %}
+                                    <option value="{{ encuesta.id }}">{{ encuesta.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12">
                             <label for="asunto_evento" class="form-label">Asunto:</label>
                             <input type="text" id="asunto_evento" name="asunto_evento" class="form-control form-control-lg" required placeholder="Asunto del correo">
                         </div>
@@ -82,6 +91,15 @@
                             <select name="carrera" id="carrera" class="form-select" required>
                                 {% for carrera in carreras %}
                                     <option value="{{ carrera }}">{{ carrera }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="encuesta_id_carrera" class="form-label">ID de Encuesta:</label>
+                            <select name="encuesta_id" id="encuesta_id_carrera" class="form-select" required>
+                                {% for encuesta in encuestas %}
+                                    <option value="{{ encuesta.id }}">{{ encuesta.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>

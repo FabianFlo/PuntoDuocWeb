@@ -462,6 +462,13 @@ def enviar_correos_view(request):
         asunto = request.POST.get('asunto_evento') or request.POST.get('asunto_carrera')
         mensaje = request.POST.get('mensaje_evento') or request.POST.get('mensaje_carrera')
 
+        # Obtener el ID de la encuesta
+        encuesta_id = request.POST.get('encuesta_id')  # Asegúrate de que este ID se envíe en el formulario
+        enlace_encuesta = f"http://127.0.0.1:8000/encuestas/responder/{encuesta_id}"  # Modifica según tu dominio y ruta
+
+        # Añadir el enlace de la encuesta al mensaje
+        mensaje += f"\n\nPuedes acceder a la encuesta aquí: {enlace_encuesta}"
+
         # Enviar correos por evento
         if request.POST.get('tipo') == 'evento':
             titulo_evento = request.POST['titulo_evento']
@@ -515,4 +522,31 @@ def enviar_correos_view(request):
         estudiantes = estudiantes_response.json().get('documents', [])
         carreras = list(set(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes))
 
-    return render(request, 'mi_app/difucion/enviar_correos.html', {'titulos_eventos': titulos_eventos, 'carreras': carreras})
+    # Obtener encuestas
+    encuestas_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Encuestas"
+    encuestas_response = requests.get(encuestas_url)
+
+    encuestas = []
+    if encuestas_response.status_code == 200:
+        encuestas = encuestas_response.json().get('documents', [])
+
+    # Preparar la lista de encuestas con ID y nombre
+    encuestas_list = [
+    {
+        'id': encuesta['name'].split('/')[-1],  # Extrae el ID del documento
+        'nombre': encuesta['fields']['nombre']['stringValue']
+    }
+    for encuesta in encuestas if 'nombre' in encuesta['fields']
+]
+    for encuesta in encuestas:
+        encuesta_id = encuesta.get('fields', {}).get('id', {}).get('stringValue', None)
+        encuesta_nombre = encuesta.get('fields', {}).get('nombre', {}).get('stringValue', None)
+
+        if encuesta_id and encuesta_nombre:  # Asegúrate de que ambos valores estén presentes
+            encuestas_list.append({'id': encuesta_id, 'nombre': encuesta_nombre})
+
+    return render(request, 'mi_app/difucion/enviar_correos.html', {
+        'titulos_eventos': titulos_eventos, 
+        'carreras': carreras,
+        'encuestas': encuestas_list
+    })
