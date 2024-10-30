@@ -10,137 +10,220 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color" style="
-background: radial-gradient(rgb(92, 144, 246),rgb(10, 73, 168));
-background-repeat: no-repeat; background-attachment: fixed;">
+<body class="bg-white">
 
-
-{% include 'mi_app/navbar.html' %}
-
-
-
-
-
+    <p class="position-absolute top-0 start-0 mt-3 ms-3" style="overflow: hidden;">{{ alert_message }}</p>
 
     <section>
-        <div class="container-lg mt-4 mb-5">
-            <div class="row shadow mx-auto">
-                <div class="col p-0 border-end">
-                    <div class="p-5 text-center rounded-start-3 background-image h-100" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/05/sede_san_carlos_apoquindo.jpg') !important; background-position: left !important;">
-                        <div class="bg-black bg-opacity-25 rounded h-100 d-flex align-items-center justify-content-center">
-                            <div class="px-3">
-                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                                width="30%">
-                                <div>
-                                    <h1 class="text-black p-2 display-1">PuntoDuoc</h1>
-                                    <p class="text-center text-muted fs-2">Crear estudiante</p>
+        <div class="container-fluid p-0 m-0 row mx-auto" style="height:100vh;">
+            <div class="col-lg-5 p-0">
+                <div class="col-10 col-lg-7 mx-auto h-100">
+
+                    <div class="d-flex flex-column justify-content-center h-100 pt-5 pb-3">
+                        <a href="{% url 'home' %}" class="fs-4 fw-bold nav-link"><span><img src="https://www.svgrepo.com/show/101168/go-back-arrow.svg" alt="home" style="width:1em;" class="me-2 pb-1"></span>PuntoDuoc</a>
+                        <h1 class="display-5 fw-bold mb-3">Crear Estudiante</h1>
+                        
+
+                        <form class="row py-3" method="POST">
+                            {% csrf_token %}
+                        
+                            <!---Nombre Completo-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required autofocus placeholder="Jane Doe">
+                                    <label for="nombre_completo" class="text-muted">Nombre Completo</label>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
 
-                <div class="col p-0">
-                    <div class="p-4 rounded-end-3 bg-white">
-
-                        <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
-                            {% csrf_token %}
-                            <!-- Aquí van tus campos de formulario -->
-                
-                            <!---Nombre-->
-                            <div class="col-12">
-                                <label for="nombre_completo" class="form-label">Nombre Completo:</label>
-                                <div>
-                                    <input type="text" id="nombre_completo" name="nombre_completo" class="form-control form-control" required
-                                        placeholder="Jane Doe">
+                            <!---Carrera SELECT-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <select id="carrera" name="carrera" class="form-select" required>
+                                        <option value="" selected disabled>--Selecciona una carrera--</option>
+                                        <hr />
+                                        <optgroup label="Administración y Negocios">
+                                            <option value="Administración de Empresas">Administración de Empresas</option>
+                                            <option value="Administración Pública">Administración Pública</option>
+                                            <option value="Auditoría">Auditoría</option>
+                                            <option value="Técnico en Comercio Exterior">Técnico en Comercio Exterior</option>
+                                            <option value="Contabilidad General Mención Legislación Tributaria">Contabilidad General Mención Legislación Tributaria</option>
+                                            <option value="Contabilidad Tributaria">Contabilidad Tributaria</option>
+                                            <option value="Ingeniería en Administración Mención Innovación y Emprendimiento">Ingeniería en Administración Mención Innovación y Emprendimiento</option>
+                                            <option value="Ingeniería en Administración Mención Finanzas">Ingeniería En Administración Mención Finanzas</option>
+                                            <option value="Ingeniería en Comercio Exterior">Ingeniería en Comercio Exterior</option>
+                                            <option value="Ingeniería en Administración Mención Gestión de Personas">Ingeniería en Administración Mención Gestión de Personas</option>
+                                            <option value="Ingeniería en Gestión Logística">Ingeniería en Gestión Logística</option>
+                                            <option value="Ingeniería en Marketing Digital">Ingeniería en Marketing Digital</option>
+                                            <option value="Técnico en Administración">Técnico en Administración</option>
+                                            <option value="Técnico en Gestión Logística">Técnico en Gestión Logística</option>
+                                            <option value="Técnico en Operaciones Logísticas">Técnico en Operaciones Logísticas</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Comunicación">
+                                            <option value="Actuación">Actuación</option>
+                                            <option value="Animación Digital">Animación Digital</option>
+                                            <option value="Comunicación Audiovisual">Comunicación Audiovisual</option>
+                                            <option value="Ingeniería en Sonido">Ingeniería en Sonido</option>
+                                            <option value="Publicidad">Publicidad</option>
+                                            <option value="Relaciones Públicas y Comunicación Organizacional">Relaciones Públicas y Comunicación Organizacional</option>
+                                            <option value="Técnico Audiovisual">Técnico Audiovisual</option>
+                                            <option value="Tecnología en Sonido e Iluminación">Tecnología en Sonido e Iluminación</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Construcción">
+                                            <option value="Dibujo y Modelamiento Arquitectónico y Estructural">Dibujo y Modelamiento Arquitectónico y Estructural</option>
+                                            <option value="Ingeniería en Construcción">Ingeniería en Construcción</option>
+                                            <option value="Ingeniería en Prevención de Riesgos">Ingeniería en Prevención de Riesgos</option>
+                                            <option value="Restauración de Bienes Patrimoniales">Restauración de Bienes Patrimoniales</option>
+                                            <option value="Técnico en Construcción">Técnico en Construcción</option>
+                                            <option value="Técnico en Prevención de Riesgos Laborales">Técnico en Prevención de Riesgos Laborales</option>
+                                            <option value="Técnico en Instalaciones y Proyectos Eléctricos">Técnico en Instalaciones y Proyectos Eléctricos</option>
+                                            <option value="Técnico en Prevención de Riesgos">Técnico en Prevención de Riesgos</option>
+                                            <option value="Técnico Topógrafo Geomático">Técnico Topógrafo Geomático</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Diseño">
+                                            <option value="Desarrollo y Diseño Web">Desarrollo y Diseño Web</option>
+                                            <option value="Diseño de Ambientes">Diseño de Ambientes</option>
+                                            <option value="Diseño de Vestuario">Diseño de Vestuario</option>
+                                            <option value="Diseño Gráfico">Diseño Gráfico</option>
+                                            <option value="Diseño Industrial">Diseño Industrial</option>
+                                            <option value="Ilustración">Ilustración</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Gastronomía">
+                                            <option value="Gastronomía">Gastronomía</option>
+                                            <option value="Gastronomía Internacional">Gastronomía Internacional</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Informática y Telecomunicaciones">
+                                            <option value="Analista Programador">Analista Programador</option>
+                                            <option value="Analista Programador Computacional">Analista Programador Computacional</option>
+                                            <option value="Desarrollo de Aplicaciones">Desarrollo de Aplicaciones</option>
+                                            <option value="Ingeniería en Desarrollo de Software">Ingeniería en Desarrollo de Software</option>
+                                            <option value="Ingeniería en Informática">Ingeniería en Informática</option>
+                                            <option value="Ingeniería en Infraestructura Tecnológica">Ingeniería en Infraestructura Tecnológica</option>
+                                            <option value="Ingeniería en Redes y Telecomunicaciones">Ingeniería en Redes y Telecomunicaciones</option>
+                                            <option value="Técnico en Redes y Telecomunicaciones">Técnico en Redes y Telecomunicaciones</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Ingeniería y Recursos Naturales">
+                                            <option value="Técnico en Control y Monitoreo Remoto de Procesos Mineros">Técnico en Control y Monitoreo Remoto de Procesos Mineros</option>
+                                            <option value="Ingeniería Agrícola">Ingeniería Agrícola</option>
+                                            <option value="Ingeniería en Electricidad y Automatización Industrial">Ingeniería en Electricidad y Automatización Industrial</option>
+                                            <option value="Ingeniería en Mantenimiento Industrial">Ingeniería en Mantenimiento Industrial</option>
+                                            <option value="Ingeniería en Maquinaria y Vehículos Pesados">Ingeniería en Maquinaria y Vehículos Pesados</option>
+                                            <option value="Ingeniería en Mecánica Automotriz y Autotrónica">Ingeniería en Mecánica Automotriz y Autotrónica</option>
+                                            <option value="Ingeniería en Medio Ambiente">Ingeniería en Medio Ambiente</option>
+                                            <option value="Técnico Agrícola">Técnico Agrícola</option>
+                                            <option value="Técnico en Calidad de Alimentos">Técnico en Calidad de Alimentos</option>
+                                            <option value="Técnico en Electricidad y Automatización Industrial">Técnico en Electricidad y Automatización Industrial</option>
+                                            <option value="Técnico en Mecánica Automotriz y Autotrónica">Técnico en Mecánica Automotriz y Autotrónica</option>
+                                            <option value="Técnico en Operación y Supervisión de Procesos Mineros">Técnico en Operación y Supervisión de Procesos Mineros</option>
+                                            <option value="Técnico en Electricidad y Energías Renovables">Técnico en Electricidad y Energías Renovables</option>
+                                            <option value="Técnico en Geología">Técnico en Geología</option>
+                                            <option value="Técnico en Mantenimiento Industrial">Técnico en Mantenimiento Industrial</option>
+                                            <option value="Técnico en Maquinaria y Vehículos Pesados">Técnico en Maquinaria y Vehículos Pesados</option>
+                                            <option value="Técnico Veterinario y Pecuario">Técnico Veterinario y Pecuario</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Salud">
+                                            <option value="Informática Biomédica">Informática Biomédica</option>
+                                            <option value="Preparador Físico">Preparador Físico</option>
+                                            <option value="Técnico de Enfermería">Técnico de Enfermería</option>
+                                            <option value="Técnico de Laboratorio Clínico y Banco de Sangre">Técnico de Laboratorio Clínico y Banco de Sangre</option>
+                                            <option value="Técnico en Odontología">Técnico en Odontología</option>
+                                            <option value="Técnico en Química y Farmacia">Técnico en Química y Farmacia</option>
+                                            <option value="Técnico de Radiodiagnóstico y Radioterapia">Técnico de Radiodiagnóstico y Radioterapia</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Turismo y Hospitalidad">
+                                            <option value="Administración en Turismo y Hospitalidad Mención Administración Hotelera">Administración en Turismo y Hospitalidad Mención Administración Hotelera</option>
+                                            <option value="Administración en Turismo y Hospitalidad Mención Gestión para el Ecoturismo">Administración en Turismo y Hospitalidad Mención Gestión para el Ecoturismo</option>
+                                            <option value="Administración en Turismo y Hospitalidad Mención Gestión de Destinos Turísticos">Administración en Turismo y Hospitalidad Mención Gestión de Destinos Turísticos</option>
+                                            <option value="Administración en Turismo y Hospitalidad Mención Hospitality Management">Administración en Turismo y Hospitalidad Mención Hospitality Management</option>
+                                            <option value="Técnico en Turismo y Hospitalidad">Técnico en Turismo y Hospitalidad</option>
+                                        </optgroup>
+                                    </select>
+                                    <label for="carrera" class="text-muted">Carrera</label>
                                 </div>
-                            </div>    
-
-                            <!---Carrera-->
-                            <div class="col-12">
-                                <label for="carrera" class="form-label">Carrera:</label>
-                                <div>
-                                    <input type="text" id="carrera" name="carrera" class="form-control" required
-                                        placeholder="Ingeniería Civil">
-                                </div>
-                            </div>                    
-
+                            </div>
+ 
 
                             <!---Rut-->
-                            <div class="col">
-                                <label for="rut" class="form-label">Rut:</label>
-                                <div>
-                                    <input type="text" id="rut" name="rut" class="form-control" required
-                                        placeholder="12.456.789-0">
+                            <div class="col mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="rut" name="rut" class="form-control" required placeholder="12.456.789-0">
+                                    <label for="rut" class="text-muted">Rut</label>
                                 </div>
                             </div>
 
-                            <!--Teléfono-->
-                            <div class="col">
-                                <label for="telefono" class="form-label">Teléfono:</label>
-                                <div>
-                                    <input type="text" id="telefono" name="telefono" class="form-control" required
-                                        placeholder="+56 9 1234 5678">
-                                </div>
-                            </div> 
+                        
 
-                            <!--Email-->
-                            <div class="col-12">
-                                <label for="email" class="form-label">Email:</label>
-                                <div>
-                                    <input type="email" id="email" name="email" class="form-control" required
-                                        placeholder="jane@doe.com">
+                            <!---Teléfono-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="telefono" name="telefono" class="form-control" required placeholder="9 1234 5678">
+                                    <label for="telefono" class="text-muted">Teléfono</label>
                                 </div>
-                            </div>  
-                            
-                            <!--Contraseña-->
-                            <div class="col-12">
-                                <label for="password" class="form-label">Contraseña:</label>
-                                <div>
-                                    <input type="password" id="password" name="password" class="form-control" required
-                                        placeholder="**********">
+                            </div>
+
+
+                            <!---Email-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="email" id="email" name="email" class="form-control" required placeholder="janedoe@gmail.com">
+                                    <label for="email" class="text-muted">Correo</label>
                                 </div>
-                            </div> 
-                            
+                            </div>
+
+                            <!---Contraseña-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="password" id="password" name="password" class="form-control" required placeholder="*********">
+                                    <label for="password" class="text-muted">Contraseña</label>
+                                </div>
+                            </div>
+
                             <hr class="mt-3">
-                
+
                             <!--Button Crear Usuario-->
-                            <div class="col-12 col-md-6 mt-3">
-                                <input type="submit" value="Crear usuario" class="btn btn-dark col-12">
+                            <div class="col-12 mt-3">
+                                <input type="submit" value="Crear usuario" class="btn btn-dark w-100">
                             </div>
 
                             <!--Button Listar estudiantes-->
-                            <div class="col-12 col-md-6 my-3">
-                                <a href="/listar_estudiantes" class="btn btn-outline-dark col-12">Listar estudiantes</a>
+                            <div class="col-12 my-3">
+                                <a href="/listar_estudiantes" class="btn btn-outline-dark w-100">Listado de estudiantes</a>
                             </div>
-                    
+
                         </form>
                     </div>
                 </div>
+                
+            </div>
+
+            <div class="col-7 w-100 d-lg-none p-0 m-0" style="overflow:hidden;">
+                <div>
+                    <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop><stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z"></path></svg>
+                </div>
+                
+                <div class="container-flex h-100" style="background: #336DCF;"></div>
+            </div>
+            
+            <div class="col-lg-7 d-none d-lg-block p-0 background-svg">
+                <!--
+                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                        <img src="https://chamomilehasa.blog/wp-content/uploads/2022/07/corporate-memphis.png" alt="Banner landing page" class="w-50">
+                    </div>
+                -->
             </div>
         </div>
-        <p>{{ alert_message }}</p>
+
+        <p class="position-absolute top-0 start-0 mt-3 ms-3" style="overflow: hidden;">{{ alert_message }}</p>
     </section>
 
-
-    <!--
-    <form method="POST">
-        {% csrf_token %}
-        <label for="nombre_completo">Nombre Completo:</label>
-        <input type="text" id="nombre_completo" name="nombre_completo" required><br>
-
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required><br>
-
-        <button type="submit">Crear Estudiante</button>
-    </form>
-    <p>{{ alert_message }}</p>
-
-    <button>
-        <a href="{% url 'listar_estudiantes' %}" class="btn">Listar Eventos</a>
-    </button>
-    -->
 
     <!-- Scripts -->
     <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->

@@ -1,85 +1,69 @@
-<!DOCTYPE html>
-<html lang="es">
+<header>
+    <nav class="navbar navbar-expand-lg bg-white sticky-top">
+        <div class="container-lg">
+            <a class="navbar-brand mb-0 h1" href="{% url 'home' %}">PuntoDuoc</a>
+            
+            <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon invert-color"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-</head>
-
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg bg-black">
-            <div class="container-fluid">
-                <a class="navbar-brand text-white" href="/">
-                    <span class="nav-brand">PuntoDuoc</span>
-                    <img src="https://www.reactor.cl/assets/uploads/2016/06/logo_color_uc.svg" alt="Logo Duoc"
-                        width="25" class="d-inline-block align-text-top invert-color align-bottom">
-                </a>
-                <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav" data-bs-theme="dark">
-
-                    <!--Alineados desde la izquierda-->
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="estudiantesDropdown"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Estudiantes
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="estudiantesDropdown">
-                                <li><a class="dropdown-item" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
-                                <li><a class="dropdown-item" href="{% url 'listar_estudiantes' %}">Listar Estudiantes</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="eventosDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Eventos
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
-                                <li><a class="dropdown-item" href="/subir_evento">Subir Evento</a></li>
-                                <li><a class="dropdown-item" href="/listar_eventos">Listar Eventos</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="difusionDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Difusión
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
-                                <li><a class="dropdown-item" href="/enviar-correos">Envio de Correos</a></li>
-                                <li><a class="dropdown-item" href="/encuestas/crear/">Crear Encuestas</a></li>
-                                <li><a class="dropdown-item" href="/encuestas/ver/">Ver Encuestas</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="/dashboard_2">Métricas</a>
-                        </li>
-                    </ul>
-
-                    <!--Alineados desde la derecha (Iniciar/Cerrar sesión)-->
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            {% if request.session.usuario_autenticado %}
-                            <form action="{% url 'logout' %}" method="post" class="logout-button">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-black text-white">Cerrar Sesión</button>
-                            </form>
-                            {% else %}
-                            <!--<p>No estás logeado.</p>-->
-                            <a class="nav-link text-light" href="{% url 'login_view' %}">Iniciar sesión</a>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </div>
+                <!--Alineados desde la izquierda-->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="estudiantesDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Estudiantes
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="estudiantesDropdown">
+                            <li><a class="dropdown-item" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
+                            <li><a class="dropdown-item" href="{% url 'listar_estudiantes' %}">Listar Estudiantes</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="eventosDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Eventos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
+                            <li><a class="dropdown-item" href="/subir_evento">Subir Evento</a></li>
+                            <li><a class="dropdown-item" href="/listar_eventos">Listar Eventos</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="difusionDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Difusión
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
+                            <li><a class="dropdown-item" href="/enviar-correos">Envio de Correos</a></li>
+                            <li><a class="dropdown-item" href="/encuestas/crear/">Crear Encuestas</a></li>
+                            <li><a class="dropdown-item" href="/encuestas/ver/">Ver Encuestas</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard_2">Métricas</a>
+                    </li>
+                </ul>
+                
+                <!--Alineados desde la derecha (Iniciar/Cerrar sesión)-->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        {% if request.session.usuario_autenticado %}
+                        <form action="{% url 'logout' %}" method="post" class="logout-button">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-white">Cerrar Sesión</button>
+                        </form>
+                        {% else %}
+                        <!--<p>No estás logeado.</p>-->
+                        <a class="nav-link" href="{% url 'login_view' %}">Iniciar sesión</a>
+                        {% endif %}
+                    </li>
+                </ul>
+                
             </div>
-        </nav>
-    </header>
-</body>
-
-</html>
+        </div>
+    </nav>
+</header>

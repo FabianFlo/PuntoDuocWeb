@@ -10,120 +10,84 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color">
+<body class="bg-white">
 
 
 
     {% include 'mi_app/navbar.html' %}
 
+    <section>
+        <div class="container-fluid mb-2">
+            <div class="container-lg row p-3 mx-auto">
+                <div>
 
+                    <h1 class="display-5 pt-3 pb-5">Listado de eventos</h1>
+                    {% for evento in eventos %}
+                    <div class="d-flex align-items-center">
+                        <div class="card mb-3 w-100">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <div>Organizador: {{ evento.fields.sede.stringValue }}</div>
+                                    <div>Fecha Evento: {{ evento.fields.fecha.timestampValue|slice:"8:10" }}/{{ evento.fields.fecha.timestampValue|slice:"5:7" }}/{{ evento.fields.fecha.timestampValue|slice:":4" }} 
+                                        {{ evento.fields.fecha.timestampValue|slice:"11:16" }} hrs <span class="ps-2 badge 
+                                        {% if evento.fields.estado.stringValue == 'en_curso' %} text-bg-info
+                                        {% elif evento.fields.estado.stringValue == 'Pendiente' %} text-bg-warning
+                                        {% elif evento.fields.estado.stringValue == 'Aprobado' %} text-bg-success
+                                        {% else %}text-bg-secondary
+                                        {% endif %}">{{ evento.fields.estado.stringValue }}
+                                    </span></div>
+                                </div>
+                            </div>
+                            <div class="row g-0">
+                              <div class="col-md-2">
+                                <img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen evento" class="img-fluid" style="height:100%; border-bottom-left-radius: .3rem;">
+                              </div>
+                              <div class="col-md-10">
+                                <div class="card-body">
+                                  <h5 class="card-title">{{ evento.fields.titulo.stringValue }}</h5>
+                                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                  <p class="card-text"><small class="text-body-secondary">Actualizado {{ evento.updateTime|slice:"8:10" }}/{{ evento.updateTime|slice:"5:7" }}/{{ evento.updateTime|slice:":4" }},
+                                    {{ evento.updateTime|slice:"11:16" }} hrs</small></p>
+                                    <div class="d-flex flex-row justify-content-start">
+                                        <div class="px-1">
+                                            <!-- Botón para editar -->
+                                            <form method="GET" action="{% url 'modificar_evento' evento.id %}" class="m-0">
+                                                <button type="submit" class="btn btn-light border border-dark">Editar
+                                                </button>
+                                            </form>
+                                        </div>
 
-    <div class="container-fluid mb-5 mt-4 p-0">
-        <div class="row m-0">
-            <div class="col-10 mx-auto p-0">
-                <div class="pb-3">
-                    <div class="p-3 text-center rounded-3 background-image shadow" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/san-joaquin.jpg') !important;">
-                        <div class="bg-black bg-opacity-25 rounded">
-                            <div class="d-inline-flex gap-2 justify-content-center px-3">
-                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                                width="30%" class="d-inline-block align-text-top">
-                                <h1 class="p-3 m-3 text-center border-start border-dark">Listado de Eventos</h1>
+                                        <div class="px-1">
+                                            <!-- Botón para eliminar -->
+                                            <form method="POST" action="{% url 'eliminar_evento' evento.id %}" class="m-0">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-dark border border-dark">Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                              </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    {% endfor %}
 
-    
-            <div class="col-10 mx-auto p-0">
-                <div class="table-responsive rounded-3 shadow">
-                    <table class="table table-striped table-hover table-sm m-0 align-middle">
-                        <thead class="table-dark">
-                            <tr class="text-center">
-                                <th scope="col" class="px-2">#</th>
-                                <th scope="col">Actualizado</th>
-                                <th scope="col">Imagen</th>
-                                <th scope="col" class="nowrap">Título del evento</th>
-                                <th scope="col">Inicio</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col" class="px-2">Cupos</th>
-                                <th scope="col" class="px-2">Inscritos</th>
-                                <th scope="col" class="nowrap">Waitlist</th>
-                                <th scope="col">Sede</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Opciones</th> <!-- Nueva columna para acciones -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for evento in eventos %}
-                                <tr class="text-center">
-                                    <!--Contador-->
-                                    <th scope="row" class="nowrap">{{ forloop.counter }}</td>
-                                    <!--Fecha actualización de evento-->
-                                    <td class="nowrap">{{ evento.updateTime|slice:"8:10" }}/{{ evento.updateTime|slice:"5:7" }}/{{ evento.updateTime|slice:":4" }}<br>
-                                        {{ evento.updateTime|slice:"11:16" }} hrs</td>
-                                    <!--Imagen-->
-                                    <td><div style="width:8rem" class="mx-auto"><img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen evento" class="img-thumbnail"></div></td>
-                                    <!--Titulo-->
-                                    <td><div style="width: 15rem;" class="mx-auto">{{ evento.fields.titulo.stringValue }}</div></td>
-                                    <!--Fecha de evento-->
-                                    <td class="nowrap px-2">{{ evento.fields.fecha.timestampValue|slice:"8:10" }}/{{ evento.fields.fecha.timestampValue|slice:"5:7" }}/{{ evento.fields.fecha.timestampValue|slice:":4" }}<br>
-                                        {{ evento.fields.fecha.timestampValue|slice:"11:16" }} hrs</td>
-                                    <!--Estado de evento-->
-                                    <td class="nowrap">{{ evento.fields.estado.stringValue }}</td>
-                                    <!--Cupos-->
-                                    <td class="nowrap">{{ evento.fields.Cupos.integerValue }}</td>
-                                    <!--Inscritos-->
-                                    <td class="nowrap">{{ evento.fields.inscritos.integerValue }}</td>
-                                    <!--Lista de espera-->
-                                    <td class="nowrap">
-                                        {% if evento.fields.listaEspera.arrayValue.values %}
-                                            {{ evento.fields.listaEspera.arrayValue.values | length }}
-                                        {% else %}
-                                            <div>Lista vacía<div>
-                                        {% endif %}
-                                    </td>   
-                                    <!--Sede organizadora-->
-                                    <td><div style="width: 13rem;" class="mx-auto">{{ evento.fields.sede.stringValue }}</div></td>
-                                    <!--Tipo de evento-->
-                                    <td class="nowrap">{{ evento.fields.tipo.stringValue }}</td>
-                                    <!--Opciones-->
-                                    <td>
-                                        <div class="d-flex flex-row justify-content-evenly">
-                                            <div class="px-1">
-                                                <!-- Botón para editar -->
-                                                <form method="GET" action="{% url 'modificar_evento' evento.id %}" class="m-1">
-                                                    <button type="submit" class="btn btn-light border border-dark">
-                                                        <img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit"
-                                                            style="width: 1rem; height: 1rem;">
-                                                    </button>
-                                                </form>
-                                            </div>
 
-                                            <div class="px-1">
-                                                <!-- Botón para eliminar -->
-                                                <form method="POST" action="{% url 'eliminar_evento' evento.id %}" class="m-1">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-dark border border-dark">
-                                                        <img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Delete"
-                                                            style="width: 1rem; height: 1rem;" class="invert-color">
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="11">No hay eventos disponibles.</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+
+
+
+
+
+
+
+
 
 
                     <!--De-listed-->

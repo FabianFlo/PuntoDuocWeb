@@ -3,10 +3,11 @@
     src: url(/static/Merriweather-font/Merriweather-Regular.ttf);
 }
 
-
+/*
 * {
     font-family: 'Merriweather', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
+*/
 
 body {
     background: #eee;
@@ -65,3 +66,10 @@ body {
 .nowrap {
     white-space: nowrap; /* Evitar wrapping */
 } 
+
+.background-svg {
+    background: #000;
+    background-image: url('/static/assets/svg/subtle-prism.svg');
+    background-position: right;
+    object-fit: cover;
+}

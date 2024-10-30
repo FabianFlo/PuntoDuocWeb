@@ -18,129 +18,180 @@
         };
     </script>
 </head>
-<body class="background-color" style="
-background: radial-gradient(rgb(92, 144, 246),rgb(10, 73, 168));
-background-repeat: no-repeat; background-attachment: fixed;">
-
-
-{% include 'mi_app/navbar.html' %}
-
-
+<body class="bg-white">
 
     <section>
-        <div class="container-lg mt-4 mb-5">
-            <div class="row shadow mx-auto">
-                <div class="col p-0 border-end">
-                    <div class="p-5 text-center rounded-start-3 background-image h-100" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/plaza-vespucio.jpg') !important;">
-                        <div class="bg-black bg-opacity-25 rounded h-100 d-flex align-items-center justify-content-center">
-                            <div class="px-3">
-                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                                width="30%">
-                                <div>
-                                    <h1 class="text-black p-2 display-1">PuntoDuoc</h1>
-                                    <p class="text-center text-muted fs-2">Crear nuevo evento</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="container-fluid p-0 m-0 row mx-auto" style="height:100vh;">
+            <div class="col-lg-5 p-0">
+                <div class="col-10 col-lg-7 mx-auto h-100">
 
-        
-                <div class="col p-0">
-                    <div class="p-4 rounded-end-3 bg-white">
+                    <div class="d-flex flex-column justify-content-center h-100 pt-5 pb-3">
+                        <a href="{% url 'home' %}" class="fs-4 fw-bold nav-link"><span><img src="https://www.svgrepo.com/show/101168/go-back-arrow.svg" alt="home" style="width:1em;" class="me-2 pb-1"></span>PuntoDuoc</a>
+                        <h1 class="display-5 fw-bold mb-3">Crear nuevo evento</h1>
+                        
 
-                        <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
+                        <form class="row py-3" method="POST">
                             {% csrf_token %}
-                            <!-- Aquí van tus campos de formulario -->
-                
-                            <!---Título Evento-->
-                            <div class="col-12">
-                                <label for="titulo" class="form-label">Título de Evento:</label>
-                                <div>
-                                    <input type="text" id="titulo" name="titulo" class="form-control form-control-lg" required
-                                        placeholder="Charla: La importancia de la música en el ser humano">
+                        
+                            <!--Título Evento-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="titulo" name="titulo" class="form-control form-control-lg" required autofocus placeholder="Charla: La importancia de la música en el ser humano">
+                                    <label for="titulo" class="text-muted">Título de evento</label>
                                 </div>
                             </div>
 
-                            <!---Descripción [Detalles Evento] (TextArea)-->
-                            <div class="col-12">
-                                <label for="descripcion" class="form-label">Detalles de evento:</label>
-                                <textarea id="descripcion" name="descripcion" rows="2" cols="33" class="form-control" maxlength="300" required
-                                    placeholder="Información sobre el evento..."></textarea>
-                            </div>
-
-                            <!--Imagen Evento (Upload)-->
-                            <div class="col-12">
-                                <label for="imagen" class="form-label">Imagen para el evento:</label>
-                                <input type="text" id="imagen" name="imagen" class="form-control" required
-                                    placeholder="URL de imagen.">
-                            </div>
-
-                            <!---Fecha-->
-                            <div class="col">
-                                <label for="fecha" class="form-label">Fecha:</label>
-                                <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
-                            </div>
-
-                            <!--Sede (text)-->
-                            <div class="col">
-                                <label for="sede-select" class="form-label">Sede:</label>
-                                <select name="sede" id="sede-select" class="form-select" required>
-                                    <option value="" selected disabled>--Escoge una sede--</option>
-                                    <option value="Duoc UC Antonio Varas">Duoc UC Antonio Varas</option>
-                                    <option value="Duoc UC Puente Alto">Duoc UC Puente Alto</option>
-                                    <option value="Duoc San Bernardo">Duoc UC San Bernardo</option>
-                                </select>
-                            </div>
-
-                            <!--Estado Evento (text)-->
-                            <div class="col d-none">
-                                <label for="estado" class="form-label">Estado de Evento (Cambiar en modo editar):</label>
-                                <input type="text" id="estado" name="estado" class="col-12 form-control" required readonly
-                                    placeholder="Pendiente" value="Pendiente">
+                            <!--Descripción-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <textarea id="descripcion" name="descripcion" class="form-control" maxlength="300" required
+                                        placeholder="Información sobre el evento..." style="height: 5rem"></textarea>
+                                    <label for="descripcion" class="text-muted">Descripción</label>
+                                </div>
                             </div>
 
 
-                            <!--Lugar Evento [Ubicación] (text)-->
-                            <div class="col-12">
-                                <label for="lugar" class="form-label">Ubicación:</label>
-                                <input type="text" id="lugar" name="lugar" class="col-12 form-control" required
-                                    placeholder="Avenida Concha y Toro 1340, Puente Alto">
+
+                            <!--Imagen Evento-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="imagen" name="imagen" class="form-control" required placeholder="URL de imagen">
+                                    <label for="imagen" class="text-muted">URL de imagen para el evento</label>
+                                </div>
+                            </div>
+
+
+                            <!--Fecha-->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
+                                    <label for="fecha" class="text-muted">Fecha</label>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <!---Sede-->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <select id="sede" name="sede" class="form-select" required aria-label="Floating label select example">
+                                        <option value="" selected disabled>--Selecciona una sede--</option>
+                                        <hr />
+                                        <optgroup label="Modalidad online">
+                                            <option value="Campus Virtual">Campus Virtual</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Región Metropolitana">
+                                            <option value="Alameda">Alameda</option>
+                                            <option value="Padre Alonso de Ovalle">Padre Alonso de Ovalle</option>
+                                            <option value="Antonio Varas">Antonio Varas</option>
+                                            <option value="Educación Continua">Educación Continua</option>
+                                            <option value="Maipú">Maipú</option>
+                                            <option value="Melipilla">Melipilla</option>
+                                            <option value="Plaza Norte">Plaza Norte</option>
+                                            <option value="Plaza Oeste">Plaza Oeste</option>
+                                            <option value="Plaza Vespucio">Plaza Vespucio</option>
+                                            <option value="Puente Alto">Puente Alto</option>
+                                            <option value="San Bernardo">San Bernardo</option>
+                                            <option value="San Carlos de Apoquindo">San Carlos de Apoquindo</option>
+                                            <option value="San Joaquín">San Joaquín</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Región de Valparaíso: Valparaíso y Viña del Mar">
+                                            <option value="Valparaíso">Valparaíso</option>
+                                            <option value="Viña del Mar">Viña del Mar</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Región del Biobío: Concepción, Arauco y Nacimiento">
+                                            <option value="Arauco">Arauco</option>
+                                            <option value="Nacimiento">Nacimiento</option>
+                                            <option value="San Andrés de Concepción">San Andrés de Concepción</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Región de La Araucanía: Villarrica">
+                                            <option value="Villarrica">Villarrica</option>
+                                        </optgroup>
+                                        <hr />
+                                        <optgroup label="Región de Los Lagos: Puerto Montt">
+                                            <option value="Puerto Montt">Puerto Montt</option>
+                                        </optgroup>
+                                    </select>
+                                    <label for="sede" class="text-muted">Sede</label>
+                                </div>
+                            </div>
+
+
+
+                            <!--Estado evento (text)-->
+                            <div class="col-12 d-none mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="estado" name="estado" class="form-control" required readonly placeholder="Pendiente" value="Pendiente">
+                                    <label for="estado" class="text-muted">Estado de Evento (Cambiar en modo editar)</label>
+                                </div>
+                            </div>
+
+
+                            <!--Ubicación Evento-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="lugar" name="lugar" class="form-control" required placeholder="Avenida Concha y Toro 1340, Puente Alto">
+                                    <label for="lugar" class="text-muted">Ubicación</label>
+                                </div>
                             </div>
 
 
                             <!--Tipo (text)-->
-                            <div class="col">
-                                <label for="tipo" class="form-label">Tipo:</label>
-                                <input type="text" id="tipo" name="tipo" class="col-12 form-control" required
-                                    placeholder="Taller">
-                            </div>                    
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="tipo" name="tipo" class="form-control" required placeholder="Taller">
+                                    <label for="tipo" class="text-muted">Tipo</label>
+                                </div>
+                            </div>
+
 
                             <!--Cupos-->
-                            <div class="col">
-                                <label for="cupos" class="form-label">Cupos :</label>
-                                <div>
-                                    <input type="number" id="cupos" name="cupos" class="form-control" required
-                                        placeholder="999">
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="number" id="cupos" name="cupos" class="form-control" required placeholder="200">
+                                    <label for="cupos" class="text-muted">Cupos</label>
                                 </div>
                             </div>
 
                             <hr class="mt-3">
-                
+
+
                             <!--Button Crear evento-->
-                            <div class="col-12 col-md-6 mt-3">
-                                <input type="submit" value="Crear evento" class="btn btn-dark col-12">
+                            <div class="col-12 mt-3">
+                                <input type="submit" value="Crear evento" class="btn btn-dark w-100">
                             </div>
                 
                             <!--Button Listar eventos-->
-                            <div class="col-12 col-md-6 my-3">
-                                <a href="/listar_eventos" class="btn btn-outline-dark col-12">Listar eventos</a>
+                            <div class="col-12 my-3">
+                                <a href="/listar_eventos" class="btn btn-outline-dark w-100">Listar eventos</a>
                             </div>
 
                         </form>
-
                     </div>
                 </div>
+                
+            </div>
+
+            <div class="col-7 w-100 d-lg-none p-0 m-0" style="overflow:hidden;">
+                <div>
+                    <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop><stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z"></path></svg>
+                </div>
+                
+                <div class="container-flex h-100" style="background: #336DCF;"></div>
+            </div>
+            
+            <div class="col-lg-7 d-none d-lg-block p-0 background-svg">
+                <!--
+                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                        <img src="https://chamomilehasa.blog/wp-content/uploads/2022/07/corporate-memphis.png" alt="Banner landing page" class="w-50">
+                    </div>
+                -->
             </div>
         </div>
     </section>
