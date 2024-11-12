@@ -20,7 +20,7 @@
             <div class="container-lg row p-3 mx-auto">
                 <div class="col-lg-6 p-0">
                     <div class="d-flex flex-column justify-content-center h-100 p-5">
-                        <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc" class="invert-color w-50 py-4" style="opacity: 75%;">
+                        <img src="{% static 'assets/svg/logo-duoc.svg' %}" alt="Logo Duoc" class="invert-color w-50 py-4" style="opacity: 75%;">
                         <h1 class="display-5 fw-bold mb-3">PuntoDuoc: Administradores</h1>
                         <p class="fs-4">Herramienta para la creación y gestión de eventos Duoc UC.</p>
                         {% if request.session.usuario_autenticado %}
@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-sm-6 d-none d-lg-block p-0">
                     <div class="d-flex justify-content-center align-items-center w-100 h-100">
-                        <img src="https://chamomilehasa.blog/wp-content/uploads/2022/07/corporate-memphis.png" alt="Banner landing page" class="w-50">
+                        <img src="{% static 'assets/img/home banner.png' %}" alt="Banner landing page" class="w-50">
                     </div>
                 </div>
             </div>

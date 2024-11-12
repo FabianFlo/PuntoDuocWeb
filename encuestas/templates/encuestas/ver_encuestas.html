@@ -10,24 +10,51 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color">
-
+<body class="bg-white">
     {% include 'mi_app/navbar.html' %}
 
     <section>
-        <div class="container mt-4 mb-5">
-            <h1 class="text-center text-dark">Encuestas Disponibles</h1>
-            <ul class="list-group">
+        <div class="container-fluid m-0 p-0 mb-2">
+            <div class="container-lg row mx-auto pb-5">
+
+                <h1 class="display-5 fw-semibold mt-5 mb-3">Encuestas Disponibles</h1>
+
                 {% for encuesta in encuestas %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>{{ encuesta.nombre }}</strong>
-                        <a href="{% url 'responder_encuesta' encuesta.id %}" class="btn btn-primary">Responder</a>
-                    </li>
+                    <div class="d-flex w-100">
+                        <div class="card mb-3 w-100">
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h2 class="card-title fs-4">{{ encuesta.nombre }}</h2>
+                                        <p class="card-text">{{ encuesta.preguntas|length }} preguntas</p>
+                                    </div>
+                                    <div>
+                                        <form method="GET" action="{% url 'responder_encuesta' encuesta.id %}" class="m-0">
+                                            <button type="submit" class="btn btn-dark border border-dark">Responder
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
+            <div class="col-12 p-0 m-0 mt-5" style="overflow:hidden;">
+                <div class="m-0 p-0">
+                    <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop><stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z"></path></svg>
+                </div>
+            </div>
+            <div class="col-12 p-0 m-0">
+                <div class="" style="background: #336DCF; height:30vh; outline: #336DCF solid;"></div>
+            </div>
         </div>
     </section>
 
+    <!-- Scripts -->
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

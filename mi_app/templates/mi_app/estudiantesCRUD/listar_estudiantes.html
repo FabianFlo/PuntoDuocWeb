@@ -10,98 +10,69 @@
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 
-<body class="background-color">
+<body class="bg-white">
 
 
 
     {% include 'mi_app/navbar.html' %}
 
+    <section>
+        <div class="container-fluid mb-2">
+            <div class="container-lg row mx-auto">
 
-
-    <div class="container-fluid mb-5 mt-4 p-0">
-        <div class="row m-0">
-            <div class="col-10 mx-auto p-0">
-                <div class="pb-3">
-                    <div class="p-3 text-center rounded-3 background-image shadow" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://www.duoc.cl/wp-content/uploads/2020/06/san-joaquin.jpg') !important;">
-                        <div class="bg-black bg-opacity-25 rounded">
-                            <div class="d-inline-flex gap-2 justify-content-center px-3">
-                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                                width="30%" class="d-inline-block align-text-top">
-                                <h1 class="p-3 m-3 text-center border-start border-dark">Listado de Estudiantes</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-10 mx-auto p-0">
-                <div class="table-responsive rounded-3 shadow">
-                    <table class="table table-striped table-hover table-sm m-0 align-middle">
-                        <thead class="table-dark">
-                            <tr class="text-center nowrap">
-                                <th scope="col" class="px-2">#</th>
-                                <th scope="col">ID Estudiante</th>
-                                <th scope="col" class="nowrap">Nombre Completo</th>
-                                <th scope="col">Rut</th>
-                                <th scope="col">Carrera</th>
-                                <th scope="col">Puntaje</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Teléfono</th>
-                                <th scope="col">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for estudiante in estudiantes %}
-                            <tr class="text-center">
-
-                                <!--Contador-->
-                                <th scope="row" class="nowrap">{{ forloop.counter }}</td>
-
-                                <!-- Mostrar el ID del documento -->
-                                <td><div style="width: 10rem; word-break: break-word;" class="mx-auto">{{ estudiante.id }}</div></td>
-                                <!--Nombre completo-->
-                                <td><div style="width: 15rem;" class="mx-auto">{{ estudiante.fields.Nombre_completo.stringValue }}</div></td>
-                                <!--Rut-->
-                                <td class="nowrap">{{ estudiante.fields.Rut.stringValue }}</td>
-                                <td><div style="width: 15rem;" class="mx-auto">{{ estudiante.fields.carrera.stringValue }}</div></td>
-                                <td class="nowrap">{{ estudiante.fields.puntaje.integerValue }}</td>
-                                <td class="nowrap">{{ estudiante.fields.email.stringValue }}</td>
-                                <td class="nowrap">{{ estudiante.fields.Telefono.stringValue }}</td>
-
-                                <!--Acciones-->
-                                <td>
-                                    <!--Botón para editar-->
-                                    <div class="d-flex flex-row justify-content-evenly">
+                <h1 class="display-5 fw-semibold mt-5 mb-3">Listado de Estudiantes</h1>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 m-0 p-0">
+                    {% for estudiante in estudiantes %}
+                        <div class="col mb-3 card-group">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between">
+                                        <div>Escuela de Test</div>
+                                    </div>
+                                </div>
+                                <!--aquí row image descartado-->
+                                <!--aquí row image descartado (incluye 2 </div> al final)-->
+                                <div class="card-body px-4">
+                                    <h5 class="card-title">{{ estudiante.fields.Nombre_completo.stringValue }}</h5>
+                                    <p class="card-text">
+                                        <span><img src="https://www.svgrepo.com/show/460057/reward.svg" alt="Ícono puntaje" style="width:1em; user-select: none;" class="me-2 pb-1"></span><span class="badge text-bg-secondary">{{ estudiante.fields.puntaje.integerValue }}</span> puntos
+                                        <br><span><img src="https://www.svgrepo.com/show/499663/user.svg" alt="Ícono rut" style="width:1em; user-select: none;" class="me-2 pb-1"></span>{{ estudiante.fields.Rut.stringValue }}
+                                        <br><span><img src="https://www.svgrepo.com/show/118970/college-graduation.svg" alt="Ícono carrera" style="width:1em; user-select: none;" class="me-2 pb-1"></span>{{ estudiante.fields.carrera.stringValue }}
+                                        <br><span><img src="https://www.svgrepo.com/show/507361/mail.svg" alt="Ícono mail" style="width:1em; user-select: none;" class="me-2 pb-1"></span>{{ estudiante.fields.email.stringValue }}
+                                        <br><span><img src="https://www.svgrepo.com/show/488325/phone.svg" alt="Ícono teléfono" style="width:1em; user-select: none;" class="me-2 pb-1"></span>{{ estudiante.fields.Telefono.stringValue }}</p>
+                                    <p class="card-text"><small class="text-body-secondary"><span><img src="https://www.svgrepo.com/show/408786/broken-link-broken-link-url-hyperlink-disconnect.svg" alt="Ícono id" style="width:1em; user-select: none;" class="me-2 pb-1"></span>{{ estudiante.id }}</small></p>
+                                </div> 
+                                
+                                <div class="card-footer bg-white">
+                                    <div class="d-flex flex-row justify-content-start">
                                         <div class="px-1">
-                                            <button class="btn btn-light border border-dark">
-                                                <a href="{% url 'modificar_estudiante' estudiante.id %}">
-                                                    <img src="https://www.svgrepo.com/show/509351/edit-3.svg" alt="Edit"
-                                                        style="width: 1rem; height: 1rem;">
-                                                </a>
-                                            </button>
+                                            <!--Botón para editar-->
+                                            <form method="GET" action="{% url 'modificar_estudiante' estudiante.id %}" class="m-0">
+                                                <button type="submit" class="btn btn-light border border-dark">Editar
+                                                </button>
+                                            </form>
                                         </div>
 
-                                        <!--Botón para eliminar-->
+
                                         <div class="px-1">
-                                            <form action="{% url 'eliminar_estudiante' estudiante.id %}" method="post">
+                                            <!--Botón para eliminar-->
+                                            <form method="post" action="{% url 'eliminar_estudiante' estudiante.id %}" class="m-0">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn btn-dark border border-dark">
-                                                    <img src="https://www.svgrepo.com/show/509405/trash-alt.svg" alt="Delete"
-                                                        style="width: 1rem; height: 1rem;" class="invert-color">
+                                                <button type="submit" class="btn btn-dark border border-dark">Eliminar
                                                 </button>
                                             </form>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Scripts -->
     <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->

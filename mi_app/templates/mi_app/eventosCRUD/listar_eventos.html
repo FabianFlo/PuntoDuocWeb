@@ -11,25 +11,22 @@
 </head>
 
 <body class="bg-white">
-
-
-
     {% include 'mi_app/navbar.html' %}
 
     <section>
         <div class="container-fluid mb-2">
-            <div class="container-lg row p-3 mx-auto">
-                <div>
+            <div class="container-lg row mx-auto">
 
-                    <h1 class="display-5 pt-3 pb-5">Listado de eventos</h1>
-                    {% for evento in eventos %}
-                    <div class="d-flex align-items-center">
+                <h1 class="display-5 fw-semibold mt-5 mb-3">Listado de Eventos</h1>
+                
+                {% for evento in eventos %}
+                    <div class="d-flex w-100">
                         <div class="card mb-3 w-100">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between">
                                     <div>Organizador: {{ evento.fields.sede.stringValue }}</div>
                                     <div>Fecha Evento: {{ evento.fields.fecha.timestampValue|slice:"8:10" }}/{{ evento.fields.fecha.timestampValue|slice:"5:7" }}/{{ evento.fields.fecha.timestampValue|slice:":4" }} 
-                                        {{ evento.fields.fecha.timestampValue|slice:"11:16" }} hrs <span class="ps-2 badge 
+                                        {{ evento.fields.fecha.timestampValue|slice:"11:16" }} hrs <span style="margin-left:0.5rem;" class="badge 
                                         {% if evento.fields.estado.stringValue == 'en_curso' %} text-bg-info
                                         {% elif evento.fields.estado.stringValue == 'Pendiente' %} text-bg-warning
                                         {% elif evento.fields.estado.stringValue == 'Aprobado' %} text-bg-success
@@ -39,43 +36,77 @@
                                 </div>
                             </div>
                             <div class="row g-0">
-                              <div class="col-md-2">
-                                <img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen evento" class="img-fluid" style="height:100%; border-bottom-left-radius: .3rem;">
-                              </div>
-                              <div class="col-md-10">
-                                <div class="card-body">
-                                  <h5 class="card-title">{{ evento.fields.titulo.stringValue }}</h5>
-                                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                  <p class="card-text"><small class="text-body-secondary">Actualizado {{ evento.updateTime|slice:"8:10" }}/{{ evento.updateTime|slice:"5:7" }}/{{ evento.updateTime|slice:":4" }},
-                                    {{ evento.updateTime|slice:"11:16" }} hrs</small></p>
-                                    <div class="d-flex flex-row justify-content-start">
-                                        <div class="px-1">
-                                            <!-- Botón para editar -->
-                                            <form method="GET" action="{% url 'modificar_evento' evento.id %}" class="m-0">
-                                                <button type="submit" class="btn btn-light border border-dark">Editar
-                                                </button>
-                                            </form>
-                                        </div>
-
-                                        <div class="px-1">
-                                            <!-- Botón para eliminar -->
-                                            <form method="POST" action="{% url 'eliminar_evento' evento.id %}" class="m-0">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-dark border border-dark">Eliminar
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-
+                                <div class="col-md-3 col-xl-2">
+                                    <img src="{{ evento.fields.imagen.stringValue }}" alt="Imagen evento" class="img-fluid object-fit-cover" style="height:100%; border-bottom-left-radius: .3rem;">
                                 </div>
-                              </div>
+                                <div class="col-md-9 col-xl-10">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ evento.fields.titulo.stringValue }}</h5>
+                                        {% if evento.fields.descripcion.stringValue|length > 201 %}
+                                            <p class="card-text">{{ evento.fields.descripcion.stringValue|slice:":200" }}...</p>
+                                        {% else %}
+                                            <p class="card-text">{{ evento.fields.descripcion.stringValue }}</p>
+                                        {% endif %}
+                                    
+                                        
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <h5 class="card-title">Inscritos:</h5>
+                                                <!--Barra de progreso cupos-->
+                                                {% if evento.fields.inscritos.integerValue|add:evento.fields.Cupos.integerValue != 0 %}
+                                                    <div class="progress" role="progressbar" aria-label="Porcentaje de cupos registrados" aria-valuenow="{% widthratio evento.fields.inscritos.integerValue evento.fields.inscritos.integerValue|add:evento.fields.Cupos.integerValue 100 %}" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar progress-bar-striped bg-info text-dark overflow-visible" style="width: {% widthratio evento.fields.inscritos.integerValue evento.fields.inscritos.integerValue|add:evento.fields.Cupos.integerValue 100 %}%">
+                                                            <span class="fw-semibold px-2">{{ evento.fields.inscritos.integerValue }} de {{ evento.fields.inscritos.integerValue|add:evento.fields.Cupos.integerValue }} ({% widthratio evento.fields.inscritos.integerValue evento.fields.inscritos.integerValue|add:evento.fields.Cupos.integerValue 100 %}%)</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="progress" role="progressbar" aria-label="Porcentaje de cupos registrados" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                                        <div class="progress-bar progress-bar-striped bg-info text-dark overflow-visible" style="width: 0%">Error al calcular los datos</div>
+                                                    </div>
+                                                {% endif %}
+
+                                                <!--Lista de espera-->
+                                                {% if evento.fields.listaEspera.arrayValue.values %}
+                                                    <p class="card-text mt-1">Lista de espera: {{ evento.fields.listaEspera.arrayValue.values | length }}</p>
+                                                {% else %}
+                                                    <p class="card-text mt-1">Lista de espera: 0</p>
+                                                {% endif %}
+
+                                                <!--<div>Cupos disponibles: {{ evento.fields.Cupos.integerValue }}</div>-->
+                                                
+                                            </div>
+                                            
+                                            <div class="col-md-7">
+                                                <p class="card-text text-end px-2 mb-2"><small class="text-body-secondary">Editado: {{ evento.updateTime|slice:"8:10" }}/{{ evento.updateTime|slice:"5:7" }}/{{ evento.updateTime|slice:":4" }},
+                                                    {{ evento.updateTime|slice:"11:16" }} hrs</small></p>
+
+                                                <div class="d-flex flex-row justify-content-end">
+                                                    <div class="px-1">
+                                                        <!-- Botón para editar -->
+                                                        <form method="GET" action="{% url 'modificar_evento' evento.id %}" class="m-0">
+                                                            <button type="submit" class="btn btn-light border border-dark">Editar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+                                                    <div class="px-1">
+                                                        <!-- Botón para eliminar -->
+                                                        <form method="POST" action="{% url 'eliminar_evento' evento.id %}" class="m-0">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-dark border border-dark">Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-
-
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -93,8 +124,7 @@
                     <!--De-listed-->
                         <!--<th>Descripción</th>-->
                         <!--<th>Lugar</th>-->
-                        
-                        
+
                             <!--Descripción (límite caracteres)
                             <td>
                                 {% if evento.fields.descripcion.stringValue|length > 100 %}
@@ -121,6 +151,7 @@
                             <!--lugar (dirección) evento
                             <td>{{ evento.fields.lugar.stringValue }}</td>
                             -->
+                    <!--De-listed-->
 
 
 
