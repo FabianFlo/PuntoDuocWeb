@@ -10,6 +10,7 @@ import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from django.http import HttpResponse
 from django.core.mail import send_mail
+import json
 
 
 # mi_app/views.py
@@ -344,15 +345,19 @@ def logout_view(request):
 
 @login_required
 def dashboard_2(request):
-    # Obtener datos de Firebase
+    # URLs de las colecciones en Firebase
     eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
-    
+    respuestas_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Respuestas"
+
+    # Obtener datos de Firebase
     eventos_response = requests.get(eventos_url)
     estudiantes_response = requests.get(estudiantes_url)
+    respuestas_response = requests.get(respuestas_url)
 
     eventos = []
     estudiantes = []
+    respuestas = []
 
     if eventos_response.status_code == 200:
         eventos = eventos_response.json().get('documents', [])
@@ -366,7 +371,45 @@ def dashboard_2(request):
             estudiante_id = estudiante['name'].split('/')[-1]
             estudiante['id'] = estudiante_id
 
+    if respuestas_response.status_code == 200:
+        respuestas = respuestas_response.json().get('documents', [])
+
     # KPIs
+    # Cantidad de Encuestas Contestadas
+    cantidad_encuestas_contestadas = len(set(respuesta['fields']['encuesta_id']['stringValue'] for respuesta in respuestas))
+
+    # Diferentes id_estudiante en "Estudiantes" y "Inscripciones" dentro de "Eventos"
+    id_estudiantes_totales = set(estudiante['id'] for estudiante in estudiantes)
+    id_estudiantes_inscripciones = set(
+        inscripcion['mapValue']['fields'].get('id_estudiante', {}).get('stringValue', '')
+        for evento in eventos
+        for inscripcion in evento['fields'].get('Inscripciones', {}).get('arrayValue', {}).get('values', [])
+        if 'id_estudiante' in inscripcion['mapValue']['fields']
+    )
+
+    diferentes_estudiantes_totales = len(id_estudiantes_totales)
+    diferentes_estudiantes_inscripciones = len(id_estudiantes_inscripciones)
+
+    # Datos para gráfico de torta
+    data_estudiantes = {
+        'Totales': diferentes_estudiantes_totales,
+        'Inscripciones': diferentes_estudiantes_inscripciones,
+    }
+
+    # Número de "id_estudiante" en "listaEspera" para cada evento
+    lista_espera_eventos = sorted(
+        [
+            (
+                evento['fields']['titulo']['stringValue'],
+                len(evento['fields'].get('listaEspera', {}).get('arrayValue', {}).get('values', [])),
+                evento['fields'].get('cupos', {}).get('integerValue', 0)
+            )
+            for evento in eventos
+        ],
+        key=lambda x: x[1],
+        reverse=True
+    )
+
     inscritos_por_evento = {evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0) for evento in eventos}
     carreras_con_mayor_participacion = Counter(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes).most_common(5)
     promedio_eventos_por_estudiante = len(eventos) / len(estudiantes) if estudiantes else 0
@@ -375,11 +418,11 @@ def dashboard_2(request):
     # Gráficos
     grafico_inscritos = list(inscritos_por_evento.values())
     grafico_eventos = list(inscritos_por_evento.keys())
-    
+
     # Preparar datos para gráfico de carreras
     labels_carreras = [carrera[0] for carrera in carreras_con_mayor_participacion]
     data_carreras = [carrera[1] for carrera in carreras_con_mayor_participacion]
-    
+
     # Enviando datos al template
     context = {
         'eventos': eventos,
@@ -392,7 +435,11 @@ def dashboard_2(request):
         'grafico_eventos': grafico_eventos,
         'labels_carreras': labels_carreras,
         'data_carreras': data_carreras,
+        'cantidad_encuestas_contestadas': cantidad_encuestas_contestadas,
+        'data_estudiantes': json.dumps(data_estudiantes),
+        'lista_espera_eventos': lista_espera_eventos,
     }
+
     return render(request, 'mi_app/dashboard/dashboard_2.html', context)
 
 def obtener_correos_por_carrera(carrera):
