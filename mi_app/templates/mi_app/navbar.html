@@ -35,6 +35,16 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="difusionDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
+                            Misiones
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
+                            <li><a class="dropdown-item" href="{% url 'crear_mision' %}">Crear Misiones</a></li>
+                            <li><a class="dropdown-item" href="{% url 'listar_misiones' %}">Ver misiones</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="difusionDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Difusión
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="eventosDropdown">
@@ -43,6 +53,7 @@
                             <li><a class="dropdown-item" href="/encuestas/ver/">Ver Encuestas</a></li>
                         </ul>
                     </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard_2">Métricas</a>
                     </li>

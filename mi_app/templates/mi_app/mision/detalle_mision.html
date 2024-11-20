@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Misión</title>
+</head>
+<body>
+    <h1>{{ mision.titulo }}</h1>
+    <p>{{ mision.descripcion }}</p>
+    <p>Puntaje: {{ mision.puntaje }}</p>
+    <p>Parámetros: {{ mision.parametros|join:", " }}</p>
+    <a href="/misiones/">Volver a la lista</a>
+</body>
+</html>

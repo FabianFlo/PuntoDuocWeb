@@ -597,3 +597,161 @@ def enviar_correos_view(request):
         'carreras': carreras,
         'encuestas': encuestas_list
     })
+import requests
+from django.shortcuts import render, redirect
+
+# URL base para interactuar con Firestore
+FIREBASE_URL = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Misiones"
+
+def listar_misiones(request):
+    # Realizar la solicitud GET a Firestore
+    response = requests.get(FIREBASE_URL)
+
+    if response.status_code == 200:
+        # Obtener las misiones de la respuesta
+        misiones = response.json().get('documents', [])
+
+        # Lista para almacenar las misiones procesadas
+        misiones_data = []
+        
+        # Recorrer cada misión y extraer los datos necesarios
+        for mision in misiones:
+            mision_id = mision['name'].split('/')[-1]  # Obtener el ID de la misión (es el título)
+
+            mision_data = {
+                'id': mision_id,  # El ID es el título de la misión
+                'titulo': mision_id,  # Usamos el título como ID de la misión
+                'descripcion': mision['fields'].get('descripcion', {}).get('stringValue', 'Sin descripción'),
+                'puntaje': mision['fields'].get('puntaje', {}).get('integerValue', 0),
+                'objetivo': mision['fields'].get('objetivo', {}).get('stringValue', 'Sin objetivo')
+            }
+            misiones_data.append(mision_data)
+
+        # Pasar las misiones a la plantilla para que se muestren
+        return render(request, 'mi_app/mision/listar_misiones.html', {'misiones': misiones_data})
+
+    else:
+        # Si hay un error al obtener las misiones
+        return render(request, 'error.html', {'mensaje': 'Error al obtener las misiones.'})
+
+
+
+def crear_mision(request):
+    if request.method == 'POST':
+        # Obtener el título, que se usará como el ID del documento
+        titulo = request.POST.get('titulo')
+
+        # Si no hay título, evitamos crear la misión
+        if not titulo:
+            return render(request, 'error.html', {'mensaje': 'El título es obligatorio.'})
+
+        # Construir los datos que se enviarán a Firestore
+        data = {
+            "fields": {
+                "titulo": {"stringValue": titulo},
+                "descripcion": {"stringValue": request.POST.get('descripcion')},
+                "puntaje": {"integerValue": int(request.POST.get('puntaje'))},
+                "objetivo": {"stringValue": request.POST.get('objetivo')}
+            }
+        }
+        
+        # Usamos el título como el ID en la URL de Firestore
+        url = f"{FIREBASE_URL}/{titulo}"  # Aquí añadimos el título a la URL para usarlo como ID
+        
+        # Hacer la solicitud POST a Firestore para crear el documento
+        response = requests.patch(url, json=data)  # Usamos PATCH para actualizar o crear con un ID específico
+        
+        # Verificar si la misión fue creada correctamente
+        if response.status_code == 200:
+            return redirect('listar_misiones')  # Redirigir a la lista de misiones
+        else:
+            return render(request, 'error.html', {'mensaje': 'Error al crear la misión.'})
+
+    return render(request, 'mi_app/mision/crear_mision.html')  # Renderizar el formulario para crear misión
+
+
+# Detalle de misión
+def detalle_mision(request, mision_id):
+    response = requests.get(f"{FIREBASE_URL}/{mision_id}")
+    if response.status_code == 200:
+        mision = response.json()['fields']
+        mision_data = {
+            'id': mision_id,
+            'titulo': mision['titulo']['stringValue'],
+            'descripcion': mision['descripcion']['stringValue'],
+            'puntaje': mision['puntaje']['integerValue'],
+            'parametros': [p['stringValue'] for p in mision['parametros']['arrayValue']['values']],
+        }
+        return render(request, 'mi_app/mision/detalle_mision.html', {'mision': mision_data})
+    else:
+        return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+
+def actualizar_mision(request, mision_id):
+    if request.method == 'POST':
+        data = {
+            "fields": {
+                "titulo": {"stringValue": request.POST.get('titulo')},
+                "descripcion": {"stringValue": request.POST.get('descripcion')},
+                "puntaje": {"integerValue": int(request.POST.get('puntaje'))},
+                "objetivo": {"stringValue": request.POST.get('objetivo')}
+            }
+        }
+        response = requests.patch(f"{FIREBASE_URL}/{mision_id}", json=data)
+        if response.status_code == 200:
+            return redirect('listar_misiones')
+
+        else:
+            return render(request, 'error.html', {'mensaje': 'Error al actualizar la misión.'})
+
+    response = requests.get(f"{FIREBASE_URL}/{mision_id}")
+    if response.status_code == 200:
+        mision = response.json()['fields']
+        mision_data = {
+            'id': mision_id,
+            'titulo': mision['titulo']['stringValue'],
+            'descripcion': mision['descripcion']['stringValue'],
+            'puntaje': mision['puntaje']['integerValue'],
+            'objetivo': mision['objetivo']['stringValue'],
+        }
+        return render(request, 'mi_app/mision/actualizar_mision.html', {'mision': mision_data})
+    else:
+        return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+
+
+def detalle_mision(request, mision_id):
+    response = requests.get(f"{FIREBASE_URL}/{mision_id}")
+    if response.status_code == 200:
+        mision = response.json()['fields']
+        mision_data = {
+            'id': mision_id,
+            'titulo': mision['titulo']['stringValue'],
+            'descripcion': mision['descripcion']['stringValue'],
+            'puntaje': mision['puntaje']['integerValue'],
+            'objetivo': mision['objetivo']['stringValue'],
+        }
+        return render(request, 'mi_app/mision/detalle_mision.html', {'mision': mision_data})
+    else:
+        return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+
+# Eliminar misión
+def eliminar_mision(request, mision_id):
+    if request.method == 'POST':
+        response = requests.delete(f"{FIREBASE_URL}/{mision_id}")
+        if response.status_code == 200:
+            return redirect('listar_misiones')
+        else:
+            return render(request, 'error.html', {'mensaje': 'Error al eliminar la misión.'})
+
+    response = requests.get(f"{FIREBASE_URL}/{mision_id}")
+    if response.status_code == 200:
+        mision = response.json()['fields']
+        mision_data = {
+            'id': mision_id,
+            'titulo': mision['titulo']['stringValue'],
+            'descripcion': mision['descripcion']['stringValue'],
+            'puntaje': mision['puntaje']['integerValue'],
+            'objetivo': mision['objetivo']['stringValue'],
+        }
+        return redirect('listar_misiones', {'mision': mision_data})
+    else:
+        return render(request, 'error.html', {'mensaje': 'La misión no existe.'})

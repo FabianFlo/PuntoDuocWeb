@@ -26,4 +26,11 @@ urlpatterns = [
     
     path('encuestas/', include('encuestas.urls')),  # Cambia 'nombre_de_la_app_encuestas' por el nombre real
 
+    path('misiones/', listar_misiones, name='listar_misiones'),
+    path('misiones/crear/', crear_mision, name='crear_mision'),
+    path('misiones/<str:mision_id>/', detalle_mision, name='detalle_mision'),
+    path('misiones/<str:mision_id>/actualizar/', actualizar_mision, name='modificar_mision'),
+    path('misiones/<str:mision_id>/eliminar/', eliminar_mision, name='eliminar_mision'),
+
+
 ]

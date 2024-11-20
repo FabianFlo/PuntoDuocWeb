@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Misión</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+
+<body class="bg-white">
+
+    <p class="position-absolute top-0 start-0 mt-3 ms-3" style="overflow: hidden;">{{ alert_message }}</p>
+
+    <section>
+        <div class="container-fluid p-0 m-0 row mx-auto" style="height:100vh;">
+            <div class="col-lg-5 p-0">
+                <div class="col-10 col-lg-7 mx-auto h-100">
+                    <div class="d-flex flex-column justify-content-center h-100 pt-5 pb-3">
+                        <a href="{% url 'home' %}" class="fs-4 fw-bold nav-link"><span><img src="https://www.svgrepo.com/show/101168/go-back-arrow.svg" alt="home" style="width:1em;" class="me-2 pb-1"></span>PuntoDuoc</a>
+                        <h1 class="display-5 fw-bold mb-3">Crear Misión</h1>
+
+                        <form class="row py-3" method="POST">
+                            {% csrf_token %}
+
+                            <!---Título-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Título de la misión">
+                                    <label for="titulo" class="text-muted">Título</label>
+                                </div>
+                            </div>
+
+                            <!---Descripción-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <textarea id="descripcion" name="descripcion" class="form-control" required placeholder="Descripción de la misión"></textarea>
+                                    <label for="descripcion" class="text-muted">Descripción</label>
+                                </div>
+                            </div>
+
+                            <!---Puntaje-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="number" id="puntaje" name="puntaje" class="form-control" required placeholder="Puntaje">
+                                    <label for="puntaje" class="text-muted">Puntaje</label>
+                                </div>
+                            </div>
+
+                            <!---Objetivo-->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <textarea id="objetivo" name="objetivo" class="form-control" required placeholder="Objetivo de la misión"></textarea>
+                                    <label for="objetivo" class="text-muted">Objetivo</label>
+                                </div>
+                            </div>
+
+                            <hr class="mt-3">
+
+                            <!--Button Crear Misión-->
+                            <div class="col-12 mt-3">
+                                <input type="submit" value="Crear Misión" class="btn btn-dark w-100">
+                            </div>
+
+                            <!--Button Listar Misiones-->
+                            <div class="col-12 my-3">
+                                <a href="{% url 'listar_misiones' %}" class="btn btn-outline-dark w-100">Listado de misiones</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-7 w-100 d-lg-none p-0 m-0" style="overflow:hidden;">
+                <div>
+                    <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+                                <stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop>
+                                <stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#sw-gradient-0)" d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z"></path>
+                    </svg>
+                </div>
+                <div class="container-flex h-100" style="background: #336DCF;"></div>
+            </div>
+
+            <div class="col-lg-7 d-none d-lg-block p-0 background-svg">
+            </div>
+        </div>
+
+        <p class="position-absolute top-0 start-0 mt-3 ms-3" style="overflow: hidden;">{{ alert_message }}</p>
+    </section>
+
+    <!-- Scripts -->
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

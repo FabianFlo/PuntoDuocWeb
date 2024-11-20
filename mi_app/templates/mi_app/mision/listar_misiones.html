@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Misiones</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!-- Cargar FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="bg-white">
+
+    {% include 'mi_app/navbar.html' %}
+
+    <section>
+        <div class="container-fluid mb-2">
+            <div class="container-lg row mx-auto">
+
+                <h1 class="display-5 fw-semibold mt-5 mb-3">Listado de Misiones</h1>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 m-0 p-0">
+                    {% for mision in misiones %}
+                        <div class="col mb-3 card-group">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title">{{ mision.titulo }}</h5>
+                                    </div>
+                                </div>
+
+                                <div class="card-body px-4">
+                                    <p class="card-text">
+                                        <span><i class="fas fa-info-circle me-2"></i></span><strong>Descripción:</strong> {{ mision.descripcion }}
+                                        <br>
+                                        <span><i class="fas fa-bullseye me-2"></i></span><strong>Objetivo:</strong> {{ mision.objetivo }}
+                                        <br>
+                                        <span><i class="fas fa-trophy me-2"></i></span><strong>Puntaje:</strong> {{ mision.puntaje }} puntos
+                                    </p>
+                                </div>
+
+                                <div class="card-footer bg-white">
+                                    <div class="d-flex justify-content-center"> <!-- Centrar los botones -->
+                                        <div class="px-1 mx-2">
+                                            <!-- Botón para editar -->
+                                            <form method="GET" action="{% url 'modificar_mision' mision.id %}" class="m-0">
+                                                <button type="submit" class="btn btn-light border border-dark">Editar</button>
+                                            </form>
+                                        </div>
+
+                                        <div class="px-1 mx-2">
+                                            <!-- Botón para eliminar -->
+                                            <form method="post" action="{% url 'eliminar_mision' mision.id %}" class="m-0">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-dark border border-dark">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>
