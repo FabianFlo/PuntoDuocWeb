@@ -227,6 +227,18 @@
                     </div>
                 </div>
 
+                <div class="col" >
+                    <div class="card kpi-card">
+                        <h2 class="card-header fs-4 py-4 text-center">Encuestas Contestadas</h2>
+                        <div class="card-body text-center">
+                            <h3>{{ cantidad_encuestas_contestadas }}</h3>
+                        </div>
+                        <div class="card-footer">
+                            <button onclick="window.location.href='/encuestas/ver/'" class="btn btn-primary btn-custom mt-3">Ver Encuestas</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row row-cols-1 row-cols-lg-2 g-4 mt-5">
                     <!-- KPI Promedio de Eventos por Estudiante -->
                     <div class="col">
@@ -277,6 +289,7 @@
                 </div>
             </div>
         </div>
+        
     </section>
 
     <!-- Contenedor para la imagen de ola -->
@@ -331,19 +344,31 @@
                 options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
 
-            // Gráfico Estudiantes
-            const estudiantesData = JSON.parse('{{ data_estudiantes|escapejs }}');
-            new Chart(document.getElementById('estudiantesChart').getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(estudiantesData),
-                    datasets: [{
-                        data: Object.values(estudiantesData),
-                        backgroundColor: ['#FF6384', '#36A2EB'],
-                    }]
-                },
-                options: { responsive: true }
-            });
+
+            
+            // Gráfico de Estudiantes
+const estudiantesData = JSON.parse('{{ data_estudiantes|escapejs }}');
+new Chart(document.getElementById('estudiantesChart').getContext('2d'), {
+    type: 'pie',
+    data: {
+        labels: Object.keys(estudiantesData),
+        datasets: [{
+            data: Object.values(estudiantesData),
+            backgroundColor: ['#FF6384', '#36A2EB'],
+        }]
+    },
+    options: {
+        responsive: true,
+        aspectRatio: 2.5, // Esto asegura que el gráfico sea lo más grande posible dentro de su contenedor
+        plugins: {
+            legend: {
+                position: 'right', // Mover la leyenda a la derecha
+                
+            }
+        }
+    }
+});
+
 
             // Gráfico Promedio de Eventos
             new JustGage({
@@ -369,3 +394,4 @@
 </body>
 
 </html>
+    
