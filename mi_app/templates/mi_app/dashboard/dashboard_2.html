@@ -4,228 +4,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard 2</title>
+    <title>Dashboard de Eventos</title>
 
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 
-    <!-- Incluir Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Incluir JustGage y Raphael -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.4.0/justgage.min.js"></script>
 
     <style>
+        /* Estilos Globales */
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #495057;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-fluid {
+            max-width: 95%;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+        }
+
         .card-body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            height: 100%; /* Para llenar toda la altura de la tarjeta */
-        }
-
-        .kpi-card {
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: auto; /* Para ajustar la altura automáticamente */
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 2rem;
         }
 
         .btn-custom {
-            width: auto;
-            padding: 0.5rem 1rem;
-            margin: 0;
+            background-color: #336DCF;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            background-color: #2852A7;
+        }
+
+        .display-5 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Fondo con ola suave más grande */
+        #wave {
+            position: relative;
+            z-index: 1; /* Aseguramos que la ola esté sobre otros elementos */
+            width: 100%;
+            height: 150px; /* Aumentada la altura para una ola más visible */
+        }
+
+        /* Contenedor de la imagen de la ola */
+        .wave-image-container {
+            position: absolute;
+            top: -60px; /* Ajuste de la posición para no tapar la ola */
+            width: 100%;
+            height: 150px;
+            background-image: url('path_to_your_image.png'); /* Reemplazar con el path de la imagen */
+            background-size: cover;
+            background-position: center;
+            z-index: 0; /* Colocamos la imagen por debajo de la ola */
+        }
+
+        /* Estilos para los gráficos */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-container {
+            height: 200px;
+        }
+
+        /* Tabla estilizada */
+        .table-custom {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-custom th,
+        .table-custom td {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .table-custom th {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .table-custom tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table-custom tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Estilos para los indicadores KPI */
+        .kpi-card {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .kpi-card .card-body h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #336DCF;
+        }
+
+        .card-body ul {
+            padding-left: 1.5rem;
+        }
+
+        .card-footer button {
+            width: 100%;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 20px;
+            }
+
+            .row-cols-1 {
+                display: block;
+            }
+        }
+
+        /* Mejorar la visibilidad del fondo */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+
+        /* Gráfico de pie más pequeño */
+        .pie-chart-container {
+            height: 200px; /* Reducción de tamaño */
         }
     </style>
 </head>
 
-<body class="bg-white">
+<body>
+
     {% include 'mi_app/navbar.html' %}
 
     <section>
-        <div class="container-fluid mb-2">
-            <div class="container-lg row mx-auto">
+        <div class="container-fluid">
+            <div class="container-lg">
+                <br>
+                <h1 class="display-5 text-center mb-5">Dashboard de Eventos</h1>
 
-                <h1 class="display-5 fw-semibold mt-5 mb-3">Dashboard de Eventos</h1>
-
-                <div class="row row-cols-1 row-cols-lg-3 g-4">
-
-                    <!-- Gráfico de Inscritos -->
+                <div class="row row-cols-1 row-cols-lg-2 g-4">
+                    <!-- Gráfico Inscritos por Evento -->
                     <div class="col">
                         <div class="card">
-                          <h2 class="card-header fs-4 py-4 text-center">Inscritos por Evento</h2>
-                          <div class="card-body">
-                            <div class="mx-auto px-3 py-2">
-                                <canvas id="graficoInscritos" height="400"></canvas>
+                            <h2 class="card-header">Inscritos por Evento</h2>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="graficoInscritos"></canvas>
+                                </div>
                             </div>
-                          </div>
                         </div>
                     </div>
 
                     <!-- Gráfico Carreras con Mayor Participación -->
                     <div class="col">
-                      <div class="card">
-                        <h2 class="card-header fs-4 py-4 text-center">Carreras con Mayor Participación</h2>
-                        <div class="card-body">
-                            <div class="px-3">
-                                <canvas id="graficoCarreras"></canvas>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Gráfico Promedio de Eventos por Estudiante -->
-                    <div class="col">
-                      <div class="card">
-                        <h2 class="card-header fs-4 py-4 text-center">Promedio de Eventos por Estudiante</h2>
-                        <div class="card-body">
-                            <div class="py-2">
-                                <div id="gaugeContainer"></div>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-
-                <div class="row row-cols-1 row-cols-lg-3 g-4 mt-4">
-                    <!-- KPIs -->
-                    <div class="col">
-                        <div class="card kpi-card">
-                            <h2 class="card-header fs-4 py-4 text-center">Encuestas Contestadas</h2>
-                            <div class="card-body text-center">
-                                <h3>{{ cantidad_encuestas_contestadas }}</h3>
-                            </div>
-                            <div class="card-footer">
-                                <button onclick="window.location.href='/encuestas/ver/'" class="btn btn-primary btn-custom mt-3">Ver Encuestas</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card kpi-card">
-                            <h2 class="card-header fs-4 py-4 text-center">Estudiantes Totales e Inscripciones</h2>
-                            <div class="card-body text-center">
-                                <canvas id="estudiantesChart"></canvas>
-                            </div>
-                            <div class="card-footer">
-                                <button onclick="window.location.href='/listar_eventos/'" class="btn btn-primary btn-custom mt-3">Listar Eventos</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card kpi-card">
-                            <h2 class="card-header fs-4 py-4 text-center">Inscripciones en Eventos</h2>
-                            <div class="card-body text-center">
-                                <ul class="list-group">
-                                    {% for evento, espera, cupos in lista_espera_eventos %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ evento }} - Lista de Espera: {{ espera }} - Cupos: {{ cupos }}
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="card-footer">
-                                <button onclick="window.location.href='/listar_eventos/'" class="btn btn-primary btn-custom mt-3">Listar Eventos</button>
+                        <div class="card">
+                            <h2 class="card-header">Carreras con Mayor Participación</h2>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="graficoCarreras"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <footer class="mt-5 pt-4 px-4 text-center border-top text-muted">
-                    <p>Creado por tu nombre &copy; 2024</p>
-                </footer>
+                <div class="row row-cols-1 row-cols-lg-2 g-4 mt-5">
+                    <!-- KPI Promedio de Eventos por Estudiante -->
+                    <div class="col">
+                        <div class="card">
+                            <h2 class="card-header">Promedio de Eventos por Estudiante</h2>
+                            <div class="card-body">
+                                <div class="gauge-container" id="gaugeContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Estudiantes Totales e Inscripciones -->
+                    <div class="col">
+                        <div class="card">
+                            <h2 class="card-header">Estudiantes Totales e Inscripciones</h2>
+                            <div class="card-body text-center">
+                                <div class="pie-chart-container">
+                                    <canvas id="estudiantesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Inscripciones de Eventos -->
+                <div class="card mt-5">
+                    <h2 class="card-header text-center">Inscripciones de Eventos</h2>
+                    <div class="card-body">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Lista de Espera</th>
+                                    <th>Cupos Disponibles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evento, espera, cupos in lista_espera_eventos %}
+                                <tr>
+                                    <td>{{ evento }}</td>
+                                    <td>{{ espera }}</td>
+                                    <td>{{ cupos }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
+    <!-- Contenedor para la imagen de ola -->
+    <div class="wave-image-container"></div>
+
+    <!-- Fondo con forma de ola más grande -->
+    <div>
+        <svg id="wave" style="transform: rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+                    <stop offset="0%" stop-color="#4a90e2" />
+                    <stop offset="100%" stop-color="#0d47a1" />
+                </linearGradient>
+            </defs>
+            <path fill="url(#sw-gradient-0)" d="M0,0 C450,80 580,20 640,40 C700,60 760,20 880,40 C1000,60 1100,40 1240,60 C1380,80 1440,30 1440,30 L1440,100 L0,100 Z"></path>
+        </svg>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Datos para el gráfico de inscritos por evento
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gráfico Inscritos por Evento
             const inscritosData = {
                 labels: {{ grafico_eventos|safe }},
                 datasets: [{
                     label: 'Inscritos',
                     data: {{ grafico_inscritos|safe }},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: '#4a90e2',
+                    borderColor: '#4a90e2',
                     borderWidth: 1
                 }]
             };
-
-            const inscritosConfig = {
+            new Chart(document.getElementById('graficoInscritos').getContext('2d'), {
                 type: 'bar',
                 data: inscritosData,
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            };
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
 
-            const inscritosCtx = document.getElementById('graficoInscritos').getContext('2d');
-            new Chart(inscritosCtx, inscritosConfig);
-
-            // Datos para el gráfico de carreras con mayor participación
+            // Gráfico Carreras con Mayor Participación
             const carrerasData = {
                 labels: {{ labels_carreras|safe }},
                 datasets: [{
                     label: 'Participación',
                     data: {{ data_carreras|safe }},
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: '#FF6384',
+                    borderColor: '#FF6384',
                     borderWidth: 1
                 }]
             };
-
-            const carrerasConfig = {
+            new Chart(document.getElementById('graficoCarreras').getContext('2d'), {
                 type: 'bar',
                 data: carrerasData,
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            };
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
 
-            const carrerasCtx = document.getElementById('graficoCarreras').getContext('2d');
-            new Chart(carrerasCtx, carrerasConfig);
-
-            // Datos para el gráfico de estudiantes totales e inscripciones
-            var ctxEstudiantes = document.getElementById('estudiantesChart').getContext('2d');
-            var dataEstudiantes = JSON.parse('{{ data_estudiantes|escapejs }}');
-            var estudiantesChart = new Chart(ctxEstudiantes, {
+            // Gráfico Estudiantes
+            const estudiantesData = JSON.parse('{{ data_estudiantes|escapejs }}');
+            new Chart(document.getElementById('estudiantesChart').getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: Object.keys(dataEstudiantes),
+                    labels: Object.keys(estudiantesData),
                     datasets: [{
-                        label: 'Estudiantes',
-                        data: Object.values(dataEstudiantes),
+                        data: Object.values(estudiantesData),
                         backgroundColor: ['#FF6384', '#36A2EB'],
                     }]
                 },
-                options: {
-                    responsive: true,
-                }
+                options: { responsive: true }
             });
 
-            // Datos para el gauge del promedio de eventos por estudiante
-            const gauge = new JustGage({
+            // Gráfico Promedio de Eventos
+            new JustGage({
                 id: 'gaugeContainer',
                 value: {{ promedio_eventos_por_estudiante }},
                 min: 0,
@@ -233,25 +354,18 @@
                 title: 'Promedio de Eventos por Estudiante',
                 label: 'Eventos',
                 gaugeWidthScale: 0.6,
-                customSectors: [{
-                    color: "#ff0000",
-                    lo: 0,
-                    hi: 2
-                }, {
-                    color: "#f9c802",
-                    lo: 2,
-                    hi: 4
-                }, {
-                    color: "#a9d70b",
-                    lo: 4,
-                    hi: 10
-                }],
+                customSectors: [
+                    { color: '#ff0000', lo: 0, hi: 2 },
+                    { color: '#f9c802', lo: 2, hi: 4 },
+                    { color: '#a9d70b', lo: 4, hi: 10 }
+                ],
                 counter: true
             });
         });
     </script>
 
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+
 </body>
 
 </html>
