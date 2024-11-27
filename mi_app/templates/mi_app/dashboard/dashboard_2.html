@@ -263,37 +263,6 @@
                     </div>
                 </div>
 
-                <!-- Tabla de Inscripciones de Eventos -->
-                <div class="card mt-5">
-                    <h2 class="card-header text-center">Inscripciones de Eventos</h2>
-                    <div class="card-body">
-                        <table class="table table-custom">
-                            <thead>
-                                <tr>
-                                    <th>Evento</th>
-                                    <th>Lista de Espera</th>
-                                    <th>Cupos Disponibles</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for evento, espera, cupos in lista_espera_eventos %}
-                                <tr>
-                                    <td>{{ evento }}</td>
-                                    <td>{{ espera }}</td>
-                                    <td>{{ cupos }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <div class=>
-                            <button onclick="window.location.href='/listar_eventos/'" class="btn btn-primary btn-custom mt-3">Listar Eventos</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </section>
 
     <!-- Contenedor para la imagen de ola -->
     <div class="wave-image-container"></div>

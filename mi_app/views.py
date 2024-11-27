@@ -343,7 +343,14 @@ def logout_view(request):
     messages.success(request, 'Has cerrado sesión exitosamente.')
     return redirect('login_view')
 
-@login_required
+from django.shortcuts import render
+import requests
+import json
+from collections import Counter
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
 def dashboard_2(request):
     # URLs de las colecciones en Firebase
     eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
@@ -376,7 +383,7 @@ def dashboard_2(request):
 
     # KPIs
     # Cantidad de Encuestas Contestadas
-    cantidad_encuestas_contestadas = len(set(respuesta['fields']['encuesta_id']['stringValue'] for respuesta in respuestas))
+    cantidad_encuestas_contestadas = len(set(respuesta['fields'].get('encuesta_id', {}).get('stringValue', '') for respuesta in respuestas))
 
     # Diferentes id_estudiante en "Estudiantes" y "Inscripciones" dentro de "Eventos"
     id_estudiantes_totales = set(estudiante['id'] for estudiante in estudiantes)
@@ -396,24 +403,23 @@ def dashboard_2(request):
         'Inscripciones': diferentes_estudiantes_inscripciones,
     }
 
-    # Número de "id_estudiante" en "listaEspera" para cada evento
-    lista_espera_eventos = sorted(
-        [
-            (
-                evento['fields']['titulo']['stringValue'],
-                len(evento['fields'].get('listaEspera', {}).get('arrayValue', {}).get('values', [])),
-                evento['fields'].get('cupos', {}).get('integerValue', 0)
-            )
-            for evento in eventos
-        ],
-        key=lambda x: x[1],
-        reverse=True
-    )
 
-    inscritos_por_evento = {evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0) for evento in eventos}
-    carreras_con_mayor_participacion = Counter(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes).most_common(5)
+    # Número de inscritos por evento
+    inscritos_por_evento = {
+        evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0)
+        for evento in eventos
+    }
+
+    # Carreras con mayor participación
+    carreras_con_mayor_participacion = Counter(
+        estudiante['fields'].get('carrera', {}).get('stringValue', 'Desconocido')
+        for estudiante in estudiantes
+    ).most_common(5)
+
+    # Promedio de eventos por estudiante
     promedio_eventos_por_estudiante = len(eventos) / len(estudiantes) if estudiantes else 0
-    satisfaccion_participante = 0  # Asumiendo que no tienes estos datos aún
+
+    satisfaccion_participante = 0  # Asumimos que no tienes estos datos aún
 
     # Gráficos
     grafico_inscritos = list(inscritos_por_evento.values())
@@ -423,7 +429,6 @@ def dashboard_2(request):
     labels_carreras = [carrera[0] for carrera in carreras_con_mayor_participacion]
     data_carreras = [carrera[1] for carrera in carreras_con_mayor_participacion]
 
-    # Enviando datos al template
     context = {
         'eventos': eventos,
         'estudiantes': estudiantes,
@@ -437,7 +442,6 @@ def dashboard_2(request):
         'data_carreras': data_carreras,
         'cantidad_encuestas_contestadas': cantidad_encuestas_contestadas,
         'data_estudiantes': json.dumps(data_estudiantes),
-        'lista_espera_eventos': lista_espera_eventos,
     }
 
     return render(request, 'mi_app/dashboard/dashboard_2.html', context)
@@ -502,7 +506,6 @@ def obtener_correos_por_evento(titulo_evento):
 
     return correos
 
-@login_required
 def enviar_correos_view(request):
     if request.method == 'POST':
         # Obtener el asunto y mensaje
@@ -634,8 +637,6 @@ def listar_misiones(request):
         # Si hay un error al obtener las misiones
         return render(request, 'error.html', {'mensaje': 'Error al obtener las misiones.'})
 
-
-
 def crear_mision(request):
     if request.method == 'POST':
         # Obtener el título, que se usará como el ID del documento
@@ -668,7 +669,6 @@ def crear_mision(request):
             return render(request, 'error.html', {'mensaje': 'Error al crear la misión.'})
 
     return render(request, 'mi_app/mision/crear_mision.html')  # Renderizar el formulario para crear misión
-
 
 # Detalle de misión
 def detalle_mision(request, mision_id):
@@ -717,7 +717,6 @@ def actualizar_mision(request, mision_id):
     else:
         return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
 
-
 def detalle_mision(request, mision_id):
     response = requests.get(f"{FIREBASE_URL}/{mision_id}")
     if response.status_code == 200:
@@ -755,3 +754,192 @@ def eliminar_mision(request, mision_id):
         return redirect('listar_misiones', {'mision': mision_data})
     else:
         return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+
+def crear_gestor_view(request):
+    if request.method == 'POST':
+        id_Geventos = str(uuid.uuid4())
+        datos = {
+            'nombre_completo': request.POST.get('nombre_completo'),
+            'rut': request.POST.get('rut'),
+            'email': request.POST.get('email'),
+            'password': request.POST.get('password'),
+        }
+
+        url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, headers=headers, json={"fields": {
+            "id_Geventos": {"stringValue": id_Geventos},
+            "Nombre_completo": {"stringValue": datos['nombre_completo']},
+            "rut": {"stringValue": datos['rut']},
+            "email": {"stringValue": datos['email']},
+            "password": {"stringValue": datos['password']},
+        }})
+
+        if response.status_code in [200, 201]:
+            messages.success(request, "Gestor de eventos creado creado correctamente.")
+        else:
+            messages.error(request, "Error al crear el Gestor.")
+
+        return render(request, 'mi_app/gestorCRUD/crear_gestor.html')
+
+    return render(request, 'mi_app/gestorCRUD/crear_gestor.html')
+
+def listar_gestor_view(request):
+    url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
+    response = requests.get(url)
+    gestores = []
+
+    if response.status_code == 200:
+        gestores = response.json().get('documents', [])
+        for gestor in gestores:
+            id_Geventos = gestor['name'].split('/')[-1]
+            gestor['id'] = id_Geventos
+
+    return render(request, 'mi_app/gestorCRUD/listar_gestor.html', {'gestores': gestores})
+
+def eliminar_gestor_view(request, id_Geventos):
+    url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos/{id_Geventos}"
+    if request.method == "POST":
+        response = requests.delete(url)
+        if response.status_code == 204:
+            messages.success(request, "Gestor eliminado correctamente.")
+        else:
+            messages.error(request, "Error al eliminar el Gestor.")
+    return redirect('gestores')
+
+def modificar_gestor_view(request, gestor_id):
+    # URL del gestor en Firestore
+    url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos/{gestor_id}"
+    headers = {"Content-Type": "application/json"}
+
+    # Obtener los datos actuales del gestor
+    response = requests.get(url, headers=headers)
+
+    # Si no se encuentra el gestor, redirigir con un mensaje de error
+    if response.status_code != 200:
+        messages.error(request, "No se pudo encontrar el Gestor.")
+        return redirect('gestores')
+
+    # Obtener los datos actuales del gestor
+    gestor_data = response.json()['fields']
+    nombre_completo = gestor_data['Nombre_completo']['stringValue']
+    rut = gestor_data['rut']['stringValue']
+    email = gestor_data['email']['stringValue']
+    password = gestor_data['password']['stringValue']
+
+    if request.method == 'POST':
+        # Obtener los nuevos datos del formulario
+        nuevo_nombre_completo = request.POST.get('nombre_completo')
+        nuevo_rut = request.POST.get('rut')
+        nuevo_email = request.POST.get('email')
+        nuevo_password = request.POST.get('password')
+
+        # Validación básica de los campos
+        if not nuevo_nombre_completo or not nuevo_rut or not nuevo_email or not nuevo_password:
+            messages.error(request, "Todos los campos son obligatorios.")
+            return render(request, 'mi_app/gestorCRUD/modificar_gestor.html', {
+                'gestor_id': gestor_id,
+                'nombre_completo': nombre_completo,
+                'rut': rut,
+                'email': email,
+                'password': password
+            })
+
+        # Payload para actualizar el gestor
+        payload = {
+            "fields": {
+                "Nombre_completo": {"stringValue": nuevo_nombre_completo},
+                "rut": {"stringValue": nuevo_rut},
+                "email": {"stringValue": nuevo_email},
+                "password": {"stringValue": nuevo_password},
+            }
+        }
+
+        # Enviar solicitud PATCH para actualizar los datos
+        response = requests.patch(url, headers=headers, json=payload)
+
+        # Verificar si la actualización fue exitosa
+        if response.status_code == 200:
+            messages.success(request, "Gestor de eventos modificado correctamente.")
+            return redirect('gestores')  # Redirigir al listado de gestores
+        else:
+            messages.error(request, "Error al modificar el Gestor.")
+
+    # Si la solicitud no es POST, simplemente renderizamos el formulario con los datos actuales
+    return render(request, 'mi_app/gestorCRUD/modificar_gestor.html', {
+        'gestor_id': gestor_id,
+        'nombre_completo': nombre_completo,
+        'rut': rut,
+        'email': email,
+        'password': password
+    })
+
+def boceto(request):
+    return render(request,'mi_app/boceto.html')
+
+import requests
+from django.shortcuts import render
+
+def dashboard(request):
+    # Obtener eventos desde Firestore
+    url_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+    response_eventos = requests.get(url_eventos)
+    eventos = []
+
+    if response_eventos.status_code == 200:
+        eventos = response_eventos.json().get('documents', [])
+        for evento in eventos:
+            evento_id = evento['name'].split('/')[-1]
+            evento['id'] = evento_id
+
+    # Obtener gestores desde Firestore
+    url_gestores = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
+    response_gestores = requests.get(url_gestores)
+    gestores = []
+
+    if response_gestores.status_code == 200:
+        gestores = response_gestores.json().get('documents', [])
+        for gestor in gestores:
+            gestor_id = gestor['name'].split('/')[-1]
+            gestor['id'] = gestor_id
+            gestor['email'] = gestor['fields']['email']['stringValue']  # Tomamos el correo del gestor
+
+    # Procesar el formulario de asignación de gestores
+    if request.method == 'POST':
+        evento_id = request.POST.get('evento_id')  # Obtener el ID del evento
+        gestor_id = request.POST.get('gestor_id')  # Obtener el ID del gestor seleccionado
+
+        # Buscar el gestor seleccionado por ID
+        gestor_seleccionado = next((g for g in gestores if g['id'] == gestor_id), None)
+
+        if gestor_seleccionado:
+            # Buscar el evento correspondiente al evento_id
+            evento_seleccionado = next((e for e in eventos if e['id'] == evento_id), None)
+
+            if evento_seleccionado:
+                try:
+                    # Extraer los datos relevantes para el correo
+                    titulo_evento = evento_seleccionado['fields']['titulo']['stringValue']
+                    fecha_evento = evento_seleccionado['fields']['fecha']['timestampValue']  # Asegúrate de que este valor sea accesible
+                    nombre_gestor = gestor_seleccionado['fields']['Nombre_completo']['stringValue']
+
+                    # Enviar el correo
+                    subject = f'Nuevo Evento Asignado: {titulo_evento}'
+                    message = f'Hola {nombre_gestor},\n\nSe te ha asignado el evento "{titulo_evento}" para su gestión. El evento será realizado el {fecha_evento}.'
+                    
+                    send_mail(
+                        subject=subject,
+                        message=message,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[gestor_seleccionado['email']]
+                    )
+
+                except Exception as e:
+                    print(f"Error al enviar el correo: {str(e)}")
+                    return render(request, 'mi_app/dashboard/dashboard.html', {'eventos': eventos, 'gestores': gestores, 'error': 'Hubo un problema al enviar el correo.'})
+
+        # Redirigir al dashboard si todo fue exitoso
+        return redirect('dashboard')
+
+    # Pasar los eventos y los gestores a la plantilla
+    return render(request, 'mi_app/dashboard/dashboard.html', {'eventos': eventos, 'gestores': gestores})
