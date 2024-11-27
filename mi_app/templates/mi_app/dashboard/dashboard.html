@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio de Eventos a Estudiantes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <!-- Agregar un icono de aplicación en el navegador -->
+    <link rel="icon" href="{% static 'images/icono.png' %}" type="image/png">
+</head>
+
+<body class="bg-light">
+    {% include 'mi_app/navbar.html' %}
+
+    <section class="py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4 text-center">Recordatorio de Eventos a Estudiantes</h1>
+            <p class="lead text-center mb-4">Consulta los eventos, los estudiantes inscritos y sus correos. ¡Recuerda los eventos importantes para todos!</p>
+
+            <div class="table-responsive card">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Organizador</th>
+                            <th>Fecha Evento</th>
+                            <th>Estado</th>
+                            <th>Inscritos</th>
+                            <th>Cupos</th>
+                            <th>Lista de Espera</th>
+                            <th>Última Actualización</th>
+                            <th>Correos Inscritos</th>
+                            <th>Recordar</th>
+                            <th>Asignar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evento in eventos %}
+                            <tr>
+                                <!-- Mostrar sede/organizador -->
+                                <td>{{ evento.fields.sede.stringValue }}</td>
+
+                                <!-- Mostrar la fecha del evento -->
+                                <td>
+                                    {{ evento.fields.fecha.timestampValue|slice:"8:10" }}/
+                                    {{ evento.fields.fecha.timestampValue|slice:"5:7" }}/
+                                    {{ evento.fields.fecha.timestampValue|slice:":4" }}
+                                    {{ evento.fields.fecha.timestampValue|slice:"11:16" }} hrs
+                                </td>
+
+                                <!-- Mostrar estado del evento con badge -->
+                                <td>
+                                    <span class="badge 
+                                        {% if evento.fields.estado.stringValue == 'en_curso' %} text-bg-info
+                                        {% elif evento.fields.estado.stringValue == 'Pendiente' %} text-bg-warning
+                                        {% elif evento.fields.estado.stringValue == 'Aprobado' %} text-bg-success
+                                        {% else %} text-bg-secondary
+                                        {% endif %}">
+                                        {{ evento.fields.estado.stringValue }}
+                                    </span>
+                                </td>
+
+                                <!-- Mostrar cantidad de inscritos -->
+                                <td>{{ evento.fields.inscritos.integerValue }}</td>
+
+                                <!-- Mostrar cantidad de cupos -->
+                                <td>{{ evento.fields.Cupos.integerValue }}</td>
+
+                                <!-- Mostrar cantidad de personas en lista de espera -->
+                                <td>
+                                    {% if evento.fields.listaEspera.arrayValue.values %}
+                                        {{ evento.fields.listaEspera.arrayValue.values|length }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </td>
+
+                                <!-- Mostrar última actualización del evento -->
+                                <td>
+                                    {{ evento.updateTime|slice:"8:10" }}/
+                                    {{ evento.updateTime|slice:"5:7" }}/
+                                    {{ evento.updateTime|slice:":4" }},
+                                    {{ evento.updateTime|slice:"11:16" }} hrs
+                                </td>
+
+                                <!-- Mostrar los correos de los inscritos -->
+                                <td>
+                                    {% if evento.correos %}
+                                        <ul>
+                                            {% for correo in evento.correos %}
+                                                <li>{{ correo }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>No hay correos inscritos.</p>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Acción: Enviar recordatorio -->
+                                <td>
+                                    <a href="mailto:{{ evento.correos|join:', ' }}" class="btn btn-outline-primary">
+                                        <i class="fa-regular fa-envelope"></i> Enviar Recordatorio
+                                    </a>
+                                </td>
+
+                                <!-- Asignar gestor -->
+                                <td>
+                                    <!-- Formulario para asignar un gestor -->
+                                    <form method="POST" action="{% url 'dashboard' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="evento_id" value="{{ evento.id }}">
+                                        <select name="gestor_{{ evento.id }}" class="form-select">
+                                            <option value="">Seleccionar Gestor</option>
+                                            {% for gestor in gestores %}
+                                                <option value="{{ gestor.id }}">{{ gestor.fields.Nombre_completo.stringValue }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-success mt-2">Asignar Gestor</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Iconos de FontAwesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Eventos - Duoc</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    header {
+      background-color: #2a9d8f;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #2a9d8f;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #21867a;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .actions button {
+      margin-left: 10px;
+      background-color: #e63946;
+      border: none;
+      padding: 5px 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .actions button:hover {
+      background-color: #c5303b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gestión de Eventos - Duoc</h1>
+  </header>
+  <div class="container">
+    <form id="eventForm">
+      <input type="text" id="eventName" placeholder="Nombre del evento" required>
+      <button type="submit">Agregar Evento</button>
+    </form>
+    <ul id="eventList"></ul>
+  </div>
+  <script>
+    const eventForm = document.getElementById('eventForm');
+    const eventNameInput = document.getElementById('eventName');
+    const eventList = document.getElementById('eventList');
+
+    // Manejar el envío del formulario
+    eventForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const eventName = eventNameInput.value.trim();
+      if (eventName) {
+        addEvent(eventName);
+        eventNameInput.value = '';
+      }
+    });
+
+    // Agregar un evento a la lista
+    function addEvent(name) {
+      const li = document.createElement('li');
+
+      // Nombre del evento
+      const eventText = document.createElement('span');
+      eventText.textContent = name;
+
+      // Contenedor de botones de acción
+      const actions = document.createElement('div');
+      actions.classList.add('actions');
+
+      // Botón para completar el evento
+      const completeButton = document.createElement('button');
+      completeButton.textContent = 'Completar';
+      completeButton.addEventListener('click', () => {
+        eventText.classList.toggle('completed');
+      });
+
+      // Botón para eliminar el evento
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Eliminar';
+      deleteButton.addEventListener('click', () => {
+        eventList.removeChild(li);
+      });
+
+      // Agregar botones al contenedor de acciones
+      actions.appendChild(completeButton);
+      actions.appendChild(deleteButton);
+
+      // Agregar texto y acciones al elemento de lista
+      li.appendChild(eventText);
+      li.appendChild(actions);
+
+      // Agregar el elemento de lista a la lista de eventos
+      eventList.appendChild(li);
+    }
+  </script>
+</body>
+</html>

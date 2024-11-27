@@ -23,6 +23,16 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="estudiantesDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestores de Eventos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="estudiantesDropdown">
+                            <li><a class="dropdown-item" href="{% url 'crear_gestor' %}">Crear Gestor</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gestores' %}">Listar Gestor</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="eventosDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Eventos
