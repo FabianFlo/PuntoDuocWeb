@@ -11,7 +11,42 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from django.http import HttpResponse
 from django.core.mail import send_mail
 import json
+from pyfcm import FCMNotification
+from django.conf import settings
 
+# URL base de Firestore
+FIRESTORE_BASE_URL = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents"
+
+# mi_app/views.py
+def enviar_notificaciones(request):
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo')
+        cuerpo = request.POST.get('cuerpo')
+
+        # Datos de la notificación
+        notificacion = {
+            "fields": {
+                "titulo": {"stringValue": titulo},
+                "cuerpo": {"stringValue": cuerpo},
+                "leido": {"booleanValue": False},
+                "timestamp": {"timestampValue": format_fecha(None)}
+            }
+        }
+
+        # URL de Firestore para la colección "NotificacionesDirectas"
+        url = f"{FIRESTORE_BASE_URL}/NotificacionesDirectas"
+
+        # Enviar la notificación a Firestore
+        response = requests.post(url, headers={"Content-Type": "application/json"}, data=json.dumps(notificacion))
+
+        if response.status_code == 200:
+            messages.success(request, 'Notificación enviada con éxito')
+        else:
+            messages.error(request, 'Error al enviar la notificación')
+
+        return redirect('enviar_notificaciones')
+
+    return render(request, 'mi_app/enviar_notificaciones/enviar_notificaciones.html')
 
 # mi_app/views.py
 def metricas_page_view(request, event_id):
@@ -25,13 +60,13 @@ def metricas_page_view(request, event_id):
     if response.status_code == 200:
         evento = response.json()
         titulo = evento['fields']['titulo']['stringValue']
-        cupos = evento['fields']['Cupos']['integerValue']
+        Cupos = evento['fields']['Cupos']['integerValue']
         inscritos = evento['fields']['inscritos']['integerValue']
         
         # Crear gráfico
         fig, ax = plt.subplots(figsize=(10, 6))
         labels = ['Cupos', 'Inscritos']
-        values = [cupos, inscritos]
+        values = [Cupos, inscritos]
         ax.bar(labels, values, color=['blue', 'green'])
         ax.set_title(f'Evento: {titulo}')
         ax.set_ylabel('Cantidad')
@@ -108,7 +143,7 @@ def subir_evento_view(request):
             'sede': request.POST.get('sede'),
             'tipo': request.POST.get('tipo'),
             'titulo': request.POST.get('titulo'),
-            'cupos': request.POST.get('cupos'),
+            'Cupos': request.POST.get('Cupos'),
         }
 
         url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
@@ -125,7 +160,7 @@ def subir_evento_view(request):
             "sede": {"stringValue": datos['sede']},
             "tipo": {"stringValue": datos['tipo']},
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": datos['cupos']},
+            "Cupos": {"integerValue": datos['Cupos']},
             "inscritos": {"integerValue": "0"},
             "listaEspera": {"arrayValue": {"values": []}}
         }})
@@ -187,7 +222,7 @@ def modificar_evento_view(request, evento_id):
             'sede': request.POST.get('sede'),
             'tipo': request.POST.get('tipo'),
             'titulo': request.POST.get('titulo'),
-            'cupos': request.POST.get('cupos'),
+            'Cupos': request.POST.get('Cupos'),
         }
 
         headers = {"Content-Type": "application/json"}
@@ -200,7 +235,7 @@ def modificar_evento_view(request, evento_id):
             "sede": {"stringValue": datos['sede']},
             "tipo": {"stringValue": datos['tipo']},
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": datos['cupos']},
+            "Cupos": {"integerValue": datos['Cupos']},
             "inscritos": {"integerValue": "0"},
             "listaEspera": {"arrayValue": {"values": []}}
         }})
@@ -402,7 +437,7 @@ def dashboard_2(request):
             (
                 evento['fields']['titulo']['stringValue'],
                 len(evento['fields'].get('listaEspera', {}).get('arrayValue', {}).get('values', [])),
-                evento['fields'].get('cupos', {}).get('integerValue', 0)
+                int(evento['fields'].get('Cupos', {}).get('integerValue', 0)) - int(evento['fields'].get('inscritos', {}).get('integerValue', 0))
             )
             for evento in eventos
         ],
@@ -441,6 +476,7 @@ def dashboard_2(request):
     }
 
     return render(request, 'mi_app/dashboard/dashboard_2.html', context)
+
 
 def obtener_correos_por_carrera(carrera):
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
@@ -755,3 +791,7 @@ def eliminar_mision(request, mision_id):
         return redirect('listar_misiones', {'mision': mision_data})
     else:
         return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+    
+
+
+

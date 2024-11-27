@@ -33,4 +33,7 @@ urlpatterns = [
     path('misiones/<str:mision_id>/eliminar/', eliminar_mision, name='eliminar_mision'),
 
 
+    path('enviar_notificaciones/', enviar_notificaciones, name='enviar_notificaciones'),
+
+
 ]
