@@ -62,52 +62,66 @@
                                     <label for="fecha" class="text-muted">Fecha</label>
                                 </div>
                             </div>
-
-
-                            <!---Sede-->
+                           <!-- Categoría -->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <select id="categoria" name="categoria" class="form-select" required>
+                                        <option value="" disabled>--Selecciona una categoría--</option>
+                                        <option value="Administración y Negocios" {% if evento.categoria.stringValue == "Administración y Negocios" %}selected{% endif %}>Administración y Negocios</option>
+                                        <option value="Comunicación" {% if evento.categoria.stringValue == "Comunicación" %}selected{% endif %}>Comunicación</option>
+                                        <option value="Informática y Telecomunicaciones" {% if evento.categoria.stringValue == "Informática y Telecomunicaciones" %}selected{% endif %}>Informática y Telecomunicaciones</option>
+                                        <option value="Ingeniería y Recursos Naturales" {% if evento.categoria.stringValue == "Ingeniería y Recursos Naturales" %}selected{% endif %}>Ingeniería y Recursos Naturales</option>
+                                        <option value="Turismo y Hospitalidad" {% if evento.categoria.stringValue == "Turismo y Hospitalidad" %}selected{% endif %}>Turismo y Hospitalidad</option>
+                                        <option value="Salud" {% if evento.categoria.stringValue == "Salud" %}selected{% endif %}>Salud</option>
+                                        <option value="Gastronomía" {% if evento.categoria.stringValue == "Gastronomía" %}selected{% endif %}>Gastronomía</option>
+                                        <option value="Diseño" {% if evento.categoria.stringValue == "Diseño" %}selected{% endif %}>Diseño</option>
+                                        <option value="Construcción" {% if evento.categoria.stringValue == "Construcción" %}selected{% endif %}>Construcción</option>
+                                        <option value="Deportes" {% if evento.categoria.stringValue == "Deportes" %}selected{% endif %}>Deportes</option>
+                                        <option value="Alumnos" {% if evento.categoria.stringValue == "Alumnos" %}selected{% endif %}>Alumnos</option>
+                                        <option value="Biblioteca" {% if evento.categoria.stringValue == "Biblioteca" %}selected{% endif %}>Biblioteca</option>
+                                        <option value="Centro de Estudios" {% if evento.categoria.stringValue == "Centro de Estudios" %}selected{% endif %}>Centro de Estudios</option>
+                                        <option value="Ciclo Talleres" {% if evento.categoria.stringValue == "Ciclo Talleres" %}selected{% endif %}>Ciclo Talleres</option>
+                                        <option value="Comunidad" {% if evento.categoria.stringValue == "Comunidad" %}selected{% endif %}>Comunidad</option>
+                                        <option value="Docentes" {% if evento.categoria.stringValue == "Docentes" %}selected{% endif %}>Docentes</option>
+                                        <option value="Duoc Laboral" {% if evento.categoria.stringValue == "Duoc Laboral" %}selected{% endif %}>Duoc Laboral</option>
+                                        <option value="Empresas" {% if evento.categoria.stringValue == "Empresas" %}selected{% endif %}>Empresas</option>
+                                        <option value="Pastoral" {% if evento.categoria.stringValue == "Pastoral" %}selected{% endif %}>Pastoral</option>
+                                        <option value="Teatro" {% if evento.categoria.stringValue == "Teatro" %}selected{% endif %}>Teatro</option>
+                                        <option value="Vida Estudiantil" {% if evento.categoria.stringValue == "Vida Estudiantil" %}selected{% endif %}>Vida Estudiantil</option>
+                                        <option value="Titulados" {% if evento.categoria.stringValue == "Titulados" %}selected{% endif %}>Titulados</option>
+                                        <option value="Vive Duoc" {% if evento.categoria.stringValue == "Vive Duoc" %}selected{% endif %}>Vive Duoc</option>
+                                    </select>
+                                    <label for="categoria" class="text-muted">Categoría</label>
+                                </div>
+                            </div>
+                            <!-- Fecha de término -->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="datetime-local" id="fecha_termino" name="fecha_termino" class="form-control" required placeholder="Fecha de término" value="{{ evento.fecha_termino.timestampValue|slice:':-1' }}">
+                                    <label for="fecha_termino" class="text-muted">Fecha de término</label>
+                                </div>
+                            </div>
+                            <!-- Sede -->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
                                     <select id="sede" name="sede" class="form-select" required>
-                                        <option value="" selected disabled>--Selecciona una sede--</option>
-                                        <hr />
-                                        <optgroup label="Modalidad online">
-                                            <option value="Campus Virtual">Campus Virtual</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región Metropolitana">
-                                            <option value="Alameda">Alameda</option>
-                                            <option value="Padre Alonso de Ovalle">Padre Alonso de Ovalle</option>
-                                            <option value="Antonio Varas">Antonio Varas</option>
-                                            <option value="Educación Continua">Educación Continua</option>
-                                            <option value="Maipú">Maipú</option>
-                                            <option value="Melipilla">Melipilla</option>
-                                            <option value="Plaza Norte">Plaza Norte</option>
-                                            <option value="Plaza Oeste">Plaza Oeste</option>
-                                            <option value="Plaza Vespucio">Plaza Vespucio</option>
-                                            <option value="Puente Alto">Puente Alto</option>
-                                            <option value="San Bernardo">San Bernardo</option>
-                                            <option value="San Carlos de Apoquindo">San Carlos de Apoquindo</option>
-                                            <option value="San Joaquín">San Joaquín</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de Valparaíso: Valparaíso y Viña del Mar">
-                                            <option value="Valparaíso">Valparaíso</option>
-                                            <option value="Viña del Mar">Viña del Mar</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región del Biobío: Concepción, Arauco y Nacimiento">
-                                            <option value="Arauco">Arauco</option>
-                                            <option value="Nacimiento">Nacimiento</option>
-                                            <option value="San Andrés de Concepción">San Andrés de Concepción</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de La Araucanía: Villarrica">
-                                            <option value="Villarrica">Villarrica</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de Los Lagos: Puerto Montt">
-                                            <option value="Puerto Montt">Puerto Montt</option>
-                                        </optgroup>
+                                        <option value="" disabled>--Selecciona una sede--</option>
+                                        <option value="Duoc Alameda" {% if evento.sede.stringValue == "Duoc Alameda" %}selected{% endif %}>Duoc Alameda</option>
+                                        <option value="Duoc Antonio Varas" {% if evento.sede.stringValue == "Duoc Antonio Varas" %}selected{% endif %}>Duoc Antonio Varas</option>
+                                        <option value="Duoc Maipú" {% if evento.sede.stringValue == "Duoc Maipú" %}selected{% endif %}>Duoc Maipú</option>
+                                        <option value="Duoc Plaza Oeste" {% if evento.sede.stringValue == "Duoc Plaza Oeste" %}selected{% endif %}>Duoc Plaza Oeste</option>
+                                        <option value="Duoc Puente Alto" {% if evento.sede.stringValue == "Duoc Puente Alto" %}selected{% endif %}>Duoc Puente Alto</option>
+                                        <option value="Duoc San Bernardo" {% if evento.sede.stringValue == "Duoc San Bernardo" %}selected{% endif %}>Duoc San Bernardo</option>
+                                        <option value="Duoc San Joaquín" {% if evento.sede.stringValue == "Duoc San Joaquín" %}selected{% endif %}>Duoc San Joaquín</option>
+                                        <option value="Duoc Plaza Vespucio" {% if evento.sede.stringValue == "Duoc Plaza Vespucio" %}selected{% endif %}>Duoc Plaza Vespucio</option>
+                                        <option value="Duoc Viña del Mar" {% if evento.sede.stringValue == "Duoc Viña del Mar" %}selected{% endif %}>Duoc Viña del Mar</option>
+                                        <option value="Duoc Valparaíso" {% if evento.sede.stringValue == "Duoc Valparaíso" %}selected{% endif %}>Duoc Valparaíso</option>
+                                        <option value="Duoc Melipilla" {% if evento.sede.stringValue == "Duoc Melipilla" %}selected{% endif %}>Duoc Melipilla</option>
+                                        <option value="Duoc Renca" {% if evento.sede.stringValue == "Duoc Renca" %}selected{% endif %}>Duoc Renca</option>
+                                        <option value="Duoc Padre Alonso de Ovalle" {% if evento.sede.stringValue == "Duoc Padre Alonso de Ovalle" %}selected{% endif %}>Duoc Padre Alonso de Ovalle</option>
+                                        <option value="Duoc Concepción" {% if evento.sede.stringValue == "Duoc Concepción" %}selected{% endif %}>Duoc Concepción</option>
+                                        <option value="Duoc San Andrés de Concepción" {% if evento.sede.stringValue == "Duoc San Andrés de Concepción" %}selected{% endif %}>Duoc San Andrés de Concepción</option>
+                                        <option value="Duoc Villarrica" {% if evento.sede.stringValue == "Duoc Villarrica" %}selected{% endif %}>Duoc Villarrica</option>
                                     </select>
                                     <label for="sede" class="text-muted">Sede</label>
                                 </div>
@@ -129,7 +143,79 @@
                             </div>
 
 
+                            <!-- Carrera -->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <select id="carrera" name="carrera" class="form-select" required>
+                                        <option value="" disabled>--Selecciona una carrera--</option>
+                                        
+                                        <!-- Escuela de Administración y Negocios -->
+                                        <optgroup label="Escuela de Administración y Negocios">
+                                            <option value="Auditoría" {% if evento.carrera.stringValue == "Auditoría" %}selected{% endif %}>Auditoría</option>
+                                            <option value="Ingeniería en Administración Mención Finanzas" {% if evento.carrera.stringValue == "Ingeniería en Administración Mención Finanzas" %}selected{% endif %}>Ingeniería en Administración Mención Finanzas</option>
+                                            <option value="Ingeniería en Administración Mención Gestión de Personas" {% if evento.carrera.stringValue == "Ingeniería en Administración Mención Gestión de Personas" %}selected{% endif %}>Ingeniería en Administración Mención Gestión de Personas</option>
+                                            <option value="Ingeniería en Administración Mención Innovación y Emprendimiento" {% if evento.carrera.stringValue == "Ingeniería en Administración Mención Innovación y Emprendimiento" %}selected{% endif %}>Ingeniería en Administración Mención Innovación y Emprendimiento</option>
+                                            <option value="Ingeniería en Marketing Digital" {% if evento.carrera.stringValue == "Ingeniería en Marketing Digital" %}selected{% endif %}>Ingeniería en Marketing Digital</option>
+                                            <option value="Ingeniería en Comercio Exterior" {% if evento.carrera.stringValue == "Ingeniería en Comercio Exterior" %}selected{% endif %}>Ingeniería en Comercio Exterior</option>
+                                            <option value="Ingeniería en Gestión Logística" {% if evento.carrera.stringValue == "Ingeniería en Gestión Logística" %}selected{% endif %}>Ingeniería en Gestión Logística</option>
+                                            <option value="Comercio Exterior" {% if evento.carrera.stringValue == "Comercio Exterior" %}selected{% endif %}>Comercio Exterior</option>
+                                            <option value="Contabilidad Tributaria" {% if evento.carrera.stringValue == "Contabilidad Tributaria" %}selected{% endif %}>Contabilidad Tributaria</option>
+                                            <option value="Contabilidad General Mención Legislación Tributaria" {% if evento.carrera.stringValue == "Contabilidad General Mención Legislación Tributaria" %}selected{% endif %}>Contabilidad General Mención Legislación Tributaria</option>
+                                            <option value="Administración de Empresas" {% if evento.carrera.stringValue == "Administración de Empresas" %}selected{% endif %}>Administración de Empresas</option>
+                                            <option value="Técnico en Administración" {% if evento.carrera.stringValue == "Técnico en Administración" %}selected{% endif %}>Técnico en Administración</option>
+                                            <option value="Técnico en Gestión Logística" {% if evento.carrera.stringValue == "Técnico en Gestión Logística" %}selected{% endif %}>Técnico en Gestión Logística</option>
+                                        </optgroup>
 
+                                        <!-- Escuela de Comunicación -->
+                                        <optgroup label="Escuela de Comunicación">
+                                            <option value="Actuación" {% if evento.carrera.stringValue == "Actuación" %}selected{% endif %}>Actuación</option>
+                                            <option value="Animación Digital" {% if evento.carrera.stringValue == "Animación Digital" %}selected{% endif %}>Animación Digital</option>
+                                            <option value="Comunicación Audiovisual" {% if evento.carrera.stringValue == "Comunicación Audiovisual" %}selected{% endif %}>Comunicación Audiovisual</option>
+                                            <option value="Ingeniería en Sonido" {% if evento.carrera.stringValue == "Ingeniería en Sonido" %}selected{% endif %}>Ingeniería en Sonido</option>
+                                            <option value="Publicidad" {% if evento.carrera.stringValue == "Publicidad" %}selected{% endif %}>Publicidad</option>
+                                            <option value="Relaciones Públicas Mención Marketing" {% if evento.carrera.stringValue == "Relaciones Públicas Mención Marketing" %}selected{% endif %}>Relaciones Públicas Mención Marketing</option>
+                                            <option value="Técnico Audiovisual" {% if evento.carrera.stringValue == "Técnico Audiovisual" %}selected{% endif %}>Técnico Audiovisual</option>
+                                            <option value="Tecnología en Sonido" {% if evento.carrera.stringValue == "Tecnología en Sonido" %}selected{% endif %}>Tecnología en Sonido</option>
+                                        </optgroup>
+
+                                        <!-- Escuela de Construcción -->
+                                        <optgroup label="Escuela de Construcción">
+                                            <option value="Ingeniería en Construcción" {% if evento.carrera.stringValue == "Ingeniería en Construcción" %}selected{% endif %}>Ingeniería en Construcción</option>
+                                            <option value="Ingeniería en Prevención de Riesgos" {% if evento.carrera.stringValue == "Ingeniería en Prevención de Riesgos" %}selected{% endif %}>Ingeniería en Prevención de Riesgos</option>
+                                            <option value="Dibujo y Modelamiento Arquitectónico y Estructural" {% if evento.carrera.stringValue == "Dibujo y Modelamiento Arquitectónico y Estructural" %}selected{% endif %}>Dibujo y Modelamiento Arquitectónico y Estructural</option>
+                                            <option value="Restauración de Bienes Patrimoniales" {% if evento.carrera.stringValue == "Restauración de Bienes Patrimoniales" %}selected{% endif %}>Restauración de Bienes Patrimoniales</option>
+                                            <option value="Técnico en Construcción" {% if evento.carrera.stringValue == "Técnico en Construcción" %}selected{% endif %}>Técnico en Construcción</option>
+                                            <option value="Técnico en Instalaciones y Proyectos Eléctricos" {% if evento.carrera.stringValue == "Técnico en Instalaciones y Proyectos Eléctricos" %}selected{% endif %}>Técnico en Instalaciones y Proyectos Eléctricos</option>
+                                            <option value="Técnico en Prevención de Riesgos" {% if evento.carrera.stringValue == "Técnico en Prevención de Riesgos" %}selected{% endif %}>Técnico en Prevención de Riesgos</option>
+                                            <option value="Técnico Topógrafo" {% if evento.carrera.stringValue == "Técnico Topógrafo" %}selected{% endif %}>Técnico Topógrafo</option>
+                                        </optgroup>
+
+                                        <!-- Escuela de Diseño -->
+                                        <optgroup label="Escuela de Diseño">
+                                            <option value="Diseño de Ambientes" {% if evento.carrera.stringValue == "Diseño de Ambientes" %}selected{% endif %}>Diseño de Ambientes</option>
+                                            <option value="Diseño de Vestuario" {% if evento.carrera.stringValue == "Diseño de Vestuario" %}selected{% endif %}>Diseño de Vestuario</option>
+                                            <option value="Diseño Industrial" {% if evento.carrera.stringValue == "Diseño Industrial" %}selected{% endif %}>Diseño Industrial</option>
+                                            <option value="Diseño Gráfico" {% if evento.carrera.stringValue == "Diseño Gráfico" %}selected{% endif %}>Diseño Gráfico</option>
+                                            <option value="Ilustración" {% if evento.carrera.stringValue == "Ilustración" %}selected{% endif %}>Ilustración</option>
+                                            <option value="Desarrollo y Diseño Web" {% if evento.carrera.stringValue == "Desarrollo y Diseño Web" %}selected{% endif %}>Desarrollo y Diseño Web</option>
+                                        </optgroup>
+
+                                        <!-- Escuela de Informática y Telecomunicaciones -->
+                                        <optgroup label="Escuela de Informática y Telecomunicaciones">
+                                            <option value="Ingeniería en Informática – Mención Desarrollo de Software" {% if evento.carrera.stringValue == "Ingeniería en Informática – Mención Desarrollo de Software" %}selected{% endif %}>Ingeniería en Informática – Mención Desarrollo de Software</option>
+                                            <option value="Ingeniería en Informática – Mención Automatización" {% if evento.carrera.stringValue == "Ingeniería en Informática – Mención Automatización" %}selected{% endif %}>Ingeniería en Informática – Mención Automatización</option>
+                                            <option value="Ingeniería en Informática – Mención Ciencia de Datos" {% if evento.carrera.stringValue == "Ingeniería en Informática – Mención Ciencia de Datos" %}selected{% endif %}>Ingeniería en Informática – Mención Ciencia de Datos</option>
+                                            <option value="Ingeniería en Infraestructura Tecnológica" {% if evento.carrera.stringValue == "Ingeniería en Infraestructura Tecnológica" %}selected{% endif %}>Ingeniería en Infraestructura Tecnológica</option>
+                                            <option value="Ingeniería en Conectividad y Redes" {% if evento.carrera.stringValue == "Ingeniería en Conectividad y Redes" %}selected{% endif %}>Ingeniería en Conectividad y Redes</option>
+                                            <option value="Analista Programador Computacional" {% if evento.carrera.stringValue == "Analista Programador Computacional" %}selected{% endif %}>Analista Programador Computacional</option>
+                                            <option value="Desarrollador de Aplicaciones" {% if evento.carrera.stringValue == "Desarrollador de Aplicaciones" %}selected{% endif %}>Desarrollador de Aplicaciones</option>
+                                            <option value="Administración de Redes y Telecomunicaciones" {% if evento.carrera.stringValue == "Administración de Redes y Telecomunicaciones" %}selected{% endif %}>Administración de Redes y Telecomunicaciones</option>
+                                            <option value="Técnico de Infraestructura Tecnológica" {% if evento.carrera.stringValue == "Técnico de Infraestructura Tecnológica" %}selected{% endif %}>Técnico de Infraestructura Tecnológica</option>
+                                        </optgroup>
+                                    </select>
+                                    <label for="carrera" class="text-muted">Carrera</label>
+                                </div>
+                            </div>
                             <!--Lugar Evento [Ubicación] (text)-->
                             <div class="col-12 mb-3">
                                 <div class="form-floating">
@@ -140,12 +226,15 @@
                             </div>
 
 
-                            <!--Tipo (text)-->
+                            <!-- Tipo de Usuario -->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
-                                    <input type="text" id="tipo" name="tipo" class="form-control" required
-                                        placeholder="Taller" value="{{ evento.tipo.stringValue }}">
-                                    <label for="tipo" class="text-muted">Tipo</label>
+                                    <select id="tipo_usuario" name="tipo_usuario" class="form-select" required>
+                                        <option value="" disabled>--Selecciona un tipo de usuario--</option>
+                                        <option value="Estudiante" {% if evento.tipo_usuario.stringValue == "Estudiante" %}selected{% endif %}>Estudiante</option>
+                                        <option value="Invitado" {% if evento.tipo_usuario.stringValue == "Invitado" %}selected{% endif %}>Invitado</option>
+                                    </select>
+                                    <label for="tipo_usuario" class="text-muted">Tipo de usuario</label>
                                 </div>
                             </div>
 
@@ -153,8 +242,7 @@
                             <!--Cupos-->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
-                                    <input type="number" id="cupos" name="cupos" class="form-control" required
-                                        placeholder="200" value="{{ evento.Cupos.integerValue }}">
+                                    <input type="number" id="Cupos" name="Cupos" class="form-control" required placeholder="Cupos" value="{{ evento.Cupos.integerValue }}">
                                     <label for="cupos" class="text-muted">Cupos</label>
                                 </div>
                             </div>
@@ -170,12 +258,6 @@
                             <div class="col-12 my-3">
                                 <a href="/listar_eventos" class="btn btn-outline-dark w-100">Listado de eventos</a>
                             </div>
-<!------->
-
-
-<!------->
-
-
 
 
                         </form>
@@ -211,149 +293,12 @@
 
 
 
-{% include 'mi_app/navbar.html' %}
+
 
 
     <section>
-        <div class="container-lg mt-4 mb-5">
-            <div class="row shadow mx-auto">
-                <div class="col p-0 border-end">
-                    <div class="p-5 text-center rounded-start-3 background-image h-100" style="background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://extensionduoc.s3.us-west-2.amazonaws.com/wp-content/uploads/2023/05/09171717/alameda_IMG_4709_1920-1040x600-1.jpg') !important; background-position: left !important;">
-                        <div class="bg-black bg-opacity-25 rounded h-100 d-flex align-items-center justify-content-center">
-                            <div class="px-3">
-                                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="Logo Duoc"
-                                width="30%">
-                                <div>
-                                    <h1 class="text-black p-2 display-1">PuntoDuoc</h1>
-                                    <p class="text-center text-muted fs-2">Modificar evento</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {% if alert_message %}
-                    <script>
-                        alert("{{ alert_message }}");
-                    </script>
-                {% endif %}
-                
-                <div class="col p-0">
-                    <div class="p-4 rounded-end-3 bg-white">
-
-                        <form class="row m-1 g-2 bg-white bg-opacity-25 px-4 py-3" method="POST">
-                            {% csrf_token %}
-                            <!-- Aquí van tus campos de formulario -->
-
-                            <!---Título Evento-->
-                            <div class="col-12">
-                                <label for="titulo" class="form-label">Título de Evento:</label>
-                                <div>
-                                    <input type="text" id="titulo" name="titulo" class="form-control form-control-lg" required
-                                        placeholder="Charla: La importancia de la música en el ser humano" value="{{ evento.titulo.stringValue }}">
-                                </div>
-                            </div>
-
-                            <!---Descripción [Detalles Evento] (TextArea)-->
-                            <div class="col-12">
-                                <label for="descripcion" class="form-label">Detalles de evento:</label>
-                                <textarea id="descripcion" name="descripcion" rows="2" cols="33" class="form-control" maxlength="300" required
-                                    placeholder="Información sobre el evento...">{{ evento.descripcion.stringValue }}</textarea>
-                            </div>
-
-                            <!--Imagen Evento (Upload)-->
-                            <div class="col-6">
-                                <label for="imagen" class="form-label">Imagen para el evento:</label>
-                                <input type="text" id="imagen" name="imagen" class="form-control" required
-                                    placeholder="URL de imagen." value="{{ evento.imagen.stringValue }}">
-                            </div>
-
-                            <!---Fecha-->
-                            <div class="col-6">
-                                <label for="fecha" class="form-label">Fecha:</label>
-                                <input type="datetime-local" id="fecha" name="fecha" class="form-control" required>
-                            </div>
-
-                            <!--Sede (text)-->
-                            <div class="col">
-                                <label for="sede-select" class="form-label">Sede:</label>
-                                <select name="sede" id="sede-select" class="form-select" required>
-                                    <option value="" selected disabled>--Escoge una sede--</option>
-                                    <option value="Duoc UC Antonio Varas">Duoc UC Antonio Varas</option>
-                                    <option value="Duoc UC Puente Alto">Duoc UC Puente Alto</option>
-                                    <option value="Duoc San Bernardo">Duoc UC San Bernardo</option>
-                                </select>
-                            </div>
-                        
-                            <!--Estado Evento (Select)-->
-                            <div class="col">
-                                <label for="estado-select" class="form-label">Estado de Evento:</label>
-                                <select name="estado" id="estado-select" class="form-select" required>
-                                    <option value="" selected disabled>--Escoge un estado--</option>
-                                    <option value="Pendiente">Pendiente</option>
-                                    <option value="Aprobado">Aprobado</option>
-                                    <option value="Cancelado">Cancelado</option>
-                                    <option value="Finalizado">Finalizado</option>
-                                </select>
-                            </div>
-
-                            <!--Lugar Evento [Ubicación] (text)-->
-                            <div class="col-12">
-                                <label for="lugar" class="form-label">Ubicación:</label>
-                                <input type="text" id="lugar" name="lugar" class="col-12 form-control" required
-                                    placeholder="Avenida Concha y Toro 1340, Puente Alto" value="{{ evento.lugar.stringValue }}">
-                            </div>
-
-
-                            <!--Tipo (text)-->
-                            <div class="col">
-                                <label for="tipo" class="form-label">Tipo:</label>
-                                <input type="text" id="tipo" name="tipo" class="col-12 form-control" required
-                                    placeholder="Taller" value="{{ evento.tipo.stringValue }}">
-                            </div>                    
-
-                            <!--Cupos-->
-                            <div class="col">
-                                <label for="cupos" class="form-label">Cupos :</label>
-                                <div>
-                                    <input type="number" id="cupos" name="cupos" class="form-control" required
-                                        placeholder="999">
-                                </div>
-                            </div>
-
-                            <hr class="mt-3">
-
-                            <!--Button Modificar evento-->
-                            <div class="col-12 col-md-6 mt-3">
-                                <input type="submit" value="Modificar evento" class="btn btn-dark col-12">
-                            </div>
-                
-                            <!--Button Listar eventos-->
-                            <div class="col-12 col-md-6 my-3">
-                                <a href="/listar_eventos" class="btn btn-outline-dark col-12">Listado de eventos</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
     </section>
-
-    <!--
-    <input type="text" name="titulo" placeholder="Título" value="{{ evento.titulo.stringValue }}" required>
-    <input type="text" name="descripcion" placeholder="Descripción" value="{{ evento.descripcion.stringValue }}" required>
-    <input type="text" name="imagen" placeholder="Imagen" value="{{ evento.imagen.stringValue }}" required>
-    <input type="datetime-local" name="fecha" placeholder="Fecha" value="{{ evento.fecha.timestampValue }}" required>
-    <input type="text" name="sede" placeholder="Sede" value="{{ evento.sede.stringValue }}" required>
-    <input type="text" name="estado" placeholder="Estado" value="{{ evento.estado.stringValue }}" required>
-    <input type="text" name="lugar" placeholder="Lugar" value="{{ evento.lugar.stringValue }}" required>
-    <input type="text" name="tipo" placeholder="Tipo" value="{{ evento.tipo.stringValue }}" required>
-    <button type="submit">Modificar Evento</button>
-    -->
-
-
-    <!-- Scripts -->
-    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>-->
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

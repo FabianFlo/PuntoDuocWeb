@@ -59,7 +59,29 @@
                                     <label for="objetivo" class="text-muted">Objetivo</label>
                                 </div>
                             </div>
+                            <!-- Categoría -->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <select id="categoria" name="categoria" class="form-select" required>
+                                        <option value="Inscripción">Inscripción</option>
+                                        <option value="Comentario">Comentario</option>
+                                        <option value="Verificación">Verificación</option>
+                                        <option value="Favoritos">Favoritos</option>
+                                        <option value="Lista de Espera">Lista de Espera</option>
+                                        <option value="Consultas">Consulta</option>
+                                        <option value="Sugerencias">Sugerencia</option>
+                                    </select>
+                                    <label for="categoria" class="text-muted">Categoría</label>
+                                </div>
+                            </div>
 
+                            <!-- Meta -->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="number" id="meta" name="meta" class="form-control" required placeholder="Meta" value="{{ mision.meta }}">
+                                    <label for="meta" class="text-muted">Meta</label>
+                                </div>
+                            </div>
                             <hr class="mt-3">
 
                             <!--Button Guardar Cambios-->

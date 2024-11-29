@@ -73,52 +73,169 @@
 
 
 
-                            <!---Sede-->
+                            <!-- Fecha de término -->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
-                                    <select id="sede" name="sede" class="form-select" required aria-label="Floating label select example">
-                                        <option value="" selected disabled>--Selecciona una sede--</option>
-                                        <hr />
-                                        <optgroup label="Modalidad online">
-                                            <option value="Campus Virtual">Campus Virtual</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región Metropolitana">
-                                            <option value="Alameda">Alameda</option>
-                                            <option value="Padre Alonso de Ovalle">Padre Alonso de Ovalle</option>
-                                            <option value="Antonio Varas">Antonio Varas</option>
-                                            <option value="Educación Continua">Educación Continua</option>
-                                            <option value="Maipú">Maipú</option>
-                                            <option value="Melipilla">Melipilla</option>
-                                            <option value="Plaza Norte">Plaza Norte</option>
-                                            <option value="Plaza Oeste">Plaza Oeste</option>
-                                            <option value="Plaza Vespucio">Plaza Vespucio</option>
-                                            <option value="Puente Alto">Puente Alto</option>
-                                            <option value="San Bernardo">San Bernardo</option>
-                                            <option value="San Carlos de Apoquindo">San Carlos de Apoquindo</option>
-                                            <option value="San Joaquín">San Joaquín</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de Valparaíso: Valparaíso y Viña del Mar">
-                                            <option value="Valparaíso">Valparaíso</option>
-                                            <option value="Viña del Mar">Viña del Mar</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región del Biobío: Concepción, Arauco y Nacimiento">
-                                            <option value="Arauco">Arauco</option>
-                                            <option value="Nacimiento">Nacimiento</option>
-                                            <option value="San Andrés de Concepción">San Andrés de Concepción</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de La Araucanía: Villarrica">
-                                            <option value="Villarrica">Villarrica</option>
-                                        </optgroup>
-                                        <hr />
-                                        <optgroup label="Región de Los Lagos: Puerto Montt">
-                                            <option value="Puerto Montt">Puerto Montt</option>
-                                        </optgroup>
+                                    <input type="datetime-local" id="fecha_termino" name="fecha_termino" class="form-control" required>
+                                    <label for="fecha_termino" class="text-muted">Fecha de término</label>
+                                </div>
+                            </div>
+
+                            <!-- Categoría -->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <select id="categoria" name="categoria" class="form-select" required>
+                                        <option value="" disabled selected>--Selecciona una categoría--</option>
+                                        <option value="Administración y Negocios">Administración y Negocios</option>
+                                        <option value="Comunicación">Comunicación</option>
+                                        <option value="Informática y Telecomunicaciones">Informática y Telecomunicaciones</option>
+                                        <option value="Ingeniería y Recursos Naturales">Ingeniería y Recursos Naturales</option>
+                                        <option value="Turismo y Hospitalidad">Turismo y Hospitalidad</option>
+                                        <option value="Salud">Salud</option>
+                                        <option value="Gastronomía">Gastronomía</option>
+                                        <option value="Diseño">Diseño</option>
+                                        <option value="Construcción">Construcción</option>
+                                        <option value="Deportes">Deportes</option>
+                                        <option value="Alumnos">Alumnos</option>
+                                        <option value="Biblioteca">Biblioteca</option>
+                                        <option value="Centro de Estudios">Centro de Estudios</option>
+                                        <option value="Ciclo Talleres">Ciclo Talleres</option>
+                                        <option value="Comunidad">Comunidad</option>
+                                        <option value="Docentes">Docentes</option>
+                                        <option value="Duoc Laboral">Duoc Laboral</option>
+                                        <option value="Empresas">Empresas</option>
+                                        <option value="Pastoral">Pastoral</option>
+                                        <option value="Teatro">Teatro</option>
+                                        <option value="Vida Estudiantil">Vida Estudiantil</option>
+                                        <option value="Titulados">Titulados</option>
+                                        <option value="Vive Duoc">Vive Duoc</option>
+                                    </select>
+                                    <label for="categoria" class="text-muted">Categoría</label>
+                                </div>
+                            </div>
+
+                            <!-- Sede -->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <select id="sede" name="sede" class="form-select" required>
+                                        <option value="" disabled selected>--Selecciona una sede--</option>
+                                        <option value="Duoc Alameda">Duoc Alameda</option>
+                                        <option value="Duoc Antonio Varas">Duoc Antonio Varas</option>
+                                        <option value="Duoc Maipú">Duoc Maipú</option>
+                                        <option value="Duoc Plaza Oeste">Duoc Plaza Oeste</option>
+                                        <option value="Duoc Puente Alto">Duoc Puente Alto</option>
+                                        <option value="Duoc San Bernardo">Duoc San Bernardo</option>
+                                        <option value="Duoc San Joaquín">Duoc San Joaquín</option>
+                                        <option value="Duoc Plaza Vespucio">Duoc Plaza Vespucio</option>
+                                        <option value="Duoc Viña del Mar">Duoc Viña del Mar</option>
+                                        <option value="Duoc Valparaíso">Duoc Valparaíso</option>
+                                        <option value="Duoc Melipilla">Duoc Melipilla</option>
+                                        <option value="Duoc Renca">Duoc Renca</option>
+                                        <option value="Duoc Padre Alonso de Ovalle">Duoc Padre Alonso de Ovalle</option>
+                                        <option value="Duoc Concepción">Duoc Concepción</option>
+                                        <option value="Duoc San Andrés de Concepción">Duoc San Andrés de Concepción</option>
+                                        <option value="Duoc Villarrica">Duoc Villarrica</option>
                                     </select>
                                     <label for="sede" class="text-muted">Sede</label>
+                                </div>
+                            </div>
+
+                            <!-- Carrera -->
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <select id="carrera" name="carrera" class="form-select" required>
+                                        <option value="" disabled selected>--Selecciona una carrera--</option>
+
+                                        <!-- Escuela de Administración y Negocios -->
+                                        <option value="Auditoría">Auditoría</option>
+                                        <option value="Ingeniería en Administración Mención Finanzas">Ingeniería en Administración Mención Finanzas</option>
+                                        <option value="Ingeniería en Administración Mención Gestión de Personas">Ingeniería en Administración Mención Gestión de Personas</option>
+                                        <option value="Ingeniería en Administración Mención Innovación y Emprendimiento">Ingeniería en Administración Mención Innovación y Emprendimiento</option>
+                                        <option value="Ingeniería en Marketing Digital">Ingeniería en Marketing Digital</option>
+                                        <option value="Ingeniería en Comercio Exterior">Ingeniería en Comercio Exterior</option>
+                                        <option value="Ingeniería en Gestión Logística">Ingeniería en Gestión Logística</option>
+                                        <option value="Comercio Exterior">Comercio Exterior</option>
+                                        <option value="Contabilidad Tributaria">Contabilidad Tributaria</option>
+                                        <option value="Contabilidad General Mención Legislación Tributaria">Contabilidad General Mención Legislación Tributaria</option>
+                                        <option value="Administración de Empresas">Administración de Empresas</option>
+                                        <option value="Técnico en Administración">Técnico en Administración</option>
+                                        <option value="Técnico en Gestión Logística">Técnico en Gestión Logística</option>
+
+                                        <!-- Escuela de Comunicación -->
+                                        <option value="Actuación">Actuación</option>
+                                        <option value="Animación Digital">Animación Digital</option>
+                                        <option value="Comunicación Audiovisual">Comunicación Audiovisual</option>
+                                        <option value="Ingeniería en Sonido">Ingeniería en Sonido</option>
+                                        <option value="Publicidad">Publicidad</option>
+                                        <option value="Relaciones Públicas Mención Marketing">Relaciones Públicas Mención Marketing</option>
+                                        <option value="Técnico Audiovisual">Técnico Audiovisual</option>
+                                        <option value="Tecnología en Sonido">Tecnología en Sonido</option>
+
+                                        <!-- Escuela de Construcción -->
+                                        <option value="Ingeniería en Construcción">Ingeniería en Construcción</option>
+                                        <option value="Ingeniería en Prevención de Riesgos">Ingeniería en Prevención de Riesgos</option>
+                                        <option value="Dibujo y Modelamiento Arquitectónico y Estructural">Dibujo y Modelamiento Arquitectónico y Estructural</option>
+                                        <option value="Restauración de Bienes Patrimoniales">Restauración de Bienes Patrimoniales</option>
+                                        <option value="Técnico en Construcción">Técnico en Construcción</option>
+                                        <option value="Técnico en Instalaciones y Proyectos Eléctricos">Técnico en Instalaciones y Proyectos Eléctricos</option>
+                                        <option value="Técnico en Prevención de Riesgos">Técnico en Prevención de Riesgos</option>
+                                        <option value="Técnico Topógrafo">Técnico Topógrafo</option>
+
+                                        <!-- Escuela de Diseño -->
+                                        <option value="Diseño de Ambientes">Diseño de Ambientes</option>
+                                        <option value="Diseño de Vestuario">Diseño de Vestuario</option>
+                                        <option value="Diseño Industrial">Diseño Industrial</option>
+                                        <option value="Diseño Gráfico">Diseño Gráfico</option>
+                                        <option value="Ilustración">Ilustración</option>
+                                        <option value="Desarrollo y Diseño Web">Desarrollo y Diseño Web</option>
+
+                                        <!-- Escuela de Gastronomía -->
+                                        <option value="Gastronomía Internacional">Gastronomía Internacional</option>
+                                        <option value="Gastronomía">Gastronomía</option>
+
+                                        <!-- Escuela de Informática y Telecomunicaciones -->
+                                        <option value="Ingeniería en Informática – Mención Desarrollo de Software">Ingeniería en Informática – Mención Desarrollo de Software</option>
+                                        <option value="Ingeniería en Informática – Mención Automatización">Ingeniería en Informática – Mención Automatización</option>
+                                        <option value="Ingeniería en Informática – Mención Ciencia de Datos">Ingeniería en Informática – Mención Ciencia de Datos</option>
+                                        <option value="Ingeniería en Infraestructura Tecnológica">Ingeniería en Infraestructura Tecnológica</option>
+                                        <option value="Ingeniería en Conectividad y Redes">Ingeniería en Conectividad y Redes</option>
+                                        <option value="Analista Programador Computacional">Analista Programador Computacional</option>
+                                        <option value="Desarrollador de Aplicaciones">Desarrollador de Aplicaciones</option>
+                                        <option value="Administración de Redes y Telecomunicaciones">Administración de Redes y Telecomunicaciones</option>
+                                        <option value="Técnico de Infraestructura Tecnológica">Técnico de Infraestructura Tecnológica</option>
+
+                                        <!-- Escuela de Ingeniería y Recursos Naturales -->
+                                        <option value="Ingeniería Agrícola">Ingeniería Agrícola</option>
+                                        <option value="Ingeniería en Medio Ambiente">Ingeniería en Medio Ambiente</option>
+                                        <option value="Ingeniería en Electricidad y Automatización Industrial">Ingeniería en Electricidad y Automatización Industrial</option>
+                                        <option value="Ingeniería en Mecánica Automotriz y Autotrónica">Ingeniería en Mecánica Automotriz y Autotrónica</option>
+                                        <option value="Ingeniería en Maquinaria y Vehículos Pesados">Ingeniería en Maquinaria y Vehículos Pesados</option>
+                                        <option value="Técnico Agrícola">Técnico Agrícola</option>
+                                        <option value="Técnico Veterinario y Pecuario">Técnico Veterinario y Pecuario</option>
+                                        <option value="Técnico en Geología y Control de Sondaje">Técnico en Geología y Control de Sondaje</option>
+                                        <option value="Técnico en Calidad de Alimentos">Técnico en Calidad de Alimentos</option>
+                                        <option value="Técnico en Energías Renovables">Técnico en Energías Renovables</option>
+                                        <option value="Técnico en Mantenimiento Electromecánico">Técnico en Mantenimiento Electromecánico</option>
+                                        <option value="Técnico en Maquinaria y Vehículos Pesados">Técnico en Maquinaria y Vehículos Pesados</option>
+
+                                        <!-- Escuela de Salud -->
+                                        <option value="Informática Biomédica">Informática Biomédica</option>
+                                        <option value="Preparador Físico">Preparador Físico</option>
+                                        <option value="Técnico de Radiodiagnóstico y Radioterapia">Técnico de Radiodiagnóstico y Radioterapia</option>
+                                        <option value="Técnico en Enfermería">Técnico en Enfermería</option>
+                                        <option value="Técnico en Odontología">Técnico en Odontología</option>
+                                        <option value="Técnico en Química y Farmacia">Técnico en Química y Farmacia</option>
+                                        <option value="Técnico de Laboratorio Clínico y Banco de Sangre">Técnico de Laboratorio Clínico y Banco de Sangre</option>
+
+                                        <!-- Escuela de Turismo y Hotelería -->
+                                        <option value="Ecoturismo">Ecoturismo</option>
+                                        <option value="Tourism & Hospitality">Tourism & Hospitality</option>
+                                        <option value="Turismo y Hotelería">Turismo y Hotelería</option>
+                                        <option value="Administración Hotelera">Administración Hotelera</option>
+                                        <option value="Turismo Técnico Mención en Empresas Turísticas">Turismo Técnico Mención en Empresas Turísticas</option>
+                                        <option value="Turismo de Aventura">Turismo de Aventura</option>
+                                    </select>
+                                    <label for="carrera" class="text-muted">Carrera</label>
                                 </div>
                             </div>
 
@@ -142,11 +259,15 @@
                             </div>
 
 
-                            <!--Tipo (text)-->
+                            <!-- Tipo de Usuario -->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
-                                    <input type="text" id="tipo" name="tipo" class="form-control" required placeholder="Taller">
-                                    <label for="tipo" class="text-muted">Tipo</label>
+                                    <select id="tipo_usuario" name="tipo_usuario" class="form-select" required>
+                                        <option value="" disabled selected>--Selecciona un tipo de usuario--</option>
+                                        <option value="Estudiante">Estudiante</option>
+                                        <option value="Invitado">Invitado</option>
+                                    </select>
+                                    <label for="tipo_usuario" class="text-muted">Tipo de usuario</label>
                                 </div>
                             </div>
 

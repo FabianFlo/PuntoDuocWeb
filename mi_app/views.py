@@ -112,13 +112,12 @@ def metricas_view(request):
 
     return render(request, 'mi_app/metricas/metricas.html', context)
 
-def format_fecha(fecha):
-    if fecha:
-        try:
-            return datetime.fromisoformat(fecha).strftime('%Y-%m-%dT%H:%M:%SZ')
-        except ValueError:
-            return datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-    return datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+from datetime import datetime
+
+def format_fecha(fecha_str):
+    if not fecha_str:
+        return datetime.utcnow().isoformat() + "Z"  # Fecha actual en formato UTC
+    return datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M').isoformat() + "Z"
 
 def login_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
@@ -134,45 +133,54 @@ def subir_evento_view(request):
     if request.method == 'POST':
         id_evento = str(uuid.uuid4())
         datos = {
-            'descripcion': request.POST.get('descripcion'),
-            'estado': request.POST.get('estado'),
+            'descripcion': request.POST.get('descripcion', "Sin descripción"),
+            'estado': request.POST.get('estado', "Pendiente"),
             'fecha': format_fecha(request.POST.get('fecha')),
+            'fecha_termino': format_fecha(request.POST.get('fecha_termino')),
             'fecha_creacion': format_fecha(None),
-            'imagen': request.POST.get('imagen'),
-            'lugar': request.POST.get('lugar'),
-            'sede': request.POST.get('sede'),
-            'tipo': request.POST.get('tipo'),
-            'titulo': request.POST.get('titulo'),
-            'Cupos': request.POST.get('Cupos'),
+            'imagen': request.POST.get('imagen', "https://via.placeholder.com/150"),
+            'lugar': request.POST.get('lugar', "Lugar no especificado"),
+            'sede': request.POST.get('sede', "Sin sede"),
+            'categoria': request.POST.get('categoria', "General"),
+            'carrera': request.POST.get('carrera', "Sin carrera"),
+            'tipo_usuario': request.POST.get('tipo_usuario', "General"),
+            'titulo': request.POST.get('titulo', "Evento sin título"),
+            'Cupos': request.POST.get('cupos', "0"),  # Valor por defecto en caso de que el campo esté vacío
+
         }
 
         url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
         headers = {"Content-Type": "application/json"}
-        
+
         response = requests.post(url, headers=headers, json={"fields": {
             "id_evento": {"stringValue": id_evento},
             "descripcion": {"stringValue": datos['descripcion']},
             "estado": {"stringValue": datos['estado']},
             "fecha": {"timestampValue": datos['fecha']},
+            "fecha_termino": {"timestampValue": datos['fecha_termino']},
             "fecha_creacion": {"timestampValue": datos['fecha_creacion']},
             "imagen": {"stringValue": datos['imagen']},
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
-            "tipo": {"stringValue": datos['tipo']},
+            "categoria": {"stringValue": datos['categoria']},
+            "carrera": {"stringValue": datos['carrera']},
+            "tipo_usuario": {"stringValue": datos['tipo_usuario']},
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": datos['Cupos']},
-            "inscritos": {"integerValue": "0"},
-            "listaEspera": {"arrayValue": {"values": []}}
+            "Cupos": {"integerValue": int(datos['Cupos'])},  # Convierte el valor a entero
+            "inscritos": {"integerValue": 0},
+            "listaEspera": {"arrayValue": {"values": []}},
         }})
 
         if response.status_code in [200, 201]:
             messages.success(request, "Evento subido correctamente")
         else:
-            messages.error(request, "Error al subir evento")
+            print("Error al subir evento:", response.status_code, response.text)
+            messages.error(request, f"Error al subir evento: {response.text}")
 
         return render(request, 'mi_app/eventosCRUD/subir_evento.html')
 
     return render(request, 'mi_app/eventosCRUD/subir_evento.html')
+
 
 @login_required
 def listar_eventos_view(request):
@@ -213,40 +221,51 @@ def modificar_evento_view(request, evento_id):
             return redirect('listar_eventos')
 
     elif request.method == 'POST':
+        # Procesar los datos enviados desde el formulario
         datos = {
-            'descripcion': request.POST.get('descripcion'),
-            'estado': request.POST.get('estado'),
+            'descripcion': request.POST.get('descripcion', "Sin descripción"),
+            'estado': request.POST.get('estado', "Pendiente"),
             'fecha': format_fecha(request.POST.get('fecha')),
-            'imagen': request.POST.get('imagen'),
-            'lugar': request.POST.get('lugar'),
-            'sede': request.POST.get('sede'),
-            'tipo': request.POST.get('tipo'),
-            'titulo': request.POST.get('titulo'),
-            'Cupos': request.POST.get('Cupos'),
+            'fecha_termino': format_fecha(request.POST.get('fecha_termino')),
+            'imagen': request.POST.get('imagen', "https://via.placeholder.com/150"),
+            'lugar': request.POST.get('lugar', "Lugar no especificado"),
+            'sede': request.POST.get('sede', "Sin sede"),
+            'tipo': request.POST.get('tipo', "General"),  # Manejo de valores vacíos
+            'titulo': request.POST.get('titulo', "Evento sin título"),
+            'Cupos': int(request.POST.get('Cupos', 0)),  # Convertir a entero
         }
+
+        # Depuración
+        print("Datos enviados desde el formulario:", datos)
 
         headers = {"Content-Type": "application/json"}
         response = requests.patch(url, headers=headers, json={"fields": {
             "descripcion": {"stringValue": datos['descripcion']},
             "estado": {"stringValue": datos['estado']},
             "fecha": {"timestampValue": datos['fecha']},
+            "fecha_termino": {"timestampValue": datos['fecha_termino']},
             "imagen": {"stringValue": datos['imagen']},
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
-            "tipo": {"stringValue": datos['tipo']},
+            "tipo": {"stringValue": datos['tipo']},  # Campo corregido
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": datos['Cupos']},
-            "inscritos": {"integerValue": "0"},
-            "listaEspera": {"arrayValue": {"values": []}}
+            "Cupos": {"integerValue": datos['Cupos']},  # Convertir a entero
+            "inscritos": {"integerValue": 0},  # Mantener valor inicial
+            "listaEspera": {"arrayValue": {"values": []}},
         }})
 
         if response.status_code in [200, 204]:
             messages.success(request, "Evento modificado correctamente")
-            return render(request, 'mi_app/eventosCRUD/evento_modificar.html', {'evento': datos})
+            return redirect('listar_eventos')
         else:
-            messages.error(request, "Error al modificar el evento")
+            print("Error al modificar el evento:", response.status_code, response.text)
+            messages.error(request, f"Error al modificar el evento: {response.text}")
 
     return redirect('listar_eventos')
+
+
+
+
 
 # Home
 def home_view(request):
@@ -665,7 +684,7 @@ def listar_misiones(request):
 
         # Lista para almacenar las misiones procesadas
         misiones_data = []
-        
+
         # Recorrer cada misión y extraer los datos necesarios
         for mision in misiones:
             mision_id = mision['name'].split('/')[-1]  # Obtener el ID de la misión (es el título)
@@ -675,7 +694,9 @@ def listar_misiones(request):
                 'titulo': mision_id,  # Usamos el título como ID de la misión
                 'descripcion': mision['fields'].get('descripcion', {}).get('stringValue', 'Sin descripción'),
                 'puntaje': mision['fields'].get('puntaje', {}).get('integerValue', 0),
-                'objetivo': mision['fields'].get('objetivo', {}).get('stringValue', 'Sin objetivo')
+                'objetivo': mision['fields'].get('objetivo', {}).get('stringValue', 'Sin objetivo'),
+                'categoria': mision['fields'].get('categoria', {}).get('stringValue', 'Sin categoría'),
+                'meta': mision['fields'].get('meta', {}).get('integerValue', 0)
             }
             misiones_data.append(mision_data)
 
@@ -686,39 +707,31 @@ def listar_misiones(request):
         # Si hay un error al obtener las misiones
         return render(request, 'error.html', {'mensaje': 'Error al obtener las misiones.'})
 
+
 def crear_mision(request):
     if request.method == 'POST':
-        # Obtener el título, que se usará como el ID del documento
         titulo = request.POST.get('titulo')
-
-        # Si no hay título, evitamos crear la misión
         if not titulo:
             return render(request, 'error.html', {'mensaje': 'El título es obligatorio.'})
 
-        # Construir los datos que se enviarán a Firestore
         data = {
             "fields": {
                 "titulo": {"stringValue": titulo},
                 "descripcion": {"stringValue": request.POST.get('descripcion')},
                 "puntaje": {"integerValue": int(request.POST.get('puntaje'))},
-                "objetivo": {"stringValue": request.POST.get('objetivo')}
+                "objetivo": {"stringValue": request.POST.get('objetivo')},
+                "categoria": {"stringValue": request.POST.get('categoria')},
+                "meta": {"integerValue": int(request.POST.get('meta'))}
             }
         }
-        
-        # Usamos el título como el ID en la URL de Firestore
-        url = f"{FIREBASE_URL}/{titulo}"  # Aquí añadimos el título a la URL para usarlo como ID
-        
-        # Hacer la solicitud POST a Firestore para crear el documento
-        response = requests.patch(url, json=data)  # Usamos PATCH para actualizar o crear con un ID específico
-        
-        # Verificar si la misión fue creada correctamente
+        url = f"{FIREBASE_URL}/{titulo}"
+        response = requests.patch(url, json=data)
         if response.status_code == 200:
-            return redirect('listar_misiones')  # Redirigir a la lista de misiones
+            return redirect('listar_misiones')
         else:
             return render(request, 'error.html', {'mensaje': 'Error al crear la misión.'})
 
-    return render(request, 'mi_app/mision/crear_mision.html')  # Renderizar el formulario para crear misión
-
+    return render(request, 'mi_app/mision/crear_mision.html')
 # Detalle de misión
 def detalle_mision(request, mision_id):
     response = requests.get(f"{FIREBASE_URL}/{mision_id}")
@@ -742,13 +755,14 @@ def actualizar_mision(request, mision_id):
                 "titulo": {"stringValue": request.POST.get('titulo')},
                 "descripcion": {"stringValue": request.POST.get('descripcion')},
                 "puntaje": {"integerValue": int(request.POST.get('puntaje'))},
-                "objetivo": {"stringValue": request.POST.get('objetivo')}
+                "objetivo": {"stringValue": request.POST.get('objetivo')},
+                "categoria": {"stringValue": request.POST.get('categoria')},
+                "meta": {"integerValue": int(request.POST.get('meta'))}
             }
         }
         response = requests.patch(f"{FIREBASE_URL}/{mision_id}", json=data)
         if response.status_code == 200:
             return redirect('listar_misiones')
-
         else:
             return render(request, 'error.html', {'mensaje': 'Error al actualizar la misión.'})
 
@@ -761,10 +775,13 @@ def actualizar_mision(request, mision_id):
             'descripcion': mision['descripcion']['stringValue'],
             'puntaje': mision['puntaje']['integerValue'],
             'objetivo': mision['objetivo']['stringValue'],
+            'categoria': mision['categoria']['stringValue'],
+            'meta': mision['meta']['integerValue']
         }
         return render(request, 'mi_app/mision/actualizar_mision.html', {'mision': mision_data})
     else:
         return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
+
 
 def detalle_mision(request, mision_id):
     response = requests.get(f"{FIREBASE_URL}/{mision_id}")
