@@ -3,34 +3,29 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 import requests
 from datetime import datetime
-import uuid  # Importamos uuid para generar un identificador único
+import uuid 
 import io
 import matplotlib.pyplot as plt
-import pandas as pd
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from django.http import HttpResponse
 from django.core.mail import send_mail
 import json
 from pyfcm import FCMNotification
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
-# URL base de Firestore
 FIRESTORE_BASE_URL = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents"
 
-# mi_app/views.py
 def enviar_notificaciones(request):
     if request.method == 'POST':
         titulo = request.POST.get('titulo')
         cuerpo = request.POST.get('cuerpo')
         destinatario = request.POST.get('destinatario')
 
-        # URL de Firestore para la colección "NotificacionesDirectas"
         url = f"{FIRESTORE_BASE_URL}/NotificacionesDirectas"
 
-        # Obtener el destinatario y el tipo de usuario
-        destinatario = request.POST.get('destinatario')  # 'todos', 'estudiantes', 'invitados'
+        destinatario = request.POST.get('destinatario')  
 
-        # Formatear los usuarios para la notificación
         usuarios = []
         if destinatario == 'todos':
             estudiantes_url = f"{FIRESTORE_BASE_URL}/Estudiantes"
@@ -56,7 +51,6 @@ def enviar_notificaciones(request):
                 invitados_data = invitados_response.json().get('documents', [])
                 usuarios.extend(invitados_data)
 
-        # Formatear los usuarios para la notificación
         usuario_ids = [{
             "mapValue": {
                 "fields": {
@@ -66,7 +60,6 @@ def enviar_notificaciones(request):
             }
         } for user in usuarios]
 
-        # Crear la notificación
         notificacion = {
             "fields": {
                 "titulo": {"stringValue": titulo},
@@ -74,11 +67,10 @@ def enviar_notificaciones(request):
                 "leido": {"booleanValue": False},
                 "timestamp": {"timestampValue": format_fecha(None)},
                 "usuarioIds": {"arrayValue": {"values": usuario_ids}},
-                "destinatario": {"stringValue": destinatario}  # Guardamos el destinatario aquí
+                "destinatario": {"stringValue": destinatario}
             }
         }
 
-        # Enviar la notificación a Firestore
         response = requests.post(url, headers={"Content-Type": "application/json"}, data=json.dumps(notificacion))
 
         if response.status_code == 200:
@@ -89,11 +81,9 @@ def enviar_notificaciones(request):
 
     return render(request, 'mi_app/enviar_notificaciones/enviar_notificaciones.html')
 
-# mi_app/views.py
 def metricas_page_view(request, event_id):
-    print(f"Event ID: {event_id}")  # Añadir esta línea para verificar el ID del evento en la consola
+    print(f"Event ID: {event_id}")  
     
-    # URL de Firestore para obtener detalles del evento específico
     url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos/{event_id}"
     
     response = requests.get(url)
@@ -121,31 +111,26 @@ def metricas_page_view(request, event_id):
     return HttpResponse(status=404)
 
 def metricas_view(request):
-    # URL de Firestore para la colección "Eventos"
     eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
     
-    # URL de Firestore para la colección "Estudiantes"
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
     
-    # Obtener eventos
     eventos_response = requests.get(eventos_url)
     eventos = []
     if eventos_response.status_code == 200:
         eventos = eventos_response.json().get('documents', [])
         for evento in eventos:
-            evento_id = evento['name'].split('/')[-1]  # Extraer solo el ID
-            evento['id'] = evento_id  # Añadir el ID al evento
+            evento_id = evento['name'].split('/')[-1]  
+            evento['id'] = evento_id 
     
-    # Obtener estudiantes
     estudiantes_response = requests.get(estudiantes_url)
     estudiantes = []
     if estudiantes_response.status_code == 200:
         estudiantes = estudiantes_response.json().get('documents', [])
         for estudiante in estudiantes:
-            estudiante_id = estudiante['name'].split('/')[-1]  # Extraer solo el ID del documento
-            estudiante['id'] = estudiante_id  # Añadir el ID a los datos del estudiante
+            estudiante_id = estudiante['name'].split('/')[-1] 
+            estudiante['id'] = estudiante_id  
     
-    # Pasar los datos de eventos y estudiantes al contexto
     context = {
         'eventos': eventos,
         'estudiantes': estudiantes,
@@ -157,7 +142,7 @@ from datetime import datetime
 
 def format_fecha(fecha_str):
     if not fecha_str:
-        return datetime.utcnow().isoformat() + "Z"  # Fecha actual en formato UTC
+        return datetime.utcnow().isoformat() + "Z"
     return datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M').isoformat() + "Z"
 
 def login_required(view_func):
@@ -168,7 +153,6 @@ def login_required(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
-# CRUD de Eventos
 @login_required
 def subir_evento_view(request):
     if request.method == 'POST':
@@ -186,7 +170,7 @@ def subir_evento_view(request):
             'carrera': request.POST.get('carrera', "Sin carrera"),
             'tipo_usuario': request.POST.get('tipo_usuario', "General"),
             'titulo': request.POST.get('titulo', "Evento sin título"),
-            'Cupos': request.POST.get('cupos', "0"),  # Valor por defecto en caso de que el campo esté vacío
+            'Cupos': request.POST.get('cupos', "0"),
             'gestor': "Sin gestor",
 
         }
@@ -208,7 +192,7 @@ def subir_evento_view(request):
             "carrera": {"stringValue": datos['carrera']},
             "tipo_usuario": {"stringValue": datos['tipo_usuario']},
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": int(datos['Cupos'])},  # Convierte el valor a entero
+            "Cupos": {"integerValue": int(datos['Cupos'])},
             "inscritos": {"integerValue": 0},
             "listaEspera": {"arrayValue": {"values": []}},
             "gestor": {"stringValue": datos['gestor']},
@@ -264,7 +248,6 @@ def modificar_evento_view(request, evento_id):
             return redirect('listar_eventos')
 
     elif request.method == 'POST':
-        # Procesar los datos enviados desde el formulario
         datos = {
             'descripcion': request.POST.get('descripcion', "Sin descripción"),
             'estado': request.POST.get('estado', "Pendiente"),
@@ -273,12 +256,11 @@ def modificar_evento_view(request, evento_id):
             'imagen': request.POST.get('imagen', "https://via.placeholder.com/150"),
             'lugar': request.POST.get('lugar', "Lugar no especificado"),
             'sede': request.POST.get('sede', "Sin sede"),
-            'tipo': request.POST.get('tipo', "General"),  # Manejo de valores vacíos
+            'tipo': request.POST.get('tipo', "General"),
             'titulo': request.POST.get('titulo', "Evento sin título"),
-            'Cupos': int(request.POST.get('Cupos', 0)),  # Convertir a entero
+            'Cupos': int(request.POST.get('Cupos', 0)),
         }
 
-        # Depuración
         print("Datos enviados desde el formulario:", datos)
 
         headers = {"Content-Type": "application/json"}
@@ -290,10 +272,10 @@ def modificar_evento_view(request, evento_id):
             "imagen": {"stringValue": datos['imagen']},
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
-            "tipo": {"stringValue": datos['tipo']},  # Campo corregido
+            "tipo": {"stringValue": datos['tipo']},
             "titulo": {"stringValue": datos['titulo']},
-            "Cupos": {"integerValue": datos['Cupos']},  # Convertir a entero
-            "inscritos": {"integerValue": 0},  # Mantener valor inicial
+            "Cupos": {"integerValue": datos['Cupos']},
+            "inscritos": {"integerValue": 0},
             "listaEspera": {"arrayValue": {"values": []}},
         }})
 
@@ -306,7 +288,6 @@ def modificar_evento_view(request, evento_id):
 
     return redirect('listar_eventos')
 
-# CRUD Estudiantes
 @login_required
 def crear_estudiante_view(request):
     if request.method == 'POST':
@@ -400,7 +381,7 @@ def modificar_estudiante_view(request, estudiante_id):
         return render(request, 'mi_app/estudiantesCRUD/modificar_estudiante.html', {'estudiante': estudiante})
 
     return redirect('listar_estudiantes')
-# login 
+
 def login_view(request):
     if request.method == 'POST':
         correo_electronico = request.POST.get('Correo_electronico')
@@ -419,7 +400,7 @@ def login_view(request):
                 if email == correo_electronico and password == contrasena:
                     request.session['usuario_autenticado'] = True
                     messages.success(request, 'Login exitoso!')
-                    return redirect('home')  # Redirige a la página de inicio
+                    return redirect('home')
 
         messages.error(request, 'Credenciales inválidas')
 
@@ -428,25 +409,15 @@ def login_view(request):
     })
     
 def logout_view(request):
-    request.session.flush()  # Elimina todos los datos de la sesión
+    request.session.flush()
     messages.success(request, 'Has cerrado sesión exitosamente.')
     return redirect('login_view')
 
-from django.shortcuts import render
-import requests
-import json
-from collections import Counter
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-
 def dashboard_2(request):
-    # URLs de las colecciones en Firebase
     eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
     respuestas_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Respuestas"
 
-    # Obtener datos de Firebase
     eventos_response = requests.get(eventos_url)
     estudiantes_response = requests.get(estudiantes_url)
     respuestas_response = requests.get(respuestas_url)
@@ -470,11 +441,8 @@ def dashboard_2(request):
     if respuestas_response.status_code == 200:
         respuestas = respuestas_response.json().get('documents', [])
 
-    # KPIs
-    # Cantidad de Encuestas Contestadas
     cantidad_encuestas_contestadas = len(set(respuesta['fields'].get('encuesta_id', {}).get('stringValue', '') for respuesta in respuestas))
 
-    # Diferentes id_estudiante en "Estudiantes" y "Inscripciones" dentro de "Eventos"
     id_estudiantes_totales = set(estudiante['id'] for estudiante in estudiantes)
     id_estudiantes_inscripciones = set(
         inscripcion['mapValue']['fields'].get('id_estudiante', {}).get('stringValue', '')
@@ -486,13 +454,11 @@ def dashboard_2(request):
     diferentes_estudiantes_totales = len(id_estudiantes_totales)
     diferentes_estudiantes_inscripciones = len(id_estudiantes_inscripciones)
 
-    # Datos para gráfico de torta
     data_estudiantes = {
         'Totales': diferentes_estudiantes_totales,
         'Inscripciones': diferentes_estudiantes_inscripciones,
     }
 
-    # Número de "id_estudiante" en "listaEspera" para cada evento
     lista_espera_eventos = sorted(
         [
             (
@@ -506,28 +472,23 @@ def dashboard_2(request):
         reverse=True
     )
 
-    # Número de inscritos por evento
     inscritos_por_evento = {
         evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0)
         for evento in eventos
     }
 
-    # Carreras con mayor participación
     carreras_con_mayor_participacion = Counter(
         estudiante['fields'].get('carrera', {}).get('stringValue', 'Desconocido')
         for estudiante in estudiantes
     ).most_common(5)
 
-    # Promedio de eventos por estudiante
     promedio_eventos_por_estudiante = len(eventos) / len(estudiantes) if estudiantes else 0
 
-    satisfaccion_participante = 0  # Asumimos que no tienes estos datos aún
+    satisfaccion_participante = 0
 
-    # Gráficos
     grafico_inscritos = list(inscritos_por_evento.values())
     grafico_eventos = list(inscritos_por_evento.keys())
 
-    # Preparar datos para gráfico de carreras
     labels_carreras = [carrera[0] for carrera in carreras_con_mayor_participacion]
     data_carreras = [carrera[1] for carrera in carreras_con_mayor_participacion]
 
@@ -611,18 +572,14 @@ def obtener_correos_por_evento(titulo_evento):
 
 def enviar_correos_view(request):
     if request.method == 'POST':
-        # Obtener el asunto y mensaje
         asunto = request.POST.get('asunto_evento') or request.POST.get('asunto_carrera')
         mensaje = request.POST.get('mensaje_evento') or request.POST.get('mensaje_carrera')
 
-        # Obtener el ID de la encuesta
-        encuesta_id = request.POST.get('encuesta_id')  # Asegúrate de que este ID se envíe en el formulario
-        enlace_encuesta = f"http://127.0.0.1:8000/encuestas/responder/{encuesta_id}"  # Modifica según tu dominio y ruta
+        encuesta_id = request.POST.get('encuesta_id')
+        enlace_encuesta = f"http://127.0.0.1:8000/encuestas/responder/{encuesta_id}"
 
-        # Añadir el enlace de la encuesta al mensaje
         mensaje += f"\n\nPuedes acceder a la encuesta aquí: {enlace_encuesta}"
 
-        # Enviar correos por evento
         if request.POST.get('tipo') == 'evento':
             titulo_evento = request.POST['titulo_evento']
             correos_destinatarios = obtener_correos_por_evento(titulo_evento)
@@ -638,7 +595,6 @@ def enviar_correos_view(request):
 
                 messages.success(request, "Correos enviados exitosamente por evento.")
 
-        # Enviar correos por carrera
         elif request.POST.get('tipo') == 'carrera':
             carrera = request.POST['carrera']
             correos_destinatarios = obtener_correos_por_carrera(carrera)
@@ -656,7 +612,6 @@ def enviar_correos_view(request):
 
         return redirect('enviar_correos_view')
 
-    # Obtener títulos de eventos
     eventos_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
     eventos_response = requests.get(eventos_url)
 
@@ -666,7 +621,6 @@ def enviar_correos_view(request):
         for evento in eventos:
             titulos_eventos.append(evento['fields']['titulo']['stringValue'])
 
-    # Obtener carreras
     estudiantes_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Estudiantes"
     estudiantes_response = requests.get(estudiantes_url)
 
@@ -675,7 +629,6 @@ def enviar_correos_view(request):
         estudiantes = estudiantes_response.json().get('documents', [])
         carreras = list(set(estudiante['fields']['carrera']['stringValue'] for estudiante in estudiantes))
 
-    # Obtener encuestas
     encuestas_url = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Encuestas"
     encuestas_response = requests.get(encuestas_url)
 
@@ -683,10 +636,9 @@ def enviar_correos_view(request):
     if encuestas_response.status_code == 200:
         encuestas = encuestas_response.json().get('documents', [])
 
-    # Preparar la lista de encuestas con ID y nombre
     encuestas_list = [
     {
-        'id': encuesta['name'].split('/')[-1],  # Extrae el ID del documento
+        'id': encuesta['name'].split('/')[-1],
         'nombre': encuesta['fields']['nombre']['stringValue']
     }
     for encuesta in encuestas if 'nombre' in encuesta['fields']
@@ -695,7 +647,7 @@ def enviar_correos_view(request):
         encuesta_id = encuesta.get('fields', {}).get('id', {}).get('stringValue', None)
         encuesta_nombre = encuesta.get('fields', {}).get('nombre', {}).get('stringValue', None)
 
-        if encuesta_id and encuesta_nombre:  # Asegúrate de que ambos valores estén presentes
+        if encuesta_id and encuesta_nombre:
             encuestas_list.append({'id': encuesta_id, 'nombre': encuesta_nombre})
 
     return render(request, 'mi_app/difucion/enviar_correos.html', {
@@ -703,30 +655,21 @@ def enviar_correos_view(request):
         'carreras': carreras,
         'encuestas': encuestas_list
     })
-import requests
-from django.shortcuts import render, redirect
 
-# URL base para interactuar con Firestore
 FIREBASE_URL = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Misiones"
 
 def listar_misiones(request):
-    # Realizar la solicitud GET a Firestore
     response = requests.get(FIREBASE_URL)
 
     if response.status_code == 200:
-        # Obtener las misiones de la respuesta
         misiones = response.json().get('documents', [])
-
-        # Lista para almacenar las misiones procesadas
         misiones_data = []
-
-        # Recorrer cada misión y extraer los datos necesarios
         for mision in misiones:
-            mision_id = mision['name'].split('/')[-1]  # Obtener el ID de la misión (es el título)
+            mision_id = mision['name'].split('/')[-1]
 
             mision_data = {
-                'id': mision_id,  # El ID es el título de la misión
-                'titulo': mision_id,  # Usamos el título como ID de la misión
+                'id': mision_id,
+                'titulo': mision_id,
                 'descripcion': mision['fields'].get('descripcion', {}).get('stringValue', 'Sin descripción'),
                 'puntaje': mision['fields'].get('puntaje', {}).get('integerValue', 0),
                 'objetivo': mision['fields'].get('objetivo', {}).get('stringValue', 'Sin objetivo'),
@@ -735,11 +678,9 @@ def listar_misiones(request):
             }
             misiones_data.append(mision_data)
 
-        # Pasar las misiones a la plantilla para que se muestren
         return render(request, 'mi_app/mision/listar_misiones.html', {'misiones': misiones_data})
 
     else:
-        # Si hay un error al obtener las misiones
         return render(request, 'error.html', {'mensaje': 'Error al obtener las misiones.'})
 
 
@@ -767,7 +708,7 @@ def crear_mision(request):
             return render(request, 'error.html', {'mensaje': 'Error al crear la misión.'})
 
     return render(request, 'mi_app/mision/crear_mision.html')
-# Detalle de misión
+
 def detalle_mision(request, mision_id):
     response = requests.get(f"{FIREBASE_URL}/{mision_id}")
     if response.status_code == 200:
@@ -833,7 +774,6 @@ def detalle_mision(request, mision_id):
     else:
         return render(request, 'error.html', {'mensaje': 'La misión no existe.'})
 
-# Eliminar misión
 def eliminar_mision(request, mision_id):
     if request.method == 'POST':
         response = requests.delete(f"{FIREBASE_URL}/{mision_id}")
@@ -909,19 +849,15 @@ def eliminar_gestor_view(request, id_Geventos):
     return redirect('gestores')
 
 def modificar_gestor_view(request, gestor_id):
-    # URL del gestor en Firestore
     url = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos/{gestor_id}"
     headers = {"Content-Type": "application/json"}
 
-    # Obtener los datos actuales del gestor
     response = requests.get(url, headers=headers)
 
-    # Si no se encuentra el gestor, redirigir con un mensaje de error
     if response.status_code != 200:
         messages.error(request, "No se pudo encontrar el Gestor.")
         return redirect('gestores')
 
-    # Obtener los datos actuales del gestor
     gestor_data = response.json()['fields']
     nombre_completo = gestor_data['Nombre_completo']['stringValue']
     rut = gestor_data['rut']['stringValue']
@@ -929,13 +865,11 @@ def modificar_gestor_view(request, gestor_id):
     password = gestor_data['password']['stringValue']
 
     if request.method == 'POST':
-        # Obtener los nuevos datos del formulario
         nuevo_nombre_completo = request.POST.get('nombre_completo')
         nuevo_rut = request.POST.get('rut')
         nuevo_email = request.POST.get('email')
         nuevo_password = request.POST.get('password')
 
-        # Validación básica de los campos
         if not nuevo_nombre_completo or not nuevo_rut or not nuevo_email or not nuevo_password:
             messages.error(request, "Todos los campos son obligatorios.")
             return render(request, 'mi_app/gestorCRUD/modificar_gestor.html', {
@@ -946,7 +880,6 @@ def modificar_gestor_view(request, gestor_id):
                 'password': password
             })
 
-        # Payload para actualizar el gestor
         payload = {
             "fields": {
                 "Nombre_completo": {"stringValue": nuevo_nombre_completo},
@@ -956,17 +889,14 @@ def modificar_gestor_view(request, gestor_id):
             }
         }
 
-        # Enviar solicitud PATCH para actualizar los datos
         response = requests.patch(url, headers=headers, json=payload)
 
-        # Verificar si la actualización fue exitosa
         if response.status_code == 200:
             messages.success(request, "Gestor de eventos modificado correctamente.")
-            return redirect('gestores')  # Redirigir al listado de gestores
+            return redirect('gestores')
         else:
             messages.error(request, "Error al modificar el Gestor.")
 
-    # Si la solicitud no es POST, simplemente renderizamos el formulario con los datos actuales
     return render(request, 'mi_app/gestorCRUD/modificar_gestor.html', {
         'gestor_id': gestor_id,
         'nombre_completo': nombre_completo,
@@ -978,11 +908,7 @@ def modificar_gestor_view(request, gestor_id):
 def boceto(request):
     return render(request,'mi_app/boceto.html')
 
-import requests
-from django.shortcuts import render
-
 def dashboard(request):
-    # Obtener eventos desde Firestore
     url_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
     response_eventos = requests.get(url_eventos)
     eventos = []
@@ -993,7 +919,6 @@ def dashboard(request):
             evento_id = evento['name'].split('/')[-1]
             evento['id'] = evento_id
 
-    # Obtener gestores desde Firestore
     url_gestores = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
     response_gestores = requests.get(url_gestores)
     gestores = []
@@ -1003,28 +928,23 @@ def dashboard(request):
         for gestor in gestores:
             gestor_id = gestor['name'].split('/')[-1]
             gestor['id'] = gestor_id
-            gestor['email'] = gestor['fields']['email']['stringValue']  # Tomamos el correo del gestor
+            gestor['email'] = gestor['fields']['email']['stringValue']
 
-    # Procesar el formulario de asignación de gestores
     if request.method == 'POST':
-        evento_id = request.POST.get('evento_id')  # Obtener el ID del evento
-        gestor_id = request.POST.get('gestor_id')  # Obtener el ID del gestor seleccionado
+        evento_id = request.POST.get('evento_id')
+        gestor_id = request.POST.get('gestor_id')
 
-        # Buscar el gestor seleccionado por ID
         gestor_seleccionado = next((g for g in gestores if g['id'] == gestor_id), None)
 
         if gestor_seleccionado:
-            # Buscar el evento correspondiente al evento_id
             evento_seleccionado = next((e for e in eventos if e['id'] == evento_id), None)
 
             if evento_seleccionado:
                 try:
-                    # Extraer los datos relevantes para el correo
                     titulo_evento = evento_seleccionado['fields']['titulo']['stringValue']
-                    fecha_evento = evento_seleccionado['fields']['fecha']['timestampValue']  # Asegúrate de que este valor sea accesible
+                    fecha_evento = evento_seleccionado['fields']['fecha']['timestampValue']
                     nombre_gestor = gestor_seleccionado['fields']['Nombre_completo']['stringValue']
 
-                    # Enviar el correo
                     subject = f'Nuevo Evento Asignado: {titulo_evento}'
                     message = f'Hola {nombre_gestor},\n\nSe te ha asignado el evento "{titulo_evento}" para su gestión. El evento será realizado el {fecha_evento}.'
                     
@@ -1039,10 +959,8 @@ def dashboard(request):
                     print(f"Error al enviar el correo: {str(e)}")
                     return render(request, 'mi_app/dashboard/dashboard.html', {'eventos': eventos, 'gestores': gestores, 'error': 'Hubo un problema al enviar el correo.'})
 
-        # Redirigir al dashboard si todo fue exitoso
         return redirect('dashboard')
 
-    # Pasar los eventos y los gestores a la plantilla
     return render(request, 'mi_app/dashboard/dashboard.html', {'eventos': eventos, 'gestores': gestores})
 
 url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
@@ -1136,6 +1054,35 @@ def panel_control(request):
         else:
             progreso_eventos = 0
 
+        # Manejar la asignación de gestor a un evento (cuando el formulario se envía por POST)
+        if request.method == 'POST':
+            evento_id = request.POST.get('evento_id')
+            gestor_id = request.POST.get('gestor_id')
+
+            if evento_id and gestor_id:
+                try:
+                    # Actualizar el evento con el nuevo gestor
+                    url_update_evento = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos/{evento_id}"
+                    data = {
+                        "fields": {
+                            "gestor": {
+                                "stringValue": gestor_id
+                            }
+                        }
+                    }
+
+                    response_update = requests.patch(url_update_evento, json=data)
+                    if response_update.status_code == 200:
+                        messages.success(request, f'Gestor asignado correctamente al evento.')
+                    else:
+                        messages.error(request, 'Error al asignar el gestor al evento.')
+                except Exception as e:
+                    print(f"Error al asignar gestor: {e}")
+                    messages.error(request, 'Error al asignar el gestor al evento.')
+
+            # Redirigir a la misma página después de procesar la asignación
+            return redirect('panel_control')
+
         # Enviar los datos a la plantilla
         return render(request, 'mi_app/panel-control/panel-control.html', {
             'consultas_pendientes_count': consultas_pendientes_count,
@@ -1154,13 +1101,13 @@ def panel_control(request):
         print(f"Error inesperado: {e}")
         return render(request, 'mi_app/panel-control/panel-control.html', {'error': 'Error interno al obtener los datos.'})
 
+
 def responder_consulta(request, consulta_id):
     from datetime import datetime
     import pytz
     import requests
 
     try:
-        # Obtener la consulta de Firebase
         consulta_url = f"{url_consultas}/{consulta_id}"
         consulta_response = requests.get(consulta_url)
 
@@ -1169,7 +1116,6 @@ def responder_consulta(request, consulta_id):
 
         consulta = consulta_response.json()
 
-        # Extraer datos de la consulta
         consulta_data = {
             "correo": consulta['fields']['correo']['stringValue'],
             "nombre": consulta['fields']['nombre']['stringValue'],
@@ -1188,7 +1134,6 @@ def responder_consulta(request, consulta_id):
         try:
             mensaje_correo = f"Hola {consulta_data['nombre']},\n\nTu consulta con el motivo de '{consulta_data['motivo']}' ha sido leída y está siendo respondida a continuación:\n\n{respuesta}"
 
-            # Enviar correo
             send_mail(
                 subject=f"Respuesta a tu consulta sobre '{consulta_data['motivo']}'",
                 message=mensaje_correo,
@@ -1196,7 +1141,6 @@ def responder_consulta(request, consulta_id):
                 recipient_list=[consulta_data['correo']],
             )
 
-            # Actualizar estado de la consulta en Firebase
             respuesta_timestamp = datetime.now(pytz.timezone('America/Santiago')).isoformat()
 
             data_actualizada = {
@@ -1224,11 +1168,11 @@ def responder_consulta(request, consulta_id):
                 'consulta': consulta_data
             })
 
-    # Renderizar datos en la plantilla para solicitudes GET
     return render(request, 'mi_app/consultas/responder_consulta.html', {
         'consulta': consulta_data
     })
 
-
 def home (request):
     return render(request,'mi_app/home.html')
+
+

@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('metricas/', metricas_view, name='metricas'),
     path('metricas/grafico/', views.metricas_view, name='metricas'),
+
     # # # login 
     path('login/', login_view, name='login_view'),
     path('logout/', logout_view, name='logout'),
@@ -27,7 +28,7 @@ urlpatterns = [
     # # # correo
     path('enviar-correos/', enviar_correos_view, name='enviar_correos_view'),
     
-    path('encuestas/', include('encuestas.urls')),  # Cambia 'nombre_de_la_app_encuestas' por el nombre real
+    path('encuestas/', include('encuestas.urls')),
 
     path('misiones/', listar_misiones, name='listar_misiones'),
     path('misiones/crear/', crear_mision, name='crear_mision'),
@@ -41,8 +42,6 @@ urlpatterns = [
     path('gestores_delete/<str:id_Geventos>/',eliminar_gestor_view, name='gestores_delete' ),
     path('gestores/modificar/<str:gestor_id>/', modificar_gestor_view, name='modificar_gestor'),
 
-
-
     path('boceto/',boceto, name='boceto' ),
     path('dashboard/',dashboard, name='dashboard' ),
 
@@ -50,5 +49,8 @@ urlpatterns = [
 
     path('responder_consulta/<str:consulta_id>/', responder_consulta, name='responder_consulta'),
     path('panel-control/', panel_control, name='panel_control'),
+
+
+
 
 ]

@@ -1,273 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Administrativa</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .filter-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .filter-container select, .filter-container input {
-            padding: 10px;
-            margin: 0 10px;
-            font-size: 1em;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 20px;
-        }
-
-        .card {
-            background-color: white;
-            width: 300px;
-            margin: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            font-size: 1.2em;
-            text-align: center;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .progress-bar {
-            height: 10px;
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-
-        .progress {
-            height: 100%;
-            border-radius: 5px;
-        }
-
-        .btn-1 {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .btn:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-
-        .status-pending {
-            color: #ffc107;
-        }
-
-        .status-progress {
-            color: #007bff;
-        }
-
-        .status-completed {
-            color: #28a745;
-        }
-
-        .chart-card {
-            background-color: white;
-            width: 300px;
-            margin: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            text-align: center;
-            position: relative;
-        }
-
-        .chart-card .chart-header {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .chart-card .chart {
-            height: 150px;
-            background-color: #f1f1f1;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .chart-bar {
-            height: 100%;
-            position: absolute;
-            bottom: 0;
-            border-radius: 8px;
-        }
-
-        .chart-bar:nth-child(1) { background-color: #ff4747; width: 30%; }
-        .chart-bar:nth-child(2) { background-color: #ffab47; width: 50%; }
-        .chart-bar:nth-child(3) { background-color: #47c2ff; width: 70%; }
-
-        .diffusion-options {
-            display: none;
-            margin-top: 15px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-            text-align: left;
-        }
-
-        .diffusion-options .btn {
-            display: block;
-            margin: 10px 0;
-            background-color: #007bff;
-            color: white;
-            text-align: left;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .diffusion-options .btn:hover {
-            background-color: #0056b3;
-            transform: scale(1.03);
-        }
-
-        .toggle-btn {
-            background-color: #ff5722;
-            color: white;
-            margin-top: 15px;
-        }
-
-        .toggle-btn:hover {
-            background-color: #e64a19;
-        }
-    </style>
+    <title>Gráfico de Inscritos en Eventos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
+    <div style="width: 80%; margin: 0 auto;">
+        <h2>Inscritos en los Eventos</h2>
 
-  {% include 'mi_app/navbar.html' %}
-  
-
-    <!-- Filtro por Fechas -->
-    <div class="filter-container">
-        <label for="date-from">Desde:</label>
-        <input type="date" id="date-from" name="date-from">
-        
-        <label for="date-to">Hasta:</label>
-        <input type="date" id="date-to" name="date-to">
-        
-        <button onclick="filterByDate()" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">Filtrar</button>
-    </div>
-
-    <!-- Contenedor de las tarjetas -->
-    <div class="container">
-
-        <!-- Tarjeta 1: Creación de Usuarios Solicitados -->
-        <div class="card">
-            <div class="card-header">Creación de Usuarios Solicitados</div>
-            <div class="card-body">
-                <p>Usuarios solicitados pendientes de creación: <strong>10</strong></p>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 40%; background-color: #007bff;"></div>
-                </div>
-                <p class="status-progress">En progreso (4/10)</p>
-                <a href="#" class="btn-1">Ver detalles</a>
-            </div>
-        </div>
-
-        <!-- Tarjeta 2: Revisión de Consultas -->
-        <div class="card">
-            <div class="card-header">Revisión de Consultas</div>
-            <div class="card-body">
-                <p>Consultas pendientes de revisión: <strong>30</strong></p>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 60%; background-color: #ffc107;"></div>
-                </div>
-                <p class="status-progress">En progreso (18/30)</p>
-                <a href="#" class="btn-1">Revisar ahora</a>
-            </div>
-        </div>
-
-        <!-- Tarjeta 3: Eventos sin Asignar a Gestor -->
-        <div class="card">
-            <div class="card-header">Eventos sin Asignar a Gestor</div>
-            <div class="card-body">
-                <p>Eventos sin asignar a gestor: <strong>10</strong></p>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 20%; background-color: #ff4747;"></div>
-                </div>
-                <p class="status-pending">Pendiente (2/10)</p>
-                <a href="#" class="btn-1">Asignar gestor</a>
-            </div>
-        </div>
-
-        <!-- Tarjeta 4: Gráfico de Eventos Menos Vistos -->
-        <div class="chart-card">
-            <div class="chart-header">Eventos Menos Vistos de Este Mes</div>
-            <div class="chart">
-                <div class="chart-bar" style="height: 40%;"></div>
-                <div class="chart-bar" style="height: 50%; left: 35%;"></div>
-                <div class="chart-bar" style="height: 60%; left: 70%;"></div>
-            </div>
-            <button class="btn toggle-btn" onclick="toggleDiffusion()">Difusión</button>
-            <div class="diffusion-options">
-                <button class="btn" onclick="alert('Redirigiendo a promoción en redes sociales')">Promocionar en Redes Sociales</button>
-                <button class="btn" onclick="alert('Redirigiendo al envío de correos')">Enviar Correos</button>
-                <button class="btn" onclick="alert('Publicar en el sitio web')">Publicar en el Sitio Web</button>
-                <button class="btn" onclick="alert('Redirigiendo a notificaciones push')">Enviar Notificaciones Push</button>
-            </div>
-        </div>
-
+        <canvas id="inscritosChart"></canvas>
     </div>
 
     <script>
-        function toggleDiffusion() {
-            const options = document.querySelector('.diffusion-options');
-            options.style.display = options.style.display === 'block' ? 'none' : 'block';
-        }
+        // Datos para el gráfico de inscritos en eventos
+        const inscritosData = {
+            labels: {% for titulo in eventos_titulos %}"{{ titulo }}"{% if not forloop.last %}, {% endif %}{% endfor %},
+            datasets: [{
+                label: 'Inscritos en los eventos',
+                data: {% for inscritos in eventos_inscritos %}{{ inscritos }}{% if not forloop.last %}, {% endif %}{% endfor %},
+                backgroundColor: '#007bff',
+                borderColor: '#0056b3',
+                borderWidth: 1
+            }]
+        };
 
-        function filterByDate() {
-            const from = document.getElementById('date-from').value;
-            const to = document.getElementById('date-to').value;
-            alert(`Filtrando desde: ${from} hasta: ${to}`);
-        }
+        const inscritosConfig = {
+            type: 'bar',
+            data: inscritosData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Crear el gráfico
+        window.onload = function() {
+            const inscritosCtx = document.getElementById('inscritosChart').getContext('2d');
+            new Chart(inscritosCtx, inscritosConfig);
+        };
     </script>
-
 </body>
+
 </html>

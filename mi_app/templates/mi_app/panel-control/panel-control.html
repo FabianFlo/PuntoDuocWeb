@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!-- Incluir la librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <style>
@@ -112,6 +114,7 @@
 
     {% include 'mi_app/navbar.html' %}
 
+    <!-- Primer Sección -->
     <section>
         <div class="container-fluid bg-white mb-4">
             <div class="container-lg row p-3 mx-auto">
@@ -132,6 +135,24 @@
         </div>
     </section>
 
+    <!-- Gráfico de Inscritos por Evento -->
+    <section>
+        <div class="container-fluid bg-white mb-4 card"  >
+            <div class="container-lg row p-3 mx-auto">
+                <div class="col-12">
+                    <h3>Inscritos por Evento</h3>
+                    <div>
+                        <canvas id="graficoEventos" width="800" height="600"></canvas>
+                    </div>
+                    <br>
+                    <a href="{% url 'crear_mision' %}"
+                    class="btn-1" id="toggleEventoList">Crear misiones</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarjetas de Panel de Control -->
     <section>
         <div class="container-fluid bg-white mb-4">
             <div class="container-lg row p-3 mx-auto">
@@ -142,20 +163,23 @@
                         <div class="card-body">
                             <p>Consultas pendientes de revisión: <strong>{{ consultas_pendientes_count }}</strong></p>
                             <div class="progress-bar">
-                                <div class="progress" style="width: {{ progreso }}%; background-color: {{ color_progreso }};"></div>
+                                <div class="progress"
+                                    style="width: {{ progreso }}%; background-color: {{ color_progreso }};"></div>
                             </div>
-                            <p class="status-progress">En progreso ({{ consultas_pendientes_count }}/{{ total_consultas }})</p>
+                            <p class="status-progress">En progreso ({{ consultas_pendientes_count }}/{{ total_consultas
+                                }})</p>
                             <a href="javascript:void(0);" class="btn-1" id="toggleConsultaList">Revisar ahora</a>
 
                             <div id="consultaList" style="display: none; margin-top: 20px;">
                                 {% for consulta in consultas_pendientes %}
-                                    <div class="consulta-item">
-                                        <h5>{{ consulta.motivo }}</h5>
-                                        <p><strong>Nombre:</strong> {{ consulta.nombre }}</p>
-                                        <p><strong>Correo:</strong> {{ consulta.correo }}</p>
-                                        <p><strong>Mensaje:</strong> {{ consulta.mensaje }}</p>
-                                        <a href="{% url 'responder_consulta' consulta.id %}" class="btn btn-respond">Responder</a>
-                                    </div>
+                                <div class="consulta-item">
+                                    <h5>{{ consulta.motivo }}</h5>
+                                    <p><strong>Nombre:</strong> {{ consulta.nombre }}</p>
+                                    <p><strong>Correo:</strong> {{ consulta.correo }}</p>
+                                    <p><strong>Mensaje:</strong> {{ consulta.mensaje }}</p>
+                                    <a href="{% url 'responder_consulta' consulta.id %}"
+                                        class="btn btn-respond">Responder</a>
+                                </div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -167,48 +191,62 @@
                         <div class="card-body">
                             <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
                             <div class="progress-bar">
-                                <div class="progress" style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
+                                <div class="progress"
+                                    style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
                             </div>
-                            <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})</p>
+                            <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})
+                            </p>
                             <a href="javascript:void(0);" class="btn-1" id="toggleEventoList">Mostrar eventos</a>
 
                             <div id="eventoList" style="display: none; margin-top: 20px;">
                                 {% for evento in eventos_sin_gestor %}
-                                    <div class="evento-item">
-                                        <strong>{{ evento.titulo }}</strong><br>
-                                        Lugar: {{ evento.lugar }}<br>
-                                        Fecha: {{ evento.fecha }}<br>
-                                        <!-- Botón para seleccionar gestor -->
-                                        <button class="btn-expand" onclick="toggleGestorDropdown('{{ evento.id_evento }}')">Seleccionar Gestor</button>
+                                <div class="evento-item">
+                                    <strong>{{ evento.titulo }}</strong><br>
+                                    Lugar: {{ evento.lugar }}<br>
+                                    Fecha: {{ evento.fecha }}<br>
+                                    <!-- Botón para seleccionar gestor -->
+                                    <button class="btn-expand"
+                                        onclick="toggleGestorDropdown('{{ evento.id_evento }}')">Seleccionar
+                                        Gestor</button>
 
-                                        <div id="evento-details-{{ evento.id_evento }}" class="evento-details">
-                                            <!-- Dropdown para asignar gestor -->
-                                            <div class="form-group">
-                                                <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
-                                                <select id="gestorSelect{{ evento.id_evento }}" class="form-control">
-                                                    <option value="">Seleccionar gestor</option>
-                                                    {% for gestor in gestores %}
-                                                        <option value="{{ gestor.id }}">{{ gestor.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
+                                    <div id="evento-details-{{ evento.id_evento }}" class="evento-details">
+                                        <!-- Dropdown para asignar gestor -->
+                                        <div class="form-group">
+                                            <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
+                                            <select id="gestorSelect{{ evento.id_evento }}" class="form-control">
+                                                <option value="">Seleccionar gestor</option>
+                                                {% for gestor in gestores %}
+                                                <option value="{{ gestor.id }}">{{ gestor.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </div>
                                     </div>
+                                </div>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
-
                     <!-- Tarjeta 3: Creación de usuarios -->
                     <div class="card">
                         <div class="card-header">Creación de usuarios</div>
                         <div class="card-body">
-                            <p>Total de usuarios creados: <strong>0</strong></p>
+                            <p>Total de usuarios solicitados: <strong>0</strong></p>
                             <div class="progress-bar">
                                 <div class="progress" style="width: 0%; background-color: #ff4747;"></div>
                             </div>
-                            <p class="status-progress">Pendiente 0/0</p>
-                            <a href="{% url 'crear_estudiante' %}" class="btn-1" id="toggleEventoList">Crear estudiantes</a>
+                            <p class="status-progress">Pendiente 0/0</p> <a href="{% url 'crear_estudiante' %}"
+                                class="btn-1" id="toggleEventoList">Crear Estudiantes</a>
+                        </div>
+                    </div> <!-- Tarjeta 4: Creación de misiones -->
+                    <div class="card">
+                        <div class="card-header">Creación de misiones</div>
+                        <div class="card-body">
+                            <p>Total de misiones solicitadas: <strong>0</strong></p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%; background-color: #ff4747;"></div>
+                            </div>
+                            <p class="status-progress">Pendiente 0/0</p> <a href="{% url 'crear_mision' %}"
+                                class="btn-1" id="toggleEventoList">Crear misiones</a>
                         </div>
                     </div>
                 </div>
@@ -216,27 +254,56 @@
         </div>
     </section>
 
+    <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1"
+        xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+                <stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop>
+                <stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop>
+            </linearGradient>
+        </defs>
+        <path fill="url(#sw-gradient-0)"
+            d="M 0 100 L 0 58.5 C 144.2 54.2 288.4 60.5 432.6 65.9 C 576.8 71.3 721 75.8 865.2 78.1 C 1009.4 80.4 1153.6 80.5 1297.8 82.8 C 1442 85.1 1586.2 89.4 1630.4 94.6 L 1630.4 100 L 0 100 Z">
+        </path>
+    </svg>
+
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 
     <script>
-        // Función para mostrar u ocultar el dropdown de selección de gestor
-        function toggleGestorDropdown(eventId) {
-            var details = document.getElementById('evento-details-' + eventId);
-            details.style.display = (details.style.display === 'none' || details.style.display === '') ? 'block' : 'none';
-        }
+        // Verificar los datos de inscritos
+        const inscritosPorEvento = {{ inscritos_por_evento| safe }};
 
-        // Función para mostrar/ocultar las consultas
-        document.getElementById('toggleConsultaList').addEventListener('click', function () {
-            var consultaList = document.getElementById('consultaList');
-            consultaList.style.display = (consultaList.style.display === 'none' || consultaList.style.display === '') ? 'block' : 'none';
-        });
+        // Verificar en la consola si los datos están bien
+        console.log(inscritosPorEvento);
 
-        // Función para mostrar/ocultar los eventos
-        document.getElementById('toggleEventoList').addEventListener('click', function () {
-            var eventoList = document.getElementById('eventoList');
-            eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
+        // Preparar los datos para el gráfico
+        const labels = inscritosPorEvento.map(evento => evento.titulo);
+        const data = inscritosPorEvento.map(evento => evento.inscritos);
+
+        // Configurar el gráfico con Chart.js
+        const ctx = document.getElementById('graficoEventos').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cantidad de Inscritos',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true },
+                    title: { display: true, text: 'Inscritos por Evento' }
+                }
+            }
         });
     </script>
+
 </body>
 
 </html>
