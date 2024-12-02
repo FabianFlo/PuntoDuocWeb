@@ -22,19 +22,61 @@ def enviar_notificaciones(request):
     if request.method == 'POST':
         titulo = request.POST.get('titulo')
         cuerpo = request.POST.get('cuerpo')
+        destinatario = request.POST.get('destinatario')
 
-        # Datos de la notificación
+        # URL de Firestore para la colección "NotificacionesDirectas"
+        url = f"{FIRESTORE_BASE_URL}/NotificacionesDirectas"
+
+        # Obtener el destinatario y el tipo de usuario
+        destinatario = request.POST.get('destinatario')  # 'todos', 'estudiantes', 'invitados'
+
+        # Formatear los usuarios para la notificación
+        usuarios = []
+        if destinatario == 'todos':
+            estudiantes_url = f"{FIRESTORE_BASE_URL}/Estudiantes"
+            invitados_url = f"{FIRESTORE_BASE_URL}/Invitados"
+            estudiantes_response = requests.get(estudiantes_url)
+            invitados_response = requests.get(invitados_url)
+            if estudiantes_response.status_code == 200:
+                estudiantes_data = estudiantes_response.json().get('documents', [])
+                usuarios.extend(estudiantes_data)
+            if invitados_response.status_code == 200:
+                invitados_data = invitados_response.json().get('documents', [])
+                usuarios.extend(invitados_data)
+        elif destinatario == 'estudiante':
+            estudiantes_url = f"{FIRESTORE_BASE_URL}/Estudiantes"
+            estudiantes_response = requests.get(estudiantes_url)
+            if estudiantes_response.status_code == 200:
+                estudiantes_data = estudiantes_response.json().get('documents', [])
+                usuarios.extend(estudiantes_data)
+        elif destinatario == 'invitado':
+            invitados_url = f"{FIRESTORE_BASE_URL}/Invitados"
+            invitados_response = requests.get(invitados_url)
+            if invitados_response.status_code == 200:
+                invitados_data = invitados_response.json().get('documents', [])
+                usuarios.extend(invitados_data)
+
+        # Formatear los usuarios para la notificación
+        usuario_ids = [{
+            "mapValue": {
+                "fields": {
+                    "userId": {"stringValue": user['name'].split('/')[-1]},
+                    "leido": {"booleanValue": False}
+                }
+            }
+        } for user in usuarios]
+
+        # Crear la notificación
         notificacion = {
             "fields": {
                 "titulo": {"stringValue": titulo},
                 "cuerpo": {"stringValue": cuerpo},
                 "leido": {"booleanValue": False},
-                "timestamp": {"timestampValue": format_fecha(None)}
+                "timestamp": {"timestampValue": format_fecha(None)},
+                "usuarioIds": {"arrayValue": {"values": usuario_ids}},
+                "destinatario": {"stringValue": destinatario}  # Guardamos el destinatario aquí
             }
         }
-
-        # URL de Firestore para la colección "NotificacionesDirectas"
-        url = f"{FIRESTORE_BASE_URL}/NotificacionesDirectas"
 
         # Enviar la notificación a Firestore
         response = requests.post(url, headers={"Content-Type": "application/json"}, data=json.dumps(notificacion))
@@ -43,7 +85,6 @@ def enviar_notificaciones(request):
             messages.success(request, 'Notificación enviada con éxito')
         else:
             messages.error(request, 'Error al enviar la notificación')
-
         return redirect('enviar_notificaciones')
 
     return render(request, 'mi_app/enviar_notificaciones/enviar_notificaciones.html')
