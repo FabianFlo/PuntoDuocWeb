@@ -1,147 +1,273 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Eventos - Duoc</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
-    }
-    header {
-      background-color: #2a9d8f;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background-color: #2a9d8f;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #21867a;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background: #f9f9f9;
-    }
-    .completed {
-      text-decoration: line-through;
-      color: gray;
-    }
-    .actions button {
-      margin-left: 10px;
-      background-color: #e63946;
-      border: none;
-      padding: 5px 10px;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .actions button:hover {
-      background-color: #c5303b;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Administrativa</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-container select, .filter-container input {
+            padding: 10px;
+            margin: 0 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            width: 300px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .progress {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .btn-1 {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .status-pending {
+            color: #ffc107;
+        }
+
+        .status-progress {
+            color: #007bff;
+        }
+
+        .status-completed {
+            color: #28a745;
+        }
+
+        .chart-card {
+            background-color: white;
+            width: 300px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chart-card .chart-header {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .chart-card .chart {
+            height: 150px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .chart-bar {
+            height: 100%;
+            position: absolute;
+            bottom: 0;
+            border-radius: 8px;
+        }
+
+        .chart-bar:nth-child(1) { background-color: #ff4747; width: 30%; }
+        .chart-bar:nth-child(2) { background-color: #ffab47; width: 50%; }
+        .chart-bar:nth-child(3) { background-color: #47c2ff; width: 70%; }
+
+        .diffusion-options {
+            display: none;
+            margin-top: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+
+        .diffusion-options .btn {
+            display: block;
+            margin: 10px 0;
+            background-color: #007bff;
+            color: white;
+            text-align: left;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .diffusion-options .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.03);
+        }
+
+        .toggle-btn {
+            background-color: #ff5722;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #e64a19;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Gestión de Eventos - Duoc</h1>
-  </header>
-  <div class="container">
-    <form id="eventForm">
-      <input type="text" id="eventName" placeholder="Nombre del evento" required>
-      <button type="submit">Agregar Evento</button>
-    </form>
-    <ul id="eventList"></ul>
-  </div>
-  <script>
-    const eventForm = document.getElementById('eventForm');
-    const eventNameInput = document.getElementById('eventName');
-    const eventList = document.getElementById('eventList');
 
-    // Manejar el envío del formulario
-    eventForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const eventName = eventNameInput.value.trim();
-      if (eventName) {
-        addEvent(eventName);
-        eventNameInput.value = '';
-      }
-    });
+  {% include 'mi_app/navbar.html' %}
+  
 
-    // Agregar un evento a la lista
-    function addEvent(name) {
-      const li = document.createElement('li');
+    <!-- Filtro por Fechas -->
+    <div class="filter-container">
+        <label for="date-from">Desde:</label>
+        <input type="date" id="date-from" name="date-from">
+        
+        <label for="date-to">Hasta:</label>
+        <input type="date" id="date-to" name="date-to">
+        
+        <button onclick="filterByDate()" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">Filtrar</button>
+    </div>
 
-      // Nombre del evento
-      const eventText = document.createElement('span');
-      eventText.textContent = name;
+    <!-- Contenedor de las tarjetas -->
+    <div class="container">
 
-      // Contenedor de botones de acción
-      const actions = document.createElement('div');
-      actions.classList.add('actions');
+        <!-- Tarjeta 1: Creación de Usuarios Solicitados -->
+        <div class="card">
+            <div class="card-header">Creación de Usuarios Solicitados</div>
+            <div class="card-body">
+                <p>Usuarios solicitados pendientes de creación: <strong>10</strong></p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 40%; background-color: #007bff;"></div>
+                </div>
+                <p class="status-progress">En progreso (4/10)</p>
+                <a href="#" class="btn-1">Ver detalles</a>
+            </div>
+        </div>
 
-      // Botón para completar el evento
-      const completeButton = document.createElement('button');
-      completeButton.textContent = 'Completar';
-      completeButton.addEventListener('click', () => {
-        eventText.classList.toggle('completed');
-      });
+        <!-- Tarjeta 2: Revisión de Consultas -->
+        <div class="card">
+            <div class="card-header">Revisión de Consultas</div>
+            <div class="card-body">
+                <p>Consultas pendientes de revisión: <strong>30</strong></p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 60%; background-color: #ffc107;"></div>
+                </div>
+                <p class="status-progress">En progreso (18/30)</p>
+                <a href="#" class="btn-1">Revisar ahora</a>
+            </div>
+        </div>
 
-      // Botón para eliminar el evento
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Eliminar';
-      deleteButton.addEventListener('click', () => {
-        eventList.removeChild(li);
-      });
+        <!-- Tarjeta 3: Eventos sin Asignar a Gestor -->
+        <div class="card">
+            <div class="card-header">Eventos sin Asignar a Gestor</div>
+            <div class="card-body">
+                <p>Eventos sin asignar a gestor: <strong>10</strong></p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 20%; background-color: #ff4747;"></div>
+                </div>
+                <p class="status-pending">Pendiente (2/10)</p>
+                <a href="#" class="btn-1">Asignar gestor</a>
+            </div>
+        </div>
 
-      // Agregar botones al contenedor de acciones
-      actions.appendChild(completeButton);
-      actions.appendChild(deleteButton);
+        <!-- Tarjeta 4: Gráfico de Eventos Menos Vistos -->
+        <div class="chart-card">
+            <div class="chart-header">Eventos Menos Vistos de Este Mes</div>
+            <div class="chart">
+                <div class="chart-bar" style="height: 40%;"></div>
+                <div class="chart-bar" style="height: 50%; left: 35%;"></div>
+                <div class="chart-bar" style="height: 60%; left: 70%;"></div>
+            </div>
+            <button class="btn toggle-btn" onclick="toggleDiffusion()">Difusión</button>
+            <div class="diffusion-options">
+                <button class="btn" onclick="alert('Redirigiendo a promoción en redes sociales')">Promocionar en Redes Sociales</button>
+                <button class="btn" onclick="alert('Redirigiendo al envío de correos')">Enviar Correos</button>
+                <button class="btn" onclick="alert('Publicar en el sitio web')">Publicar en el Sitio Web</button>
+                <button class="btn" onclick="alert('Redirigiendo a notificaciones push')">Enviar Notificaciones Push</button>
+            </div>
+        </div>
 
-      // Agregar texto y acciones al elemento de lista
-      li.appendChild(eventText);
-      li.appendChild(actions);
+    </div>
 
-      // Agregar el elemento de lista a la lista de eventos
-      eventList.appendChild(li);
-    }
-  </script>
+    <script>
+        function toggleDiffusion() {
+            const options = document.querySelector('.diffusion-options');
+            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function filterByDate() {
+            const from = document.getElementById('date-from').value;
+            const to = document.getElementById('date-to').value;
+            alert(`Filtrando desde: ${from} hasta: ${to}`);
+        }
+    </script>
+
 </body>
 </html>

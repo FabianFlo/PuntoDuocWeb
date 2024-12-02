@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control</title>
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+
+<style>
+    .progress-bar {
+        width: 100%;
+        background-color: #f3f3f3;
+        border-radius: 4px;
+        height: 20px;
+    }
+
+    .progress {
+        height: 100%;
+        border-radius: 4px;
+    }
+
+    .card-body {
+        position: relative;
+    }
+
+    .consulta-item,
+    .evento-item {
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .btn-respond,
+    .btn-expand,
+    .btn-1 {
+        background-color: #007bff;
+        padding: 8px 15px;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-respond:hover,
+    .btn-expand:hover,
+    .btn-1:hover {
+        background-color: #0056b3;
+    }
+
+    .status-progress {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .card-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .card-header {
+        background-color: #f7f7f7;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 10px;
+    }
+
+    .evento-details {
+        margin-top: 10px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .form-group {
+        margin-top: 15px;
+    }
+</style>
+
+<body class="bg-white">
+
+    {% include 'mi_app/navbar.html' %}
+
+    <section>
+        <div class="container-fluid bg-white mb-4">
+            <div class="container-lg row p-3 mx-auto">
+                <div class="col-lg-6 p-0">
+                    <div class="d-flex flex-column justify-content-center h-100 p-5">
+                        <img src="{% static 'assets/svg/logo-duoc.svg' %}" alt="Logo Duoc"
+                            class="invert-color w-50 py-4" style="opacity: 75%;">
+                        <h1 class="display-5 fw-bold mb-3">PuntoDuoc: Administradores</h1>
+                        <p class="fs-4">Herramienta para la creación y gestión de eventos Duoc UC.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 d-none d-lg-block p-0">
+                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                        <img src="{% static 'assets/img/home banner.png' %}" alt="Banner landing page" class="w-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-fluid bg-white mb-4">
+            <div class="container-lg row p-3 mx-auto">
+                <div class="card-container">
+                    <!-- Tarjeta 1: Consultas pendientes -->
+                    <div class="card">
+                        <div class="card-header">Revisión de Consultas</div>
+                        <div class="card-body">
+                            <p>Consultas pendientes de revisión: <strong>{{ consultas_pendientes_count }}</strong></p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: {{ progreso }}%; background-color: {{ color_progreso }};"></div>
+                            </div>
+                            <p class="status-progress">En progreso ({{ consultas_pendientes_count }}/{{ total_consultas }})</p>
+                            <a href="javascript:void(0);" class="btn-1" id="toggleConsultaList">Revisar ahora</a>
+
+                            <div id="consultaList" style="display: none; margin-top: 20px;">
+                                {% for consulta in consultas_pendientes %}
+                                    <div class="consulta-item">
+                                        <h5>{{ consulta.motivo }}</h5>
+                                        <p><strong>Nombre:</strong> {{ consulta.nombre }}</p>
+                                        <p><strong>Correo:</strong> {{ consulta.correo }}</p>
+                                        <p><strong>Mensaje:</strong> {{ consulta.mensaje }}</p>
+                                        <a href="{% url 'responder_consulta' consulta.id %}" class="btn btn-respond">Responder</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 2: Eventos sin gestor -->
+                    <div class="card">
+                        <div class="card-header">Eventos sin asignar a gestor</div>
+                        <div class="card-body">
+                            <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
+                            </div>
+                            <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})</p>
+                            <a href="javascript:void(0);" class="btn-1" id="toggleEventoList">Mostrar eventos</a>
+
+                            <div id="eventoList" style="display: none; margin-top: 20px;">
+                                {% for evento in eventos_sin_gestor %}
+                                    <div class="evento-item">
+                                        <strong>{{ evento.titulo }}</strong><br>
+                                        Lugar: {{ evento.lugar }}<br>
+                                        Fecha: {{ evento.fecha }}<br>
+                                        <!-- Botón para seleccionar gestor -->
+                                        <button class="btn-expand" onclick="toggleGestorDropdown('{{ evento.id_evento }}')">Seleccionar Gestor</button>
+
+                                        <div id="evento-details-{{ evento.id_evento }}" class="evento-details">
+                                            <!-- Dropdown para asignar gestor -->
+                                            <div class="form-group">
+                                                <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
+                                                <select id="gestorSelect{{ evento.id_evento }}" class="form-control">
+                                                    <option value="">Seleccionar gestor</option>
+                                                    {% for gestor in gestores %}
+                                                        <option value="{{ gestor.id }}">{{ gestor.nombre }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3: Creación de usuarios -->
+                    <div class="card">
+                        <div class="card-header">Creación de usuarios</div>
+                        <div class="card-body">
+                            <p>Total de usuarios creados: <strong>0</strong></p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%; background-color: #ff4747;"></div>
+                            </div>
+                            <p class="status-progress">Pendiente 0/0</p>
+                            <a href="{% url 'crear_estudiante' %}" class="btn-1" id="toggleEventoList">Crear estudiantes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script>
+        // Función para mostrar u ocultar el dropdown de selección de gestor
+        function toggleGestorDropdown(eventId) {
+            var details = document.getElementById('evento-details-' + eventId);
+            details.style.display = (details.style.display === 'none' || details.style.display === '') ? 'block' : 'none';
+        }
+
+        // Función para mostrar/ocultar las consultas
+        document.getElementById('toggleConsultaList').addEventListener('click', function () {
+            var consultaList = document.getElementById('consultaList');
+            consultaList.style.display = (consultaList.style.display === 'none' || consultaList.style.display === '') ? 'block' : 'none';
+        });
+
+        // Función para mostrar/ocultar los eventos
+        document.getElementById('toggleEventoList').addEventListener('click', function () {
+            var eventoList = document.getElementById('eventoList');
+            eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
+        });
+    </script>
+</body>
+
+</html>

@@ -20,15 +20,22 @@
             <div class="container-lg row p-3 mx-auto">
                 <div class="col-lg-6 p-0">
                     <div class="d-flex flex-column justify-content-center h-100 p-5">
-                        <img src="{% static 'assets/svg/logo-duoc.svg' %}" alt="Logo Duoc" class="invert-color w-50 py-4" style="opacity: 75%;">
+                        <img src="{% static 'assets/svg/logo-duoc.svg' %}" alt="Logo Duoc"
+                            class="invert-color w-50 py-4" style="opacity: 75%;">
                         <h1 class="display-5 fw-bold mb-3">PuntoDuoc: Administradores</h1>
                         <p class="fs-4">Herramienta para la creación y gestión de eventos Duoc UC.</p>
                         {% if request.session.usuario_autenticado %}
-                            <!--<button class="btn btn-dark btn-lg w-50" type="button">Iniciar sesión</button>-->
-                            <a href="{% url 'subir_evento' %}" class="btn btn-dark btn-lg w-50" type="button">Subir evento</a>
-                            {% else %}
-                            <a href="{% url 'login_view' %}" class="btn btn-dark btn-lg w-50" type="button">Iniciar sesión</a>
+                        <div style="display: flex;">
+                            <a href="{% url 'subir_evento' %}" class="btn btn-dark btn-lg w-50" type="button"
+                                style="margin-right: 10%;">Subir evento</a> <!-- Espacio entre los botones -->
+                            <a href="{% url 'panel_control' %}" class="btn btn-dark btn-lg w-50" type="button">
+                                Panel de Control</a>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'login_view' %}" class="btn btn-dark btn-lg w-50" type="button">Iniciar
+                            sesión</a>
                         {% endif %}
+
                     </div>
                 </div>
                 <div class="col-sm-6 d-none d-lg-block p-0">
@@ -42,37 +49,57 @@
 
     <section>
         <div>
-            <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop><stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z"></path></svg>
+            <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+                        <stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop>
+                        <stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop>
+                    </linearGradient>
+                </defs>
+                <path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)"
+                    d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3C1500,27,1560,23,1620,28.3C1680,33,1740,47,1800,43.3C1860,40,1920,20,1980,20C2040,20,2100,40,2160,55C2220,70,2280,80,2340,70C2400,60,2460,30,2520,25C2580,20,2640,40,2700,41.7C2760,43,2820,27,2880,21.7C2940,17,3000,23,3060,25C3120,27,3180,23,3240,25C3300,27,3360,33,3420,43.3C3480,53,3540,67,3600,63.3C3660,60,3720,40,3780,28.3C3840,17,3900,13,3960,20C4020,27,4080,43,4140,55C4200,67,4260,73,4290,76.7L4320,80L4320,100L4290,100C4260,100,4200,100,4140,100C4080,100,4020,100,3960,100C3900,100,3840,100,3780,100C3720,100,3660,100,3600,100C3540,100,3480,100,3420,100C3360,100,3300,100,3240,100C3180,100,3120,100,3060,100C3000,100,2940,100,2880,100C2820,100,2760,100,2700,100C2640,100,2580,100,2520,100C2460,100,2400,100,2340,100C2280,100,2220,100,2160,100C2100,100,2040,100,1980,100C1920,100,1860,100,1800,100C1740,100,1680,100,1620,100C1560,100,1500,100,1440,100C1380,100,1320,100,1260,100C1200,100,1140,100,1080,100C1020,100,960,100,900,100C840,100,780,100,720,100C660,100,600,100,540,100C480,100,420,100,360,100C300,100,240,100,180,100C120,100,60,100,30,100L0,100Z">
+                </path>
+            </svg>
         </div>
-        
+
         <div class="container-flex pb-5" style="background: #336DCF;">
 
 
             <div class="container-lg row row-cols-1 row-cols-md-3 g-4 mx-auto py-5">
                 <div class="col">
                     <div class="card h-100 text-center rounded-4">
-                        <img src="https://www.svgrepo.com/show/341116/task-view.svg" class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color" style="width:3rem; background: #dedad6;" alt="...">
+                        <img src="https://www.svgrepo.com/show/341116/task-view.svg"
+                            class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color"
+                            style="width:3rem; background: #dedad6;" alt="...">
                         <div class="card-body">
-                        <h5 class="card-title">Gestión</h5>
-                        <p class="card-text">Crea, modifica y publica los eventos que se busca realizar en la comunidad Duoc UC.</p>
+                            <h5 class="card-title">Gestión</h5>
+                            <p class="card-text">Crea, modifica y publica los eventos que se busca realizar en la
+                                comunidad Duoc UC.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card h-100 text-center rounded-4">
-                        <img src="https://www.svgrepo.com/show/339767/analytics.svg" class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color" style="width:3rem; background: #dedad6;" alt="...">
+                        <img src="https://www.svgrepo.com/show/339767/analytics.svg"
+                            class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color"
+                            style="width:3rem; background: #dedad6;" alt="...">
                         <div class="card-body">
-                        <h5 class="card-title">Insights</h5>
-                        <p class="card-text">Descubre tendencias relacionadas al interés y recepción de los eventos por parte de los estudiantes.</p>
+                            <h5 class="card-title">Insights</h5>
+                            <p class="card-text">Descubre tendencias relacionadas al interés y recepción de los eventos
+                                por parte de los estudiantes.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card h-100 text-center rounded-4">
-                        <img src="https://www.svgrepo.com/show/339808/badge.svg" class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color" style="width:3rem; background: #dedad6;" alt="...">
+                        <img src="https://www.svgrepo.com/show/339808/badge.svg"
+                            class="rounded-circle mx-auto p-2 mt-4 mb-3 invert-color"
+                            style="width:3rem; background: #dedad6;" alt="...">
                         <div class="card-body">
-                        <h5 class="card-title">Recompensas</h5>
-                        <p class="card-text">Gestiona recompensas de usuarios, agregando y restando puntos de sus cuentas.</p>
+                            <h5 class="card-title">Recompensas</h5>
+                            <p class="card-text">Gestiona recompensas de usuarios, agregando y restando puntos de sus
+                                cuentas.</p>
                         </div>
                     </div>
                 </div>

@@ -187,6 +187,7 @@ def subir_evento_view(request):
             'tipo_usuario': request.POST.get('tipo_usuario', "General"),
             'titulo': request.POST.get('titulo', "Evento sin título"),
             'Cupos': request.POST.get('cupos', "0"),  # Valor por defecto en caso de que el campo esté vacío
+            'gestor': "Sin gestor",
 
         }
 
@@ -210,6 +211,7 @@ def subir_evento_view(request):
             "Cupos": {"integerValue": int(datos['Cupos'])},  # Convierte el valor a entero
             "inscritos": {"integerValue": 0},
             "listaEspera": {"arrayValue": {"values": []}},
+            "gestor": {"stringValue": datos['gestor']},
         }})
 
         if response.status_code in [200, 201]:
@@ -303,14 +305,6 @@ def modificar_evento_view(request, evento_id):
             messages.error(request, f"Error al modificar el evento: {response.text}")
 
     return redirect('listar_eventos')
-
-
-
-
-
-# Home
-def home_view(request):
-    return render(request, 'mi_app/home.html')
 
 # CRUD Estudiantes
 @login_required
@@ -1050,3 +1044,191 @@ def dashboard(request):
 
     # Pasar los eventos y los gestores a la plantilla
     return render(request, 'mi_app/dashboard/dashboard.html', {'eventos': eventos, 'gestores': gestores})
+
+url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
+
+def panel_control(request):
+    try:
+        # Obtener los datos desde Firebase para las consultas
+        response_consultas = requests.get(url_consultas)
+        if response_consultas.status_code != 200:
+            print(f"Error en la solicitud de consultas: {response_consultas.status_code} - {response_consultas.text}")
+            return render(request, 'mi_app/home.html', {'error': 'Error al obtener las consultas.'})
+
+        # Extraer y procesar documentos de las consultas
+        consultas = response_consultas.json().get('documents', [])
+        if not consultas:
+            print("No hay documentos en la colección de consultas.")
+            return render(request, 'mi_app/home.html', {'error': 'No hay consultas disponibles.'})
+
+        consultas_pendientes = []
+        for consulta in consultas:
+            try:
+                estado = consulta['fields']['estado']['stringValue']
+                if estado.strip().lower() == "pendiente":
+                    consultas_pendientes.append({
+                        'id': consulta['name'].split("/")[-1],
+                        'correo': consulta['fields']['correo']['stringValue'],
+                        'estado': estado,
+                        'mensaje': consulta['fields']['mensaje']['stringValue'],
+                        'motivo': consulta['fields']['motivo']['stringValue'],
+                        'nombre': consulta['fields']['nombre']['stringValue'],
+                    })
+            except KeyError as e:
+                print(f"Campo faltante en la consulta: {e}")
+
+        # Calcular el total y el pendiente de consultas
+        total_consultas = len(consultas)
+        consultas_pendientes_count = len(consultas_pendientes)
+
+        if total_consultas > 0:
+            progreso = (consultas_pendientes_count / total_consultas) * 100
+        else:
+            progreso = 0  
+        if consultas_pendientes_count == 0:
+            color_progreso = "blue"  
+        else:
+            color_progreso = "#ffc107"  
+
+        # Obtener los datos desde Firebase para los eventos
+        url_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
+        response_eventos = requests.get(url_eventos)
+        if response_eventos.status_code != 200:
+            print(f"Error en la solicitud de eventos: {response_eventos.status_code} - {response_eventos.text}")
+            return render(request, 'mi_app/home.html', {'error': 'Error al obtener los eventos.'})
+
+        # Extraer y procesar documentos de los eventos
+        eventos = response_eventos.json().get('documents', [])
+        eventos_sin_gestor = []
+        inscritos_por_evento = []  # Aquí vamos a almacenar la cantidad de inscritos por evento
+
+        for evento in eventos:
+            try:
+                gestor = evento['fields']['gestor']['stringValue']
+                inscritos = evento['fields']['inscritos']['integerValue']
+                titulo = evento['fields']['titulo']['stringValue']
+
+                if gestor.strip().lower() == "sin gestor":
+                    eventos_sin_gestor.append({
+                        'id_evento': evento['fields']['id_evento']['stringValue'],
+                        'titulo': titulo,
+                        'descripcion': evento['fields']['descripcion']['stringValue'],
+                        'fecha': evento['fields']['fecha']['timestampValue'],
+                        'lugar': evento['fields']['lugar']['stringValue'],
+                        'cupos': evento['fields']['Cupos']['integerValue'],
+                    })
+                
+                # Guardamos la cantidad de inscritos por evento
+                inscritos_por_evento.append({
+                    'titulo': titulo,
+                    'inscritos': inscritos,
+                })
+            except KeyError as e:
+                print(f"Campo faltante en el evento: {e}")
+
+        # Calcular el total de eventos sin gestor
+        total_eventos = len(eventos)
+        eventos_sin_gestor_count = len(eventos_sin_gestor)
+
+        # Calcular el progreso de los eventos sin gestor
+        if total_eventos > 0:
+            progreso_eventos = (eventos_sin_gestor_count / total_eventos) * 100
+        else:
+            progreso_eventos = 0
+
+        # Enviar los datos a la plantilla
+        return render(request, 'mi_app/panel-control/panel-control.html', {
+            'consultas_pendientes_count': consultas_pendientes_count,
+            'total_consultas': total_consultas,
+            'progreso': progreso,
+            'color_progreso': color_progreso,
+            'consultas_pendientes': consultas_pendientes,
+            'eventos_sin_gestor': eventos_sin_gestor,
+            'total_eventos': total_eventos,
+            'eventos_sin_gestor_count': eventos_sin_gestor_count,
+            'progreso_eventos': progreso_eventos,
+            'inscritos_por_evento': inscritos_por_evento  # Pasamos la lista de inscritos por evento
+        })
+
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return render(request, 'mi_app/panel-control/panel-control.html', {'error': 'Error interno al obtener los datos.'})
+
+def responder_consulta(request, consulta_id):
+    from datetime import datetime
+    import pytz
+    import requests
+
+    try:
+        # Obtener la consulta de Firebase
+        consulta_url = f"{url_consultas}/{consulta_id}"
+        consulta_response = requests.get(consulta_url)
+
+        if consulta_response.status_code != 200:
+            raise Exception("Error al obtener la consulta.")
+
+        consulta = consulta_response.json()
+
+        # Extraer datos de la consulta
+        consulta_data = {
+            "correo": consulta['fields']['correo']['stringValue'],
+            "nombre": consulta['fields']['nombre']['stringValue'],
+            "motivo": consulta['fields']['motivo']['stringValue'],
+            "mensaje": consulta['fields']['mensaje']['stringValue'],
+            "timestamp": consulta['fields']['timestamp']['timestampValue']
+        }
+
+    except Exception as e:
+        print(f"Error al obtener datos de la consulta: {e}")
+        return render(request, 'mi_app/consultas/responder_consulta.html', {'error': 'No se pudo obtener la consulta.'})
+
+    if request.method == "POST":
+        respuesta = request.POST.get('respuesta', '')
+
+        try:
+            mensaje_correo = f"Hola {consulta_data['nombre']},\n\nTu consulta con el motivo de '{consulta_data['motivo']}' ha sido leída y está siendo respondida a continuación:\n\n{respuesta}"
+
+            # Enviar correo
+            send_mail(
+                subject=f"Respuesta a tu consulta sobre '{consulta_data['motivo']}'",
+                message=mensaje_correo,
+                from_email="punto.estudiantil.puntoduoc@gmail.com",
+                recipient_list=[consulta_data['correo']],
+            )
+
+            # Actualizar estado de la consulta en Firebase
+            respuesta_timestamp = datetime.now(pytz.timezone('America/Santiago')).isoformat()
+
+            data_actualizada = {
+                "fields": {
+                    "estado": {"stringValue": "Respondido"},
+                    "respuesta_admin": {"stringValue": respuesta},
+                    "respuesta_timestamp": {"timestampValue": respuesta_timestamp},
+                    "correo": {"stringValue": consulta_data['correo']},
+                    "nombre": {"stringValue": consulta_data['nombre']},
+                    "motivo": {"stringValue": consulta_data['motivo']},
+                    "mensaje": {"stringValue": consulta_data['mensaje']},
+                    "timestamp": {"timestampValue": consulta_data['timestamp']},
+                }
+            }
+            actualizar_response = requests.patch(consulta_url, json=data_actualizada)
+            if actualizar_response.status_code not in [200, 204]:
+                raise Exception("Error al actualizar la consulta en Firebase.")
+
+            return redirect('listar_consultas')
+
+        except Exception as e:
+            print(f"Error al responder consulta: {e}")
+            return render(request, 'mi_app/consultas/responder_consulta.html', {
+                'error': 'Error al procesar la consulta.',
+                'consulta': consulta_data
+            })
+
+    # Renderizar datos en la plantilla para solicitudes GET
+    return render(request, 'mi_app/consultas/responder_consulta.html', {
+        'consulta': consulta_data
+    })
+
+
+def home (request):
+    return render(request,'mi_app/home.html')

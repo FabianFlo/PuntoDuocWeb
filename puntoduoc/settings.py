@@ -88,12 +88,12 @@ STATIC_URL = '/static/'
 
 # Configuración del correo electrónico
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Cambia por el servidor SMTP que uses
+EMAIL_HOST = 'smtp.gmail.com'  
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'punto.estudiantil.puntoduoc@gmail.com'  # Tu dirección de correo electrónico
-EMAIL_HOST_PASSWORD = 'r f o g e i w w i r f e i b y c'  # Tu contraseña de correo electrónico
-DEFAULT_FROM_EMAIL = 'punto.estudiantil.puntoduoc@gmail.com'  # El correo que aparecerá como remitente
+EMAIL_HOST_USER = 'punto.estudiantil.puntoduoc@gmail.com' 
+EMAIL_HOST_PASSWORD = 'r f o g e i w w i r f e i b y c' 
+DEFAULT_FROM_EMAIL = 'punto.estudiantil.puntoduoc@gmail.com'  
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

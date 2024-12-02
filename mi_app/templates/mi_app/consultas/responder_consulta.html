@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Consulta</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <script>
+        // Mostrar alerta si hay un mensaje
+        window.onload = function() {
+            const alertMessage = "{{ alert_message|default:'' }}";
+            if (alertMessage) {
+                alert(alertMessage);
+            }
+        };
+    </script>
+</head>
+<body class="bg-white">
+
+<section>
+    <div class="container-fluid p-0 m-0 row mx-auto" style="height:100vh;">
+        <!-- Sidebar -->
+        <div class="col-lg-5 p-0">
+            <div class="col-10 col-lg-7 mx-auto h-100">
+                <div class="d-flex flex-column justify-content-center h-100 pt-5 pb-3">
+                    <a href="{% url 'home' %}" class="fs-4 fw-bold nav-link">
+                        <span>
+                            <img src="https://www.svgrepo.com/show/101168/go-back-arrow.svg" alt="home" style="width:1em;" class="me-2 pb-1">
+                        </span>
+                        PuntoDuoc
+                    </a>
+                    <h1 class="display-5 fw-bold mb-3">Responder Consulta</h1>
+
+                    <div class="multi-collapse collapse show p-0 m-0" id="multiCollapseFormConsulta">
+                        <div class="form-container">
+                            {% if error %}
+                                <p class="text-danger">{{ error }}</p>
+                            {% endif %}
+
+                            <p><strong>Nombre:</strong> {{ consulta.nombre }}</p>
+                            <p><strong>Correo:</strong> {{ consulta.correo }}</p>
+                            <p><strong>Motivo:</strong> {{ consulta.motivo }}</p>
+                            <p><strong>Mensaje:</strong> {{ consulta.mensaje }}</p>
+
+                            <h3>Tu Respuesta:</h3>
+                            <form method="POST" class="row py-3">
+                                {% csrf_token %}
+                                <div class="col-12 mb-3">
+                                    <div class="form-floating">
+                                        <textarea id="respuesta" name="respuesta" class="form-control" placeholder="Escribe tu respuesta aquí..." required></textarea>
+                                        <label for="respuesta" class="text-muted">Escribe tu respuesta aquí...</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-dark w-100">Enviar Respuesta</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="col-7 w-100 d-lg-none p-0 m-0" style="overflow:hidden;">
+            <div>
+                <svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+                            <stop stop-color="rgba(51, 109, 207, 1)" offset="0%"></stop>
+                            <stop stop-color="rgba(51, 109, 207, 1)" offset="100%"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)"
+                          d="M0,70L30,68.3C60,67,120,63,180,60C240,57,300,53,360,51.7C420,50,480,50,540,51.7C600,53,660,57,720,58.3C780,60,840,60,900,51.7C960,43,1020,27,1080,16.7C1140,7,1200,3,1260,6.7C1320,10,1380,20,1440,23.3L1440,100L0,100Z"></path>
+                </svg>
+            </div>
+            <div class="container-flex h-100" style="background: #336DCF;"></div>
+        </div>
+
+        <div class="col-lg-7 d-none d-lg-block p-0 background-svg"></div>
+    </div>
+</section>
+
+<script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
