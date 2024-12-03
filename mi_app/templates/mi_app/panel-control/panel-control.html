@@ -183,51 +183,54 @@
                         </div>
                     </div>
 
-<!-- Tarjeta 2: Eventos sin gestor -->
-<div class="card">
-    <div class="card-header">Eventos sin asignar a gestor</div>
-    <div class="card-body">
-        <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
-        <div class="progress-bar">
-            <div class="progress" style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
-        </div>
-        <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})</p>
-        <a href="javascript:void(0);" class="btn-1 toggle-evento">Mostrar eventos</a>
+                    <!-- Tarjeta 2: Eventos sin gestor -->
+                    <div class="card">
+                        <div class="card-header">Eventos sin asignar a gestor</div>
+                        <div class="card-body">
+                            <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
+                            <div class="progress-bar">
+                                <div class="progress"
+                                    style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
+                            </div>
+                            <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})
+                            </p>
+                            <a href="javascript:void(0);" class="btn-1 toggle-evento">Mostrar eventos</a>
 
-        <div id="eventoList" style="display: none; margin-top: 20px;">
-            {% for evento in eventos_sin_gestor %}
-            <div class="evento-item">
-                <strong>{{ evento.titulo }}</strong><br>
-                Lugar: {{ evento.lugar }}<br>
-                Fecha: {{ evento.fecha }}<br>
+                            <div id="eventoList" style="display: none; margin-top: 20px;">
+                                {% for evento in eventos_sin_gestor %}
+                                <div class="evento-item">
+                                    <strong>{{ evento.titulo }}</strong><br>
+                                    Lugar: {{ evento.lugar }}<br>
+                                    Fecha: {{ evento.fecha }}<br>
 
-                <!-- Formulario para seleccionar gestor -->
-                <form method="POST" action="{% url 'panel_control' %}" style="margin-top: 10px;">
-                    {% csrf_token %}
-                    <input type="hidden" name="evento_id" value="{{ evento.id_evento }}">
+                                    <!-- Formulario para seleccionar gestor -->
+                                    <form method="POST" action="{% url 'panel_control' %}" style="margin-top: 10px;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="evento_id" value="{{ evento.id_evento }}">
 
-                    <div class="form-group">
-                        <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
-                        <select name="gestor_id" id="gestorSelect{{ evento.id_evento }}" class="form-control">
-                            <option value="">Seleccionar gestor</option>
-                            {% for gestor in gestores_nombre_completo %}
-                                <option value="{{ gestor.id }}">{{ gestor.nombre_completo }}</option>
-                            {% endfor %}
-                        </select>
+                                        <div class="form-group">
+                                            <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
+                                            <select name="gestor_id" id="gestorSelect{{ evento.id_evento }}"
+                                                class="form-control">
+                                                <option value="">Seleccionar gestor</option>
+                                                {% for gestor in gestores_nombre_completo %}
+                                                <option value="{{ gestor.id }}">{{ gestor.nombre_completo }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+<br>
+                                        <button type="submit" class="btn btn-primary">Asignar Gestor</button>
+                                    </form>
+
+                                    {% if evento.gestor != "Sin gestor" %}
+                                    <p><strong>Gestor Asignado:</strong> {{ evento.gestor }}</p>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Asignar Gestor</button>
-                </form>
-
-                {% if evento.gestor != "Sin gestor" %}
-                    <p><strong>Gestor Asignado:</strong> {{ evento.gestor }}</p>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-    
 
 
 
