@@ -965,20 +965,15 @@ def dashboard(request):
 
 url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
 
-import requests
-from django.shortcuts import render, redirect
-from django.contrib import messages
 
 def panel_control(request):
     try:
-        # Obtener los datos desde Firebase para las consultas
         url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
         response_consultas = requests.get(url_consultas)
         if response_consultas.status_code != 200:
             print(f"Error en la solicitud de consultas: {response_consultas.status_code} - {response_consultas.text}")
             return render(request, 'mi_app/home.html', {'error': 'Error al obtener las consultas.'})
 
-        # Extraer y procesar documentos de las consultas
         consultas = response_consultas.json().get('documents', [])
         if not consultas:
             print("No hay documentos en la colección de consultas.")
@@ -1000,7 +995,6 @@ def panel_control(request):
             except KeyError as e:
                 print(f"Campo faltante en la consulta: {e}")
 
-        # Calcular el total y el pendiente de consultas
         total_consultas = len(consultas)
         consultas_pendientes_count = len(consultas_pendientes)
 
@@ -1013,14 +1007,12 @@ def panel_control(request):
         else:
             color_progreso = "#ffc107"  
 
-        # Obtener los datos desde Firebase para los eventos
         url_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos"
         response_eventos = requests.get(url_eventos)
         if response_eventos.status_code != 200:
             print(f"Error en la solicitud de eventos: {response_eventos.status_code} - {response_eventos.text}")
             return render(request, 'mi_app/home.html', {'error': 'Error al obtener los eventos.'})
 
-        # Extraer y procesar documentos de los eventos
         eventos = response_eventos.json().get('documents', [])
         eventos_sin_gestor = []
         inscritos_por_evento = []  # Aquí vamos a almacenar la cantidad de inscritos por evento
@@ -1041,7 +1033,6 @@ def panel_control(request):
                         'cupos': evento['fields']['Cupos']['integerValue'],
                     })
                 
-                # Guardamos la cantidad de inscritos por evento
                 inscritos_por_evento.append({
                     'titulo': titulo,
                     'inscritos': inscritos,
@@ -1049,24 +1040,20 @@ def panel_control(request):
             except KeyError as e:
                 print(f"Campo faltante en el evento: {e}")
 
-        # Calcular el total de eventos sin gestor
         total_eventos = len(eventos)
         eventos_sin_gestor_count = len(eventos_sin_gestor)
 
-        # Calcular el progreso de los eventos sin gestor
         if total_eventos > 0:
             progreso_eventos = (eventos_sin_gestor_count / total_eventos) * 100
         else:
             progreso_eventos = 0
 
-        # Obtener los datos desde Firebase para GestorEventos
         url_gestor_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
         response_gestor_eventos = requests.get(url_gestor_eventos)
         if response_gestor_eventos.status_code != 200:
             print(f"Error en la solicitud de GestorEventos: {response_gestor_eventos.status_code} - {response_gestor_eventos.text}")
             return render(request, 'mi_app/home.html', {'error': 'Error al obtener los gestores.'})
 
-        # Extraer y procesar documentos de los GestorEventos
         gestores = response_gestor_eventos.json().get('documents', [])
         gestores_nombre_completo = []
 
@@ -1080,23 +1067,19 @@ def panel_control(request):
             except KeyError as e:
                 print(f"Campo faltante en el gestor: {e}")
 
-        # Si el formulario se envía para crear una tarea de gestor y actualizar el evento
         if request.method == 'POST':
             evento_id = request.POST.get('evento_id')
             gestor_id = request.POST.get('gestor_id')
 
             if evento_id and gestor_id:
                 try:
-                    # Obtener los datos actuales del evento antes de actualizar
                     url_evento = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos/{evento_id}"
                     response_get_evento = requests.get(url_evento)
                     if response_get_evento.status_code == 200:
                         evento_data = response_get_evento.json().get('fields', {})
 
-                        # Mantener todos los datos del evento y actualizar solo el campo 'gestor'
                         evento_data['gestor'] = {"stringValue": gestor_id}  # Aquí actualizamos el gestor
 
-                        # Reescribir el documento del evento con los datos actuales más la actualización del gestor
                         data_evento = {
                             "fields": evento_data
                         }
@@ -1104,7 +1087,6 @@ def panel_control(request):
                         response_update_evento = requests.patch(url_evento, json=data_evento)
 
                         if response_update_evento.status_code == 200:
-                            # Crear el documento en la colección TareasGestor con la relación entre evento y gestor
                             url_tareas_gestor = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/TareasGestor"
                             data_tarea = {
                                 "fields": {
@@ -1129,10 +1111,8 @@ def panel_control(request):
                     print(f"Error al asignar gestor: {e}")
                     messages.error(request, 'Error al asignar el gestor al evento.')
 
-            # Redirigir a la misma página después de procesar la asignación
             return redirect('panel_control')
 
-        # Enviar los datos a la plantilla
         return render(request, 'mi_app/panel-control/panel-control.html', {
             'consultas_pendientes_count': consultas_pendientes_count,
             'total_consultas': total_consultas,

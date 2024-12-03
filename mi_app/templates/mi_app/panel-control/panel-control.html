@@ -9,16 +9,23 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <!-- Incluir la librería Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <style>
+    body {
+        background-color: #ffffff;
+        font-family: 'Roboto', sans-serif;
+    }
+
     .progress-bar {
         width: 100%;
         background-color: #f3f3f3;
         border-radius: 4px;
-        height: 20px;
+        height: 15px;
     }
 
     .progress {
@@ -32,22 +39,31 @@
 
     .consulta-item,
     .evento-item {
-        margin-bottom: 15px;
-        padding: 15px;
-        background-color: #fff;
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #ffffff;
         border: 1px solid #ddd;
-        border-radius: 8px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .consulta-item:hover,
+    .evento-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
     }
 
     .btn-respond,
     .btn-expand,
     .btn-1 {
         background-color: #007bff;
-        padding: 8px 15px;
+        padding: 10px 20px;
         color: white;
         border-radius: 5px;
         text-decoration: none;
         cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
     .btn-respond:hover,
@@ -59,6 +75,7 @@
     .status-progress {
         margin-top: 10px;
         font-size: 14px;
+        color: #555;
     }
 
     .card-container {
@@ -66,17 +83,22 @@
         justify-content: center;
         gap: 30px;
         flex-wrap: wrap;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .card {
         width: 100%;
         max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
     }
 
     .card-header {
         background-color: #f7f7f7;
         font-weight: bold;
+        font-size: 18px;
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
     }
 
     .form-control {
@@ -85,6 +107,7 @@
         font-size: 14px;
         border: 1px solid #ddd;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease;
     }
 
     .form-control:focus {
@@ -96,21 +119,48 @@
         display: flex;
         justify-content: flex-end;
         padding: 10px;
+        background-color: #f7f7f7;
+        border-radius: 0 0 10px 10px;
     }
 
     .evento-details {
-        margin-top: 10px;
+        margin-top: 20px;
         background-color: #f8f9fa;
-        padding: 15px;
+        padding: 20px;
         border-radius: 5px;
     }
 
     .form-group {
         margin-top: 15px;
     }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Mejora de los estilos del gráfico */
+    .chart-container {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-1 {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-1:hover {
+        background-color: #218838;
+    }
 </style>
 
-<body class="bg-white">
+<body>
 
     {% include 'mi_app/navbar.html' %}
 
@@ -131,23 +181,42 @@
                         <img src="{% static 'assets/img/home banner.png' %}" alt="Banner landing page" class="w-50">
                     </div>
                 </div>
+                <a href="/dashboard_2" class="btn btn-dark btn-lg w-50" type="button">
+                    Metricas</a>
             </div>
         </div>
     </section>
 
     <!-- Gráfico de Inscritos por Evento -->
     <section>
-        <div class="container-fluid bg-white mb-4 card">
+        <div class="container-fluid bg-white mb-4 card expandable-card" id="expandableCard">
             <div class="container-lg row p-3 mx-auto">
                 <div class="col-12">
-                    <h3>Inscritos por Evento</h3>
-                    <div>
-                        <canvas id="graficoEventos" width="800" height="600"></canvas>
+                    <div class="section-title">Inscritos por Evento</div>
+                    <div class="chart-container">
+                        <canvas id="graficoEventos" width="400" height="400"
+                            style="display: block; box-sizing: border-box; height: 300px; width: 8000px;"></canvas>
                     </div>
                     <br>
-                    <a href="{% url 'crear_mision' %}" class="btn-1" id="toggleEventoList">Crear misiones</a>
                 </div>
             </div>
+            <a href="javascript:void(0);" class="btn-1" id="expandButton" style="text-align: center;">Tomar Medidas</a>
+            <br>
+            <!-- Los tres botones que se mostrarán al expandir -->
+            <div id="expandedButtons"
+                style="display: flex !important; justify-content: space-around; text-align: center; align-items: center;">
+                <a href="{% url 'enviar_correos_view' %}" class="btn-1" style="text-decoration: none;">
+                    <i class="fas fa-envelope"></i> Correos
+                </a>
+                <a href="{% url 'enviar_notificaciones' %}" class="btn-1" style="text-decoration: none;">
+                    <i class="fas fa-bell"></i> Notificaciones
+                </a>
+                <a href="/encuestas/crear/" class="btn-1" style="text-decoration: none;">
+                    <i class="fas fa-poll"></i> Encuestas
+                </a>
+            </div>
+
+            <br>
         </div>
     </section>
 
@@ -194,7 +263,14 @@
                             </div>
                             <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})
                             </p>
-                            <a href="javascript:void(0);" class="btn-1 toggle-evento">Mostrar eventos</a>
+
+                            <!-- Espaciado entre los botones -->
+                            <div class="d-flex justify-content-between">
+                                <a href="javascript:void(0);" class="btn-1 toggle-evento"
+                                    style="margin-right: 10px;">Mostrar eventos</a>
+                                <a href="{% url 'crear_gestor' %}" class="btn-1 toggle-evento"
+                                    style="margin-left: 10px;">Crear Gestor</a>
+                            </div>
 
                             <div id="eventoList" style="display: none; margin-top: 20px;">
                                 {% for evento in eventos_sin_gestor %}
@@ -218,7 +294,7 @@
                                                 {% endfor %}
                                             </select>
                                         </div>
-<br>
+                                        <br>
                                         <button type="submit" class="btn btn-primary">Asignar Gestor</button>
                                     </form>
 
@@ -232,8 +308,6 @@
                     </div>
 
 
-
-
                     <!-- Tarjeta 3: Creación de usuarios -->
                     <div class="card">
                         <div class="card-header">Creación de usuarios</div>
@@ -245,7 +319,9 @@
                             <p class="status-progress">Pendiente 0/0</p> <a href="{% url 'crear_estudiante' %}"
                                 class="btn-1" id="toggleEventoList">Crear Estudiantes</a>
                         </div>
-                    </div> <!-- Tarjeta 4: Creación de misiones -->
+                    </div>
+
+                    <!-- Tarjeta 4: Creación de misiones -->
                     <div class="card">
                         <div class="card-header">Creación de misiones</div>
                         <div class="card-body">
@@ -271,7 +347,7 @@
             </linearGradient>
         </defs>
         <path fill="url(#sw-gradient-0)"
-            d="M 0 100 L 0 58.5 C 144.2 54.2 288.4 60.5 432.6 65.9 C 576.8 71.3 721 75.8 865.2 78.1 C 1009.4 80.4 1153.6 80.5 1297.8 82.8 C 1442 85.1 1586.2 89.4 1630.4 94.6 L 1630.4 100 L 0 100 Z">
+        d="M0 100 V60 C180 80, 360 40, 540 60 C720 80, 900 40, 1080 60 C1260 80, 1440 40, 1620 60 V100 Z">
         </path>
     </svg>
 
@@ -310,10 +386,6 @@
                 }
             }
         });
-        function toggleGestorDropdown(eventId) {
-            var details = document.getElementById('evento-details-' + eventId);
-            details.style.display = (details.style.display === 'none' || details.style.display === '') ? 'block' : 'none';
-        }
 
         // Función para mostrar/ocultar las consultas
         document.getElementById('toggleConsultaList').addEventListener('click', function () {
@@ -326,6 +398,13 @@
             var eventoList = document.getElementById('eventoList');
             eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
         });
+
+        document.getElementById("expandButton").onclick = function () {
+            var expandedButtons = document.getElementById("expandedButtons");
+
+            // Alternar la visibilidad de los botones adicionales
+            expandedButtons.style.display = (expandedButtons.style.display === 'none' || expandedButtons.style.display === '') ? 'flex' : 'none';
+        };
         document.querySelectorAll('.toggle-evento').forEach(button => {
             button.addEventListener('click', function () {
                 // Buscar el elemento eventoList relacionado al botón
