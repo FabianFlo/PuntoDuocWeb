@@ -965,9 +965,14 @@ def dashboard(request):
 
 url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
 
+import requests
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
 def panel_control(request):
     try:
         # Obtener los datos desde Firebase para las consultas
+        url_consultas = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Consultas"
         response_consultas = requests.get(url_consultas)
         if response_consultas.status_code != 200:
             print(f"Error en la solicitud de consultas: {response_consultas.status_code} - {response_consultas.text}")
@@ -1028,7 +1033,7 @@ def panel_control(request):
 
                 if gestor.strip().lower() == "sin gestor":
                     eventos_sin_gestor.append({
-                        'id_evento': evento['fields']['id_evento']['stringValue'],
+                        'id_evento': evento['name'].split("/")[-1],  # Aquí obtenemos el ID del evento
                         'titulo': titulo,
                         'descripcion': evento['fields']['descripcion']['stringValue'],
                         'fecha': evento['fields']['fecha']['timestampValue'],
@@ -1054,25 +1059,57 @@ def panel_control(request):
         else:
             progreso_eventos = 0
 
-        # Manejar la asignación de gestor a un evento (cuando el formulario se envía por POST)
+        # Obtener los datos desde Firebase para GestorEventos
+        url_gestor_eventos = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos"
+        response_gestor_eventos = requests.get(url_gestor_eventos)
+        if response_gestor_eventos.status_code != 200:
+            print(f"Error en la solicitud de GestorEventos: {response_gestor_eventos.status_code} - {response_gestor_eventos.text}")
+            return render(request, 'mi_app/home.html', {'error': 'Error al obtener los gestores.'})
+
+        # Extraer y procesar documentos de los GestorEventos
+        gestores = response_gestor_eventos.json().get('documents', [])
+        gestores_nombre_completo = []
+
+        for gestor in gestores:
+            try:
+                nombre_completo = gestor['fields']['Nombre_completo']['stringValue']
+                gestores_nombre_completo.append({
+                    'id': gestor['name'].split("/")[-1],  # Obtener el ID del gestor
+                    'nombre_completo': nombre_completo,
+                })
+            except KeyError as e:
+                print(f"Campo faltante en el gestor: {e}")
+
+        # Si el formulario se envía para crear una tarea de gestor
         if request.method == 'POST':
             evento_id = request.POST.get('evento_id')
             gestor_id = request.POST.get('gestor_id')
 
             if evento_id and gestor_id:
                 try:
-                    # Actualizar el evento con el nuevo gestor
-                    url_update_evento = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/Eventos/{evento_id}"
-                    data = {
+                    # Obtener el nombre completo del gestor seleccionado
+                    url_gestor = f"https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/GestorEventos/{gestor_id}"
+                    response_gestor = requests.get(url_gestor)
+
+                    if response_gestor.status_code != 200:
+                        return render(request, 'mi_app/home.html', {'error': 'Error al obtener los detalles del gestor.'})
+
+                    gestor = response_gestor.json().get('fields', {})
+                    nombre_completo = gestor.get('Nombre_completo', {}).get('stringValue')
+
+                    # Crear un nuevo documento en la colección TareasGestor con la relación entre el evento y el gestor
+                    url_tareas_gestor = "https://firestore.googleapis.com/v1/projects/puntoduoc-894e9/databases/(default)/documents/TareasGestor"
+                    data_tarea = {
                         "fields": {
-                            "gestor": {
-                                "stringValue": gestor_id
-                            }
+                            "evento_id": {"stringValue": evento_id},  # Usamos el ID del evento que se pasa en el formulario
+                            "gestor_id": {"stringValue": gestor_id},  # Usamos el ID del gestor seleccionado
+                            "gestor_nombre_completo": {"stringValue": nombre_completo}  # Nombre del gestor seleccionado
                         }
                     }
 
-                    response_update = requests.patch(url_update_evento, json=data)
-                    if response_update.status_code == 200:
+                    response_create_tarea = requests.post(url_tareas_gestor, json=data_tarea)
+
+                    if response_create_tarea.status_code == 200:
                         messages.success(request, f'Gestor asignado correctamente al evento.')
                     else:
                         messages.error(request, 'Error al asignar el gestor al evento.')
@@ -1094,12 +1131,14 @@ def panel_control(request):
             'total_eventos': total_eventos,
             'eventos_sin_gestor_count': eventos_sin_gestor_count,
             'progreso_eventos': progreso_eventos,
-            'inscritos_por_evento': inscritos_por_evento  # Pasamos la lista de inscritos por evento
+            'inscritos_por_evento': inscritos_por_evento,  # Pasamos la lista de inscritos por evento
+            'gestores_nombre_completo': gestores_nombre_completo  # Pasamos la lista de gestores
         })
 
     except Exception as e:
         print(f"Error inesperado: {e}")
         return render(request, 'mi_app/panel-control/panel-control.html', {'error': 'Error interno al obtener los datos.'})
+
 
 
 def responder_consulta(request, consulta_id):

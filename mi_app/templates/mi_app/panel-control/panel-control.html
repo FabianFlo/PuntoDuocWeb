@@ -137,7 +137,7 @@
 
     <!-- Gráfico de Inscritos por Evento -->
     <section>
-        <div class="container-fluid bg-white mb-4 card"  >
+        <div class="container-fluid bg-white mb-4 card">
             <div class="container-lg row p-3 mx-auto">
                 <div class="col-12">
                     <h3>Inscritos por Evento</h3>
@@ -145,8 +145,7 @@
                         <canvas id="graficoEventos" width="800" height="600"></canvas>
                     </div>
                     <br>
-                    <a href="{% url 'crear_mision' %}"
-                    class="btn-1" id="toggleEventoList">Crear misiones</a>
+                    <a href="{% url 'crear_mision' %}" class="btn-1" id="toggleEventoList">Crear misiones</a>
                 </div>
             </div>
         </div>
@@ -166,8 +165,7 @@
                                 <div class="progress"
                                     style="width: {{ progreso }}%; background-color: {{ color_progreso }};"></div>
                             </div>
-                            <p class="status-progress">En progreso ({{ consultas_pendientes_count }}/{{ total_consultas
-                                }})</p>
+                            <p class="status-progress">En progreso ({{ consultas_pendientes_count }}/{{ total_consultas }})</p>
                             <a href="javascript:void(0);" class="btn-1" id="toggleConsultaList">Revisar ahora</a>
 
                             <div id="consultaList" style="display: none; margin-top: 20px;">
@@ -185,47 +183,54 @@
                         </div>
                     </div>
 
-                    <!-- Tarjeta 2: Eventos sin gestor -->
-                    <div class="card">
-                        <div class="card-header">Eventos sin asignar a gestor</div>
-                        <div class="card-body">
-                            <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
-                            <div class="progress-bar">
-                                <div class="progress"
-                                    style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
-                            </div>
-                            <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})
-                            </p>
-                            <a href="javascript:void(0);" class="btn-1" id="toggleEventoList">Mostrar eventos</a>
+<!-- Tarjeta 2: Eventos sin gestor -->
+<div class="card">
+    <div class="card-header">Eventos sin asignar a gestor</div>
+    <div class="card-body">
+        <p>Total de eventos sin gestor: <strong>{{ eventos_sin_gestor_count }}</strong></p>
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ progreso_eventos }}%; background-color: #ff4747;"></div>
+        </div>
+        <p class="status-progress">Pendiente ({{ eventos_sin_gestor_count }}/{{ total_eventos }})</p>
+        <a href="javascript:void(0);" class="btn-1 toggle-evento">Mostrar eventos</a>
 
-                            <div id="eventoList" style="display: none; margin-top: 20px;">
-                                {% for evento in eventos_sin_gestor %}
-                                <div class="evento-item">
-                                    <strong>{{ evento.titulo }}</strong><br>
-                                    Lugar: {{ evento.lugar }}<br>
-                                    Fecha: {{ evento.fecha }}<br>
-                                    <!-- Botón para seleccionar gestor -->
-                                    <button class="btn-expand"
-                                        onclick="toggleGestorDropdown('{{ evento.id_evento }}')">Seleccionar
-                                        Gestor</button>
+        <div id="eventoList" style="display: none; margin-top: 20px;">
+            {% for evento in eventos_sin_gestor %}
+            <div class="evento-item">
+                <strong>{{ evento.titulo }}</strong><br>
+                Lugar: {{ evento.lugar }}<br>
+                Fecha: {{ evento.fecha }}<br>
 
-                                    <div id="evento-details-{{ evento.id_evento }}" class="evento-details">
-                                        <!-- Dropdown para asignar gestor -->
-                                        <div class="form-group">
-                                            <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
-                                            <select id="gestorSelect{{ evento.id_evento }}" class="form-control">
-                                                <option value="">Seleccionar gestor</option>
-                                                {% for gestor in gestores %}
-                                                <option value="{{ gestor.id }}">{{ gestor.nombre }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
+                <!-- Formulario para seleccionar gestor -->
+                <form method="POST" action="{% url 'panel_control' %}" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="evento_id" value="{{ evento.id_evento }}">
+
+                    <div class="form-group">
+                        <label for="gestorSelect{{ evento.id_evento }}">Asignar Gestor:</label>
+                        <select name="gestor_id" id="gestorSelect{{ evento.id_evento }}" class="form-control">
+                            <option value="">Seleccionar gestor</option>
+                            {% for gestor in gestores_nombre_completo %}
+                                <option value="{{ gestor.id }}">{{ gestor.nombre_completo }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+
+                    <button type="submit" class="btn btn-primary">Asignar Gestor</button>
+                </form>
+
+                {% if evento.gestor != "Sin gestor" %}
+                    <p><strong>Gestor Asignado:</strong> {{ evento.gestor }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+    
+
+
+
                     <!-- Tarjeta 3: Creación de usuarios -->
                     <div class="card">
                         <div class="card-header">Creación de usuarios</div>
@@ -301,6 +306,31 @@
                     title: { display: true, text: 'Inscritos por Evento' }
                 }
             }
+        });
+        function toggleGestorDropdown(eventId) {
+            var details = document.getElementById('evento-details-' + eventId);
+            details.style.display = (details.style.display === 'none' || details.style.display === '') ? 'block' : 'none';
+        }
+
+        // Función para mostrar/ocultar las consultas
+        document.getElementById('toggleConsultaList').addEventListener('click', function () {
+            var consultaList = document.getElementById('consultaList');
+            consultaList.style.display = (consultaList.style.display === 'none' || consultaList.style.display === '') ? 'block' : 'none';
+        });
+
+        // Función para mostrar/ocultar los eventos
+        document.getElementById('toggleEventoList').addEventListener('click', function () {
+            var eventoList = document.getElementById('eventoList');
+            eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
+        });
+        document.querySelectorAll('.toggle-evento').forEach(button => {
+            button.addEventListener('click', function () {
+                // Buscar el elemento eventoList relacionado al botón
+                const eventoList = this.closest('.card-body').querySelector('#eventoList');
+                if (eventoList) {
+                    eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
+                }
+            });
         });
     </script>
 
