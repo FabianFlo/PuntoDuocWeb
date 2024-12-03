@@ -1189,7 +1189,7 @@ def responder_consulta(request, consulta_id):
             if actualizar_response.status_code not in [200, 204]:
                 raise Exception("Error al actualizar la consulta en Firebase.")
 
-            return redirect('listar_consultas')
+            return redirect('panel_control')
 
         except Exception as e:
             print(f"Error al responder consulta: {e}")
