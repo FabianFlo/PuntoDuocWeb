@@ -84,7 +84,7 @@
                             <!-- Categoría -->
                             <div class="col-6 mb-3">
                                 <div class="form-floating">
-                                    <select id="categoria" name="categoria" class="form-select" required>
+                                    <select id="tipo" name="tipo" class="form-select" required>
                                         <option value="" disabled selected>--Selecciona una categoría--</option>
                                         <option value="Administración y Negocios">Administración y Negocios</option>
                                         <option value="Comunicación">Comunicación</option>
@@ -110,7 +110,7 @@
                                         <option value="Titulados">Titulados</option>
                                         <option value="Vive Duoc">Vive Duoc</option>
                                     </select>
-                                    <label for="categoria" class="text-muted">Categoría</label>
+                                    <label for="tipo" class="text-muted">Categoría</label>
                                 </div>
                             </div>
 
@@ -149,6 +149,7 @@
                                         <!-- Escuela de Administración y Negocios -->
                                         <option value="Auditoría">Auditoría</option>
                                         <option value="Ingeniería en Administración Mención Finanzas">Ingeniería en Administración Mención Finanzas</option>
+                                        <option value="Comunicación">Técnico en Programación</option>
                                         <option value="Ingeniería en Administración Mención Gestión de Personas">Ingeniería en Administración Mención Gestión de Personas</option>
                                         <option value="Ingeniería en Administración Mención Innovación y Emprendimiento">Ingeniería en Administración Mención Innovación y Emprendimiento</option>
                                         <option value="Ingeniería en Marketing Digital">Ingeniería en Marketing Digital</option>
@@ -277,6 +278,14 @@
                                 <div class="form-floating">
                                     <input type="number" id="cupos" name="cupos" class="form-control" required placeholder="200">
                                     <label for="cupos" class="text-muted">Cupos</label>
+                                </div>
+                            </div>
+                            
+                            <!--puntaje-->
+                            <div class="col-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="number" id="puntaje" name="puntaje" class="form-control" required placeholder="200">
+                                    <label for="puntaje" class="text-muted">puntaje</label>
                                 </div>
                             </div>
 

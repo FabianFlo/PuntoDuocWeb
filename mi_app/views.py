@@ -166,11 +166,12 @@ def subir_evento_view(request):
             'imagen': request.POST.get('imagen', "https://via.placeholder.com/150"),
             'lugar': request.POST.get('lugar', "Lugar no especificado"),
             'sede': request.POST.get('sede', "Sin sede"),
-            'categoria': request.POST.get('categoria', "General"),
+            'tipo': request.POST.get('tipo', "General"),
             'carrera': request.POST.get('carrera', "Sin carrera"),
             'tipo_usuario': request.POST.get('tipo_usuario', "General"),
             'titulo': request.POST.get('titulo', "Evento sin título"),
             'Cupos': request.POST.get('cupos', "0"),
+            'puntaje': request.POST.get('puntaje'),
             'gestor': "Sin gestor",
 
         }
@@ -188,13 +189,15 @@ def subir_evento_view(request):
             "imagen": {"stringValue": datos['imagen']},
             "lugar": {"stringValue": datos['lugar']},
             "sede": {"stringValue": datos['sede']},
-            "categoria": {"stringValue": datos['categoria']},
+            "tipo": {"stringValue": datos['tipo']},
             "carrera": {"stringValue": datos['carrera']},
             "tipo_usuario": {"stringValue": datos['tipo_usuario']},
             "titulo": {"stringValue": datos['titulo']},
             "Cupos": {"integerValue": int(datos['Cupos'])},
+            "puntaje": {"integerValue": int(datos['puntaje'])},
             "inscritos": {"integerValue": 0},
             "listaEspera": {"arrayValue": {"values": []}},
+            "verificadoPorMision": {"arrayValue": {"values": []}},
             "gestor": {"stringValue": datos['gestor']},
         }})
 
@@ -277,6 +280,7 @@ def modificar_evento_view(request, evento_id):
             "Cupos": {"integerValue": datos['Cupos']},
             "inscritos": {"integerValue": 0},
             "listaEspera": {"arrayValue": {"values": []}},
+            "gestor":{"stringValue": 'Sin gestor'},
         }})
 
         if response.status_code in [200, 204]:

@@ -188,23 +188,24 @@
     </section>
 
     <!-- Gráfico de Inscritos por Evento -->
-    <section>
-        <div class="container-fluid bg-white mb-4 card expandable-card" id="expandableCard">
+    <section class="full-page-section">
+        <div class="container-fluid bg-white mb-4 card expandable-card" id="expandableCard" style="max-width: 40% !important; max-height: 50% !important;">
             <div class="container-lg row p-3 mx-auto">
                 <div class="col-12">
                     <div class="section-title">Inscritos por Evento</div>
                     <div class="chart-container">
                         <canvas id="graficoEventos" width="400" height="400"
-                            style="display: block; box-sizing: border-box; height: 300px; width: 8000px;"></canvas>
+                            style="display: block; box-sizing: border-box; height: 300px; width: 800px;"></canvas>
                     </div>
                     <br>
                 </div>
             </div>
             <a href="javascript:void(0);" class="btn-1" id="expandButton" style="text-align: center;">Tomar Medidas</a>
             <br>
-            <!-- Los tres botones que se mostrarán al expandir -->
-            <div id="expandedButtons"
-                style="display: flex !important; justify-content: space-around; text-align: center; align-items: center;">
+            <div id="expandedButtons" class="expanded-buttons" style="    display: flex
+            ;
+                flex-wrap: wrap;
+                justify-content: space-around;">
                 <a href="{% url 'enviar_correos_view' %}" class="btn-1" style="text-decoration: none;">
                     <i class="fas fa-envelope"></i> Correos
                 </a>
@@ -215,10 +216,10 @@
                     <i class="fas fa-poll"></i> Encuestas
                 </a>
             </div>
-
             <br>
         </div>
     </section>
+    
 
     <!-- Tarjetas de Panel de Control -->
     <section>
@@ -401,13 +402,10 @@
 
         document.getElementById("expandButton").onclick = function () {
             var expandedButtons = document.getElementById("expandedButtons");
-
-            // Alternar la visibilidad de los botones adicionales
             expandedButtons.style.display = (expandedButtons.style.display === 'none' || expandedButtons.style.display === '') ? 'flex' : 'none';
         };
         document.querySelectorAll('.toggle-evento').forEach(button => {
             button.addEventListener('click', function () {
-                // Buscar el elemento eventoList relacionado al botón
                 const eventoList = this.closest('.card-body').querySelector('#eventoList');
                 if (eventoList) {
                     eventoList.style.display = (eventoList.style.display === 'none' || eventoList.style.display === '') ? 'block' : 'none';
