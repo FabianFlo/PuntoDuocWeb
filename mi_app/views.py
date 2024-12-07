@@ -445,7 +445,9 @@ def dashboard_2(request):
     if respuestas_response.status_code == 200:
         respuestas = respuestas_response.json().get('documents', [])
 
-    cantidad_encuestas_contestadas = len(set(respuesta['fields'].get('encuesta_id', {}).get('stringValue', '') for respuesta in respuestas))
+    cantidad_encuestas_contestadas = len(set(
+        respuesta['fields'].get('encuesta_id', {}).get('stringValue', '') for respuesta in respuestas
+    ))
 
     id_estudiantes_totales = set(estudiante['id'] for estudiante in estudiantes)
     id_estudiantes_inscripciones = set(
@@ -476,9 +478,15 @@ def dashboard_2(request):
         reverse=True
     )
 
+    # Diccionarios con inscritos y cupos por evento
     inscritos_por_evento = {
-        evento['fields']['titulo']['stringValue']: evento['fields'].get('inscritos', {}).get('integerValue', 0)
-        for evento in eventos
+        evento['fields']['titulo']['stringValue']: int(evento['fields'].get('inscritos', {}).get('integerValue', 0))
+        for evento in eventos if 'titulo' in evento['fields']
+    }
+
+    cupos_por_evento = {
+        evento['fields']['titulo']['stringValue']: int(evento['fields'].get('Cupos', {}).get('integerValue', 0))
+        for evento in eventos if 'titulo' in evento['fields']
     }
 
     carreras_con_mayor_participacion = Counter(
@@ -487,11 +495,13 @@ def dashboard_2(request):
     ).most_common(5)
 
     promedio_eventos_por_estudiante = len(eventos) / len(estudiantes) if estudiantes else 0
-
     satisfaccion_participante = 0
 
-    grafico_inscritos = list(inscritos_por_evento.values())
-    grafico_eventos = list(inscritos_por_evento.keys())
+    # Aseguramos el mismo orden en las listas grafico_eventos, grafico_inscritos y data_cupos
+    events_keys = list(inscritos_por_evento.keys())
+    grafico_eventos = events_keys
+    grafico_inscritos = [inscritos_por_evento[e] for e in events_keys]
+    data_cupos = [cupos_por_evento[e] for e in events_keys]
 
     labels_carreras = [carrera[0] for carrera in carreras_con_mayor_participacion]
     data_carreras = [carrera[1] for carrera in carreras_con_mayor_participacion]
@@ -505,13 +515,17 @@ def dashboard_2(request):
         'satisfaccion_participante': satisfaccion_participante,
         'grafico_inscritos': grafico_inscritos,
         'grafico_eventos': grafico_eventos,
-        'labels_carreras': labels_carreras,
         'data_carreras': data_carreras,
+        'labels_carreras': labels_carreras,
         'cantidad_encuestas_contestadas': cantidad_encuestas_contestadas,
         'data_estudiantes': json.dumps(data_estudiantes),
+        'lista_espera_eventos': lista_espera_eventos,
+        'data_cupos': data_cupos  # Agregamos data_cupos al contexto
     }
 
     return render(request, 'mi_app/dashboard/dashboard_2.html', context)
+
+
 
 
 def obtener_correos_por_carrera(carrera):

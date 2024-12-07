@@ -285,6 +285,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        
         <div class=>
             <button onclick="window.location.href='/listar_eventos/'" class="btn btn-primary btn-custom mt-3">Listar Eventos</button>
         </div>  
@@ -393,6 +394,98 @@ new Chart(document.getElementById('estudiantesChart').getContext('2d'), {
     </script>
 
     <script src="{% static 'bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let eventos = {{ grafico_eventos|safe }};
+            let inscritos = {{ grafico_inscritos|safe }};
+            let cupos = {{ data_cupos|safe }};
+    
+            // Combinar datos en un array de objetos
+            let dataEventos = eventos.map((evento, i) => {
+                return {
+                    nombre: evento,
+                    inscritos: inscritos[i],
+                    cupos: cupos[i]
+                };
+            });
+    
+            // Ordenar de mayor a menor por inscritos
+            dataEventos.sort((a, b) => b.inscritos - a.inscritos);
+    
+            // Paginación
+            let pageSize = 7;  // Cantidad de eventos por página
+            let currentPage = 0;
+    
+            const ctx = document.getElementById('graficoInscritos').getContext('2d');
+            let chart;
+    
+            function getCurrentPageData() {
+                const start = currentPage * pageSize;
+                const end = start + pageSize;
+                return dataEventos.slice(start, end);
+            }
+    
+            function renderChart() {
+                const pageData = getCurrentPageData();
+                const labels = pageData.map(d => d.nombre);
+                const dataValues = pageData.map(d => d.inscritos);
+    
+                // Calcular colores dinámicos
+                const backgroundColors = pageData.map(d => {
+                    const porcentaje = d.cupos > 0 ? (d.inscritos / d.cupos) : 0;
+                    return porcentaje < 0.4 ? 'red' : '#4a90e2';
+                });
+    
+                if (chart) {
+                    chart.destroy(); // Destruir el gráfico previo
+                }
+    
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Inscritos',
+                            data: dataValues,
+                            backgroundColor: backgroundColors,
+                            borderColor: backgroundColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+    
+            function nextPage() {
+                if ((currentPage + 1) * pageSize < dataEventos.length) {
+                    currentPage++;
+                    renderChart();
+                }
+            }
+    
+            function prevPage() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    renderChart();
+                }
+            }
+    
+            renderChart();
+    
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+    
+            if (prevPageBtn) prevPageBtn.addEventListener('click', prevPage);
+            if (nextPageBtn) nextPageBtn.addEventListener('click', nextPage);
+        });
+    </script>
+    
 
 </body>
 
